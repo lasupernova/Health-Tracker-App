@@ -11,7 +11,7 @@ class MainWindow(tk.Tk):
         super().__init__(*args, **kwargs)
 
     # ----- paths -----
-        icon_path = f"media{os.sep}icons"
+        icon_path = f"media{os.sep}icons" #use os.sep for tracker to work in different OS
         # print(icon_path) #uncomment for troubleshooting
 
     # ----- Styles -----
