@@ -3,9 +3,10 @@ import tkinter as tk
 from tkinter import ttk
 import tkinter.font as tkFont
 import os
+from style.widget_style import Style
 
 #  ----- class inheriting from tk.Tk -----
-class MainWindow(tk.Tk):
+class InputWindow(tk.Tk):
     #  ----- initialize -----
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -15,6 +16,8 @@ class MainWindow(tk.Tk):
         # print(icon_path) #uncomment for troubleshooting
 
     # ----- Styles -----
+
+        style = Style(self)
 
         # colors
 
@@ -39,10 +42,10 @@ class MainWindow(tk.Tk):
     # ----- Tabs -----
 
         # initiate ttk.Notebook as parent for tabs
-        tabControl = ttk.Notebook(self)#, style="Custom.TNotebook.Tab")
+        tabControl = ttk.Notebook(self, style="TimerText.TLabel")#, style="Custom.TNotebook.Tab")
 
         # create tabs
-        mood_tab = ttk.Frame(tabControl, style="Test.TFrame")
+        mood_tab = ttk.Frame(tabControl, style="Background.TFrame")
         health_tab = ttk.Frame(tabControl, relief = tk.SUNKEN)
         sleep_tab = ttk.Frame(tabControl)
         food_tab = ttk.Frame(tabControl)
@@ -67,6 +70,7 @@ class MainWindow(tk.Tk):
         ttk.Label(health_tab,  text ="Health Fields here! \n 🡓").grid(column = 0,  row = 0, padx = 30, pady = 30)  
 
 # ----- run app -----
-app = MainWindow() 
+if __name__ == '__main__':
+    app = InputWindow() 
 
-app.mainloop()
+    app.mainloop()
