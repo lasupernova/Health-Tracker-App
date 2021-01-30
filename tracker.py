@@ -77,18 +77,20 @@ class InputWindow(tk.Tk):
         self.mood_selections = {}
         # iterate over options and save tk.Stringvar object as value
         for option in self.mood_options:
-            self.mood_selections[option] = tk.StringVar(value=0)
+            self.mood_selections[option] = {}
+            self.mood_selections[option]["selection"] = tk.StringVar(value=0)
+            self.mood_selections[option]["frame"] = tk.Frame(mood_tab)
 
 
     #  ----- Entry -----
 
         # iterate over options nand create checkbutton for each option
         for option in self.mood_selections:
-            # frame = ttk.Frame(mood_tab).pack(fill="both", anchor="w")
-            ttk.Checkbutton(mood_tab,
-                            text=option,
+            self.mood_selections[option]["frame"].pack(anchor="w")
+            ttk.Label(self.mood_selections[option]["frame"],text=option, width=10).grid(row=0, column=0, sticky="W")
+            ttk.Checkbutton(self.mood_selections[option]["frame"],
                             command=lambda x=option: self.check_mood(x), #lambda command refering to method in order to be able to pass current option name as variable
-                            variable=self.mood_selections[option]).pack(anchor="w")
+                            variable=self.mood_selections[option]["selection"] ).grid(row=0, column=1, sticky="W")
 
     # ----- Buttons -----
         test = ttk.Button(
@@ -96,17 +98,17 @@ class InputWindow(tk.Tk):
             command=self.print_all_selected,
             text="Print Selection"
         )
-        test.pack()
+        test.pack(anchor="w", pady =15)
 
     # method printing current checkbutton state when clicked
     def check_mood(self, option):
         # print(self.angry_check.state())
-        print(self.mood_selections[f"{option}"].get())
+        print(self.mood_selections[option]["selection"].get())
 
     # method printing all current checkbutton states
     def print_all_selected(self):
         for mood in self.mood_selections:
-            print(mood,": ", self.mood_selections[mood].get())
+            print(mood,": ", self.mood_selections[mood]["selection"].get())
 
 # ----- run app -----
 if __name__ == '__main__':
