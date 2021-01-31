@@ -4,6 +4,7 @@ from tkinter import ttk
 import tkinter.font as tkFont
 import os
 from style.widget_style import Style
+from frames.entry_frames import EntryFrame
 
 #  ----- class inheriting from tk.Tk -----
 class InputWindow(tk.Tk):
@@ -114,6 +115,8 @@ class InputWindow(tk.Tk):
 
     #  ----- Entry -----
 
+        # EntryFrame(mood_tab).pack()
+
         # iterate over tabs with correpsonding tk-objects (saved in all_topics) and options-lists
         for tab, topic, options in zip(all_tabs, all_topics, all_lists):
             # # iterate over options nand create checkbutton and label for each option
@@ -121,35 +124,31 @@ class InputWindow(tk.Tk):
                 topic[option]["frame"].pack(anchor="w")
                 ttk.Label(topic[option]["frame"],text=option, width=17).grid(row=0, column=0, sticky="W", padx =(5,0)) #label created separately fron checkbutton (instead of using 'text'-parameter) in order to have label on the left-hand side
                 ttk.Checkbutton(topic[option]["frame"],
-                                command=lambda x=(option, topic): self.check_options(x), #lambda command refering to method in order to be able to pass current option name as variable
+                                command=lambda x=(option, topic): self.check_options(*x), #lambda command refering to method in order to be able to pass current option name as variable
                                 variable=topic[option]["selection"] ).grid(row=0, column=1, sticky="W")
 
         # ----- Buttons -----
             test = ttk.Button(
                 tab,
-                command=lambda x=(options, topic): self.print_all_selected(x),
+                command=lambda x=(options, topic): self.print_all_selected(*x),
                 text="Print Selection"
             )
             test.pack(anchor="w", pady =15, padx = (5,5))
 
     # method printing current checkbutton state when clicked
-    def check_options(self, selection_choice):
-        # extract clicked option and topic-dict from 'selection_choice'-parameter
-        option, topic = self._get_selection_parameters(selection_choice)
-        # print chackbutton state (=value of tk.Stringvar-object saved in topic-dict for current option)
+    def check_options(self, option, topic):
+        # print checkbutton variable value (=value of tk.Stringvar-object saved in topic-dict for current option)
         print(topic[option]["selection"].get())
 
     # method printing all current checkbutton states
-    def print_all_selected(self, selection_choice):
-        # extract clicked option and topic-dict from 'selection_choice'-parameter
-        options, topic = self._get_selection_parameters(selection_choice)
+    def print_all_selected(self, options, topic):
         for option in options:
             print(option,": ", topic[option]["selection"].get())
 
-    def _get_selection_parameters(self, selection_choice):
-        option = selection_choice[0]
-        topic = selection_choice[1]
-        return option, topic
+    # def _get_selection_parameters(self, selection_choice):
+    #     option = selection_choice[0]
+    #     topic = selection_choice[1]
+    #     return option, topic
 
 
 
