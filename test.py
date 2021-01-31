@@ -2,6 +2,14 @@
 import tkinter as tk
 from tkinter import ttk
 import tkinter.font as tkFont
-from ..tracker import InputWindow
+from assets.entry_information import *
 
-InputWindow()
+
+def print_parameters(*options):
+    print(*options)
+    print(options[0])
+
+print_parameters(1, 2)
+
+
+print(mood_info)
