@@ -64,11 +64,17 @@ class InputWindow(tk.Tk):
         tabControl.add(longterm_tab, text='Longterm Changes')
 
         # pack tabs - to make them visible 
-        tabControl.pack(expand=1, fill="both")
+        tabControl.pack(expand=1, fill="both", pady=(10,10))
 
     # ----- Labels ----- 
-        ttk.Label(mood_tab,  text ="Mood Fields here! \n 🡓", font={'size':12}).pack()#.grid(column = 0,  row = 0, padx = 30, pady = 30)  
-        ttk.Label(health_tab,  text ="Health Fields here! \n 🡓").pack()
+        ttk.Label(mood_tab,  text ="How's your head feeling? \n", font={'size':12}).pack()
+        ttk.Label(food_tab,  text ="How's your stomach feeling? \n", font={'size':12}).pack()
+        ttk.Label(fitness_tab,  text ="How's your muscles feeling? \n", font={'size':12}).pack()
+        ttk.Label(period_tab,  text ="How's your uterus feeling? \n", font={'size':12}).pack()
+        ttk.Label(longterm_tab,  text ="How have you been? \n", font={'size':12}).pack()
+        ttk.Label(health_tab,  text ="How's your body feeling? \n", font={'size':12}).pack()
+        ttk.Label(sleep_tab,  text ="How's your ZZZZZZZs feeling? \n", font={'size':12}).pack()
+
 
     # ----- Options -----
 
@@ -77,13 +83,13 @@ class InputWindow(tk.Tk):
         
         self.food_options = ['animal products', 'cereal', 'cheats/sweets/unhealthy', 'enough water?', 'fruits', 'healthy', 'laxatives', 'supplements']
 
-        self.fitness_options = ['cycling [mins]', 'gym', 'hiking', 'running/cardio [mins]', 'stretching [mins]']
+        self.fitness_options = ['cycling', 'gym', 'hiking', 'cardio', 'stretching', 'yoga', 'other']
 
         self.vaginal_options = ['cramps', 'cycle day', 'infection', 'ovulation', 'period', 'intercourse', 'spotting']
 
         self.longterm_changes_options = ['anatomical', 'climate', 'hormonal', 'nutritional', 'social']
 
-        self.health_options = ['RHR', 'STDs', 'acidity', 'backache', 'bloating', 'breakouts', 'chestpain', 'constipation', 'defecation', 'diarrhea', 'dizziness', 'hard stool', 'headache', 'indigestion', 'medication', 'nausea', 'numbness', 'other symptoms', 'palpitations', 'panic attack', 'shortness of breath', 'sick?', 'stomachpain']
+        self.health_options = ['RHR', 'acidity', 'backache', 'bloating', 'breakouts', 'chestpain', 'constipation', 'defecation', 'diarrhea', 'dizziness', 'hard stool', 'headache', 'indigestion', 'medication', 'nausea', 'numbness', 'other symptoms', 'palpitations', 'panic attack', 'breathless', 'sick?', 'stomachpain']
 
         self.sleep_options = ['REM', 'awake', 'deep sleep', 'frequent wakeups', 'insomnia', 'light sleep', 'sleep', 'sleep medication', 'sleep score', 'timezone change']
 
@@ -101,7 +107,6 @@ class InputWindow(tk.Tk):
 
         # iterate over options and save tk.Stringvar object as value
         for topic, tab, options in zip(all_topics, all_tabs, all_lists):
-            print(tab)
             for option in options:
                 topic[option] = {}
                 topic[option]["selection"] = tk.StringVar(value=0)
@@ -114,7 +119,7 @@ class InputWindow(tk.Tk):
             # # iterate over options nand create checkbutton and label for each option
             for option in options:
                 topic[option]["frame"].pack(anchor="w")
-                ttk.Label(topic[option]["frame"],text=option, width=10).grid(row=0, column=0, sticky="W") #label created separately fron checkbutton (instead of using 'text'-parameter) in order to have label on the left-hand side
+                ttk.Label(topic[option]["frame"],text=option, width=17).grid(row=0, column=0, sticky="W", padx =(5,0)) #label created separately fron checkbutton (instead of using 'text'-parameter) in order to have label on the left-hand side
                 ttk.Checkbutton(topic[option]["frame"],
                                 command=lambda x=(option, topic): self.check_options(x), #lambda command refering to method in order to be able to pass current option name as variable
                                 variable=topic[option]["selection"] ).grid(row=0, column=1, sticky="W")
@@ -125,7 +130,7 @@ class InputWindow(tk.Tk):
                 command=lambda x=(options, topic): self.print_all_selected(x),
                 text="Print Selection"
             )
-            test.pack(anchor="w", pady =15)
+            test.pack(anchor="w", pady =15, padx = (5,5))
 
     # method printing current checkbutton state when clicked
     def check_options(self, selection_choice):
