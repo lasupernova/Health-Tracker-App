@@ -28,7 +28,7 @@ mood_info = [
             {'sad':{"type":"Checkbox"}}, 
             {'sensitive':{"type":"Checkbox"}}, 
             {'stressed':{"type":"Checkbox"}}, 
-            {'tired':{"type":"MultipleChoice", "selection_menu":["not at all", "a bit", "very much", "I'm dying!"]}}
+            {'tired':{"type":"Checkbox"}}
             ]
 
 health_info = [
@@ -45,26 +45,26 @@ health_info = [
             {'hard stool':{"type":"Checkbox"}}, 
             {'headache':{"type":"Checkbox"}}, 
             {'indigestion':{"type":"Checkbox"}}, 
-            {'medication':{"type":"XXXX"}}, 
+            {'medication':{"type":"Entryfield"}}, 
             {'nausea':{"type":"Checkbox"}}, 
-            {'numbness':{"type":"XXXX"}}, 
-            {'other symptoms':{"type":"XXXX"}}, 
+            {'numbness':{"type":"Entryfield"}}, 
+            {'other symptoms':{"type":"Entryfield"}}, 
             {'palpitations':{"type":"Checkbox"}}, 
             {'panic attack':{"type":"Checkbox"}}, 
             {'breathless':{"type":"Checkbox"}}, 
-            {'sick?':{"type":"XXXX"}}, 
+            {'sick?':{"type":"Entryfield"}}, 
             {'stomachpain':{"type":"Checkbox"}}
             ]
 
 food_info = [
-            {'animal products':{"type":"Checkbox"}}, 
-            {'cereal':{"type":"Checkbox"}}, 
-            {'cheats/sweets/unhealthy':{"type":"Checkbox"}}, 
+            {'animal products':{"type":"Entryfield"}}, 
+            {'cereal':{"type":"Entryfield"}}, 
+            {'cheats/sweets/unhealthy':{"type":"Entryfield"}}, 
             {'enough water?':{"type":"Checkbox"}}, 
-            {'fruits':{"type":"Checkbox"}}, 
+            {'fruits':{"type":"Entryfield"}}, 
             {'healthy':{"type":"Checkbox"}}, 
-            {'laxatives':{"type":"Checkbox"}}, 
-            {'supplements':{"type":"Checkbox"}}
+            {'laxatives':{"type":"Entryfield"}}, 
+            {'supplements':{"type":"Entryfield"}}, 
             ]
 
 fitness_info = [
@@ -80,7 +80,7 @@ fitness_info = [
 period_info = [
             {'cramps':{"type":"MultipleChoice", "selection_menu":["mild", "medium", "strong", "extreme"]}}, 
             {'cycle day':{"type":"Spinbox", "from":1, "to":40, "increment":1}}, 
-            {'infection':{"type":"Checkbox"}}, 
+            {'infection':{"type":"Entryfield"}}, 
             {'ovulation':{"type":"Checkbox"}}, 
             {'period':{"type":"Checkbox"}}, 
             {'intercourse':{"type":"Checkbox"}}, 
@@ -88,11 +88,11 @@ period_info = [
             ]
 
 longterm_info =[
-            {'anatomical':{"type":"Checkbox"}}, 
-            {'climate':{"type":"XXX"}}, 
-            {'hormonal':{"type":"XXXX"}}, 
-            {'nutritional':{"type":"XXXX"}}, 
-            {'social':{"type":"XXXX"}}
+            {'anatomical':{"type":"Entryfield"}}, 
+            {'climate':{"type":"Entryfield"}}, 
+            {'hormonal':{"type":"Entryfield"}}, 
+            {'nutritional':{"type":"Entryfield"}}, 
+            {'social':{"type":"Entryfield"}},
             ]
 
 sleep_info = [
