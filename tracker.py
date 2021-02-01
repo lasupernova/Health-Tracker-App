@@ -5,6 +5,7 @@ import tkinter.font as tkFont
 import os
 from style.widget_style import Style
 from frames.entry_frames import EntryFrame
+from frames.past_entry_frames import PastEntryFrame
 from assets.entry_information import *
 
 #  ----- class inheriting from tk.Tk -----
@@ -69,23 +70,30 @@ class InputWindow(tk.Tk):
         tabControl.pack(expand=1, fill="both", pady=(10,10))
 
     # ----- Labels ----- 
-        ttk.Label(mood_tab,  text ="How's your head feeling? \n", font={'size':12}).pack()
-        ttk.Label(food_tab,  text ="How's your stomach feeling? \n", font={'size':12}).pack()
-        ttk.Label(fitness_tab,  text ="How's your muscles feeling? \n", font={'size':12}).pack()
-        ttk.Label(period_tab,  text ="How's your uterus feeling? \n", font={'size':12}).pack()
-        ttk.Label(longterm_tab,  text ="How have you been? \n", font={'size':12}).pack()
-        ttk.Label(health_tab,  text ="How's your body feeling? \n", font={'size':12}).pack()
-        ttk.Label(sleep_tab,  text ="How's your ZZZZZZZs feeling? \n", font={'size':12}).pack()
+        ttk.Label(mood_tab,  text ="How's your head feeling? \n", font={'size':12}).grid(row=0, column=0, columnspan=2)
+        ttk.Label(food_tab,  text ="How's your stomach feeling? \n", font={'size':12}).grid(row=0, column=0, columnspan=2)
+        ttk.Label(fitness_tab,  text ="How's your muscles feeling? \n", font={'size':12}).grid(row=0, column=0, columnspan=2)
+        ttk.Label(period_tab,  text ="How's your uterus feeling? \n", font={'size':12}).grid(row=0, column=0, columnspan=2)
+        ttk.Label(longterm_tab,  text ="How have you been? \n", font={'size':12}).grid(row=0, column=0, columnspan=2)
+        ttk.Label(health_tab,  text ="How's your body feeling? \n", font={'size':12}).grid(row=0, column=0, columnspan=2)
+        ttk.Label(sleep_tab,  text ="How's your ZZZZZZZs feeling? \n", font={'size':12}).grid(row=0, column=0, columnspan=2)
 
     #  ----- Entry -----
 
-        EntryFrame(mood_tab, mood_info).pack()
-        EntryFrame(health_tab, health_info).pack()
-        EntryFrame(food_tab, food_info)
-        EntryFrame(sleep_tab, sleep_info)
-        EntryFrame(fitness_tab, fitness_info)
-        EntryFrame(period_tab, period_info)
-        EntryFrame(longterm_tab, longterm_info)
+        EntryFrame(mood_tab, mood_info).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
+        EntryFrame(health_tab, health_info).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
+        EntryFrame(food_tab, food_info).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
+        EntryFrame(sleep_tab, sleep_info).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
+        EntryFrame(fitness_tab, fitness_info).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
+        EntryFrame(period_tab, period_info).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
+        EntryFrame(longterm_tab, longterm_info).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
+
+        for tab in all_tabs:
+            PastEntryFrame(tab).grid(row=1, column=1, sticky="NSEW", padx=10, pady=10)
+
+        self.columnconfigure(0, weight=1)
+        self.columnconfigure(1, weight=1)
+        self.rowconfigure(1, weight=1)
 
 # ----- run app -----
 if __name__ == '__main__':
