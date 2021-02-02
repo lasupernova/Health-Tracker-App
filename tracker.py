@@ -7,6 +7,8 @@ from style.widget_style import Style
 from frames.entry_frames import EntryFrame
 from frames.past_entry_frames import PastEntryFrame
 from assets.entry_information import *
+from PIL import ImageTk, Image
+from analysis.plots.test import make_plot
 
 #  ----- class inheriting from tk.Tk -----
 class InputWindow(tk.Tk):
@@ -17,6 +19,9 @@ class InputWindow(tk.Tk):
     # ----- paths -----
         icon_path = f"media{os.sep}icons" #use os.sep for tracker to work in different OS
         # print(icon_path) #uncomment for troubleshooting
+        self.img = ImageTk.PhotoImage(Image.open(f"media{os.sep}icons{os.sep}main.png"))
+
+        test_plot = make_plot()
 
     # ----- Styles -----
 
@@ -37,7 +42,8 @@ class InputWindow(tk.Tk):
         self.title("Health Tracker")
 
         # change taskbar icon
-        self.iconphoto(False, tk.PhotoImage(file=os.path.join(icon_path, "main.png"))) 
+        # self.iconphoto(False, ImageTk.PhotoImage(file=os.path.join(icon_path, "main.png"))) 
+        self.iconphoto(False, self.img) 
 
         # make fullscreen
         self.state('zoomed')
@@ -89,7 +95,7 @@ class InputWindow(tk.Tk):
         EntryFrame(longterm_tab, longterm_info).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
 
         for tab in all_tabs:
-            PastEntryFrame(tab).grid(row=1, column=1, sticky="NSEW", padx=10, pady=10)
+            PastEntryFrame(tab, test_plot).grid(row=1, column=1, sticky="NSEW", padx=10, pady=10)
 
         self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=1)
