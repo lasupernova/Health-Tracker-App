@@ -91,6 +91,13 @@ class EntryFrame(tk.Frame):
                 )
         test.pack(anchor="w", pady =15, padx = (5,5))
 
+        test_plotly = ttk.Button(
+                self,
+                command=self.show_plotly,
+                text="Open Plotly!"
+                )
+        test_plotly.pack(anchor="w", pady =15, padx = (5,5))       
+
     # ----- method printing current checkbutton state when clicked-----
     def check_options(self, option, topic):
 
@@ -144,6 +151,14 @@ class EntryFrame(tk.Frame):
 
         # create a Label to display string
         tk.Label(container, text=entry_string).grid(row=0, column=2, sticky="W")
+
+    def show_plotly(self):
+        import plotly.express as px
+
+        gapminder = px.data.gapminder()
+        fig = px.scatter(gapminder.query("year==2007"), x="gdpPercap", y="lifeExp", size="pop", color="continent",
+                hover_name="country", log_x=True, size_max=60)
+        fig.show()
 
 
 
