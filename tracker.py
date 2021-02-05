@@ -8,7 +8,6 @@ from frames.entry_frames import EntryFrame
 from frames.past_entry_frames import PastEntryFrame
 from assets.entry_information import *
 from PIL import ImageTk, Image
-from analysis.plots.test import make_plot
 
 #  ----- class inheriting from tk.Tk -----
 class InputWindow(tk.Tk):
@@ -21,7 +20,6 @@ class InputWindow(tk.Tk):
         # print(icon_path) #uncomment for troubleshooting
         self.img = ImageTk.PhotoImage(Image.open(f"media{os.sep}icons{os.sep}main.png"))
 
-        test_plot = make_plot()
 
     # ----- Styles -----
 
@@ -74,6 +72,7 @@ class InputWindow(tk.Tk):
 
         # pack tabs - to make them visible 
         tabControl.pack(expand=1, fill="both", pady=(10,10))
+        # print(tabControl.tab(tabControl.select(), "text")) #uncomment for troubleshooting
 
     # ----- Labels ----- 
         ttk.Label(mood_tab,  text ="How's your head feeling? \n", font={'size':12}).grid(row=0, column=0, columnspan=2)
@@ -95,11 +94,14 @@ class InputWindow(tk.Tk):
         EntryFrame(longterm_tab, longterm_info).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
 
         for tab in all_tabs:
-            PastEntryFrame(tab, test_plot).grid(row=1, column=1, sticky="NSEW", padx=10, pady=10)
+            # get current notebook tab's text
+            tab_name = tabControl.tab(tab)['text']
+            # create tk.Canvas-objects as plotting area
+            PastEntryFrame(tab_name, tab).grid(row=1, column=1, sticky="NSEW", padx=10, pady=10)
 
         self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=1)
-        self.rowconfigure(1, weight=1)
+        self.rowconfigure(1, weight=1) 
 
 # ----- run app -----
 if __name__ == '__main__':
