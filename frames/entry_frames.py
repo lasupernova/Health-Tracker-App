@@ -59,14 +59,16 @@ class EntryFrame(tk.Frame):
             elif option[option_name]["type"] == "Spinbox":
                 self.bulding_blocks[option_name]["frame"].pack(anchor="w")
                 ttk.Label(self.bulding_blocks[option_name]["frame"] ,text=option_name, width=17).grid(row=0, column=0, sticky="W", padx =(5,0)) #label created separately fron checkbutton (instead of using 'text'-parameter) in order to have label on the left-hand side
-                tk.Spinbox(self.bulding_blocks[option_name]["frame"],
+                self.bulding_blocks[option_name]["entry_object"] = tk.Spinbox(self.bulding_blocks[option_name]["frame"],
                                 command=lambda option=option_name, topic=self.bulding_blocks: self.check_options(option, topic), #lambda command refering to method in order to be able to pass current option name as variable
                                 textvariable=self.bulding_blocks[option_name]["selection"],
                                 from_=option[option_name]["from"],
                                 to=option[option_name]["to"],
                                 increment=option[option_name]["increment"],
                                 justify="center",
-                                width=5).grid(row=0, column=1, sticky="W")
+                                width=5)
+                self.bulding_blocks[option_name]["entry_object"].grid(row=0, column=1, sticky="W")
+                self.bulding_blocks[option_name]["entry_object"].bind("<FocusOut>", lambda event, option=option_name, topic=self.bulding_blocks: self.check_options(option, topic))
 
             elif option[option_name]["type"] == "Entryfield":  
                 self.bulding_blocks[option_name]["selection"].set(f"Type info + ENTER")      
