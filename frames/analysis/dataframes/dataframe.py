@@ -9,8 +9,6 @@ class TrackerFrame():
         # def _constructor(self):
         #     return TrackerFrame
 
-        # print(f"Passed to dataframe: tab - {tab}, option - {option}, value - {value}")
-
         # ----- import dataframe or create new one -----
         try:
             self.frame = pd.read_csv(csv_file, index_col= 0, parse_dates=True, header=[0, 1], skipinitialspace=True)

@@ -43,7 +43,7 @@ class EntryFrame(tk.Frame):
                 self.bulding_blocks[option_name]["frame"].pack(anchor="w")
                 ttk.Label(self.bulding_blocks[option_name]["frame"] ,text=option_name, width=17).grid(row=0, column=0, sticky="W", padx =(5,0)) #label created separately fron checkbutton (instead of using 'text'-parameter) in order to have label on the left-hand side
                 ttk.Checkbutton(self.bulding_blocks[option_name]["frame"],
-                                command=lambda x=(option_name, self.bulding_blocks): self.check_options(*x), #lambda command refering to method in order to be able to pass current option name as variable
+                                command=lambda option=option_name, topic=self.bulding_blocks: self.check_options(option, topic), #lambda command refering to method in order to be able to pass current option name as variable
                                 variable=self.bulding_blocks[option_name]["selection"]).grid(row=0, column=1, sticky="W")
 
             elif option[option_name]["type"] == "MultipleChoice":
@@ -60,7 +60,7 @@ class EntryFrame(tk.Frame):
                 self.bulding_blocks[option_name]["frame"].pack(anchor="w")
                 ttk.Label(self.bulding_blocks[option_name]["frame"] ,text=option_name, width=17).grid(row=0, column=0, sticky="W", padx =(5,0)) #label created separately fron checkbutton (instead of using 'text'-parameter) in order to have label on the left-hand side
                 tk.Spinbox(self.bulding_blocks[option_name]["frame"],
-                                command=lambda x=(option_name, self.bulding_blocks): self.check_options(*x), #lambda command refering to method in order to be able to pass current option name as variable
+                                command=lambda option=option_name, topic=self.bulding_blocks: self.check_options(option, topic), #lambda command refering to method in order to be able to pass current option name as variable
                                 textvariable=self.bulding_blocks[option_name]["selection"],
                                 from_=option[option_name]["from"],
                                 to=option[option_name]["to"],
@@ -107,7 +107,7 @@ class EntryFrame(tk.Frame):
         test_plotly.pack(anchor="w", pady =15, padx = (5,5))       
 
     # ----- method printing current checkbutton state when clicked and passing them on to dataframe to be saved -----
-    def check_options(self, option, topic, value=None):
+    def check_options(self, option, topic=None, value=None):
 
         if value:
             value = value
@@ -139,6 +139,7 @@ class EntryFrame(tk.Frame):
     # ----- method adding entries from tk.Entry()-fields -----
     def add_entry(self, entry_info_dict, option_name):
 
+        print(option_name)
         # get information and objects from dict
         field_list = entry_info_dict[option_name]["entries"]
         entry = entry_info_dict[option_name]["selection"].get()
@@ -156,7 +157,7 @@ class EntryFrame(tk.Frame):
 
         # save changes to dataframe
         print(option_name)
-        self.check_options(self.tab, option_name, field_list)
+        self.check_options(option=option_name, value=field_list)
 
         # clear text typed in entry-fieldc
         entry_info_dict[option_name]["entry_object"].delete(0, "end")
@@ -178,8 +179,3 @@ class EntryFrame(tk.Frame):
         fig = px.scatter(gapminder.query("year==2007"), x="gdpPercap", y="lifeExp", size="pop", color="continent",
                 hover_name="country", log_x=True, size_max=60)
         fig.show()
-
-
-
-
-        # [{"angry":{"type":"Checkbox", "Options":""}}]
