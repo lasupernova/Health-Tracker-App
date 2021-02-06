@@ -38,8 +38,4 @@ def plot_sleep(period=14):
 
     # return figure
     return fig
-
-
-
-# if __name__ == '__main__':
-#     plot_sleep()
+    quit()

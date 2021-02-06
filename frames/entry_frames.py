@@ -1,17 +1,25 @@
-# ----- import libraries and  xxx ---
+# ----- import libraries and  modules ---
 import tkinter as tk
 from tkinter import ttk
 import tkinter.font as tkFont
 import os
+from .analysis.dataframes.dataframe import TrackerFrame
 
 class EntryFrame(tk.Frame):
-    def __init__(self, container, info_list:dict, *args, **kwargs):
+    def __init__(self, container, info_list:dict, tab_name, tracker, *args, **kwargs):
         super().__init__(container, *args, **kwargs)
 
         # ----- Parameters -----
         self.info_list = info_list
         self.bulding_blocks = {}
         self.all_options = [[*option][0] for option in info_list]
+        self.tracker = tracker
+        if tab_name == "Longterm Changes":
+            self.tab = "longterm"
+        else:
+            self.tab = tab_name.lower()
+        print(self.tab)
+
 
         # ----- Frames -----
 
@@ -98,11 +106,18 @@ class EntryFrame(tk.Frame):
                 )
         test_plotly.pack(anchor="w", pady =15, padx = (5,5))       
 
-    # ----- method printing current checkbutton state when clicked-----
-    def check_options(self, option, topic):
+    # ----- method printing current checkbutton state when clicked and passing them on to dataframe to be saved -----
+    def check_options(self, option, topic, value=None):
 
-        # print checkbutton variable value (=value of tk.Stringvar-object saved in topic-dict for current option)
-        print(topic[option]["selection"].get())
+        if value:
+            value = value
+            self.tracker.update_frame(self.tab, option, value)
+            print(value)
+        else:
+            # print checkbutton variable value (=value of tk.Stringvar-object saved in topic-dict for current option)
+            value = topic[option]["selection"].get()
+            self.tracker.update_frame(self.tab, option, value)
+            print(value)
 
 
     # ----- method printing all current checkbutton states -----
@@ -138,6 +153,10 @@ class EntryFrame(tk.Frame):
 
         # for troubleshooting
         print(field_list)
+
+        # save changes to dataframe
+        print(option_name)
+        self.check_options(self.tab, option_name, field_list)
 
         # clear text typed in entry-fieldc
         entry_info_dict[option_name]["entry_object"].delete(0, "end")

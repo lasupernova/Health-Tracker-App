@@ -9,5 +9,4 @@ def make_plot():
 
     ax.scatter(x,y)
     return fig
-
-# make_plot()
+    quit()

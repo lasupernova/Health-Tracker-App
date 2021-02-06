@@ -48,7 +48,4 @@ def plot_cycle():
     plt.xticks([],[])
     # print(df.index)
     return fig
-    # plt.show()
-
-# if __name__ == '__main__':
-#     plot_cycle()
+    quit()
