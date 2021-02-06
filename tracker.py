@@ -115,8 +115,8 @@ class InputWindow(tk.Tk):
 
     # ----- funtion to run upon closing the window -----
     def on_exit(self):
-        print(self.df.save_frame())
-        self.destroy()
+        self.df.save_frame() #save GUI-entries to .csv file
+        self.destroy() #destroy window
 
 # ----- run app -----
 if __name__ == '__main__':
