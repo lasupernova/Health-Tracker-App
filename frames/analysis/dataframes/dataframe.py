@@ -36,9 +36,9 @@ class TrackerFrame():
 
 
     # ----- save changes to dataframe ------
-    def update_frame(self, tab, option, value):
-        current_date = datetime.datetime.now().date() 
-        self.frame.at[current_date, (tab, option)] = value
+    def update_frame(self, tab, option, value, date):
+        dateInd = date
+        self.frame.at[dateInd, (tab, option)] = value
         # print(self.frame.loc[current_date])
 
     def save_frame(self):

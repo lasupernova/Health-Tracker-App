@@ -16,11 +16,36 @@ class EntryFrame(tk.Frame):
         self.bulding_blocks = {}
         self.all_options = [[*option][0] for option in info_list]
         self.tracker = tracker
+        self.current_date = datetime.datetime.now().date()
         if tab_name == "Longterm Changes":
             self.tab = "longterm"
         else:
             self.tab = tab_name.lower()
-        print(self.tab)
+        print('\ntabname: ', self.tab)
+        print('\tContainer children: ', container.winfo_children())
+        print('\tContainer children values: ',container.children.values())
+        print('\tContainer children class: ',container.winfo_class())
+        print('\tContainer parent: ',container.winfo_parent())
+        print('\t\tSiblings: ', container.master.winfo_children())
+        for child in container.master.winfo_children():
+            print(f"Sibling: {child}")
+            for childchild in child.winfo_children():
+                print(f"\tSiblings child: {childchild}")
+                print('\t\tClass:', childchild.winfo_class())
+                if childchild.winfo_class() == 'Frame':
+                    for entryframe in childchild.winfo_children():
+                        print(f"\t\t\tEntryframe: {entryframe}")
+                        for widget in entryframe.winfo_children():
+                            print(f"\t\t\t\tWidget: {widget}")
+                            print('\t\t\t\t\tClass:', widget.winfo_class())
+                        if not entryframe.winfo_children():
+                            print('\t\t\t\t\tNo Children!')
+                            print('\t\t\t\t\tName: ', entryframe.winfo_name())
+                            # entryframe.config(state=tk.DISABLED)
+                            if entryframe.winfo_name() == '!button3':
+                                print('\t\t\t\t\tButton OF INTEREST!')
+                                print('\t\t\t\t\t', entryframe['text'])
+        print("\n\n")
 
 
     # ----- Frames -----
@@ -88,6 +113,13 @@ class EntryFrame(tk.Frame):
             else:
                 pass
 
+        # #----- Date Picker Frame -----
+        # self.date_frame = tk.Frame(
+        #     container,
+        #     bg='blue'
+        # )
+        # self.date_frame.grid()
+
                 # insert elements by their 
                 # index and names. 
                 # for i in range(1,len(option[option_name]["selection_menu"])+1):
@@ -120,30 +152,37 @@ class EntryFrame(tk.Frame):
                 )
         select_date.pack(anchor="w", pady =15, padx = (5,5))  
         self.changeOnHover(select_date, 'blue', 'darkslateblue') #change button color on hover
-        print(self.winfo_children)
+        # print(self.winfo_children)
 
-    # # ----- Date Picker -----
-    #     today = datetime.datetime.now().date() 
+        # ----- Date Picker ------
+        self.cal = DateEntry(self, width=12, background='darkblue',
+                            foreground='white', borderwidth=2)
+        
+
 
     # ----- method toggling date picker and printing selection ------
     def change_date(self):
         # function printing selected date from calendar
         def print_sel(e):
-            print(self.cal.get_date())
+            old_date = self.current_date
+            new_date = self.cal.get_date()
+            self.current_date = new_date
+            print(f"Date changed from {old_date} to {new_date}")
+        self.cal.bind("<<DateEntrySelected>>", print_sel) 
 
         # toggle (=pack/unpack) calendar if it exists 
-        try:
-            if self.cal.winfo_ismapped():
-                self.cal.pack_forget()
-            else:
-                self.cal.pack(padx=5, pady=5)
-        # create and pack calendar if it does not yet exist
-        except AttributeError:
-            # print(type(e).__name__)
-            self.cal = DateEntry(self, width=12, background='darkblue',
-                            foreground='white', borderwidth=2)
-            self.cal.bind("<<DateEntrySelected>>", print_sel)    #run print_sel() on date entry selection
-            self.cal.pack(padx=5, pady=5)     
+        # try:
+        if self.cal.winfo_ismapped():
+            self.cal.pack_forget()
+        else:
+            self.cal.pack(padx=5, pady=5)
+        # # create and pack calendar if it does not yet exist and bind it to function
+        # except AttributeError:
+        #     # print(type(e).__name__)
+        #     self.cal = DateEntry(self, width=12, background='darkblue',
+        #                     foreground='white', borderwidth=2)
+        #     self.cal.bind("<<DateEntrySelected>>", print_sel)    #run print_sel() on date entry selection
+        #     self.cal.pack(padx=5, pady=5)     
 
 
     # ----- method printing current checkbutton state when clicked and passing them on to dataframe to be saved -----
@@ -151,12 +190,12 @@ class EntryFrame(tk.Frame):
 
         if value:
             value = value
-            self.tracker.update_frame(self.tab, option, value)
+            self.tracker.update_frame(self.tab, option, value, self.current_date)
             print(value)
         else:
             # print checkbutton variable value (=value of tk.Stringvar-object saved in topic-dict for current option)
             value = topic[option]["selection"].get()
-            self.tracker.update_frame(self.tab, option, value)
+            self.tracker.update_frame(self.tab, option, value, self.current_date)
             print(value)
 
 

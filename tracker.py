@@ -9,6 +9,8 @@ from frames.past_entry_frames import PastEntryFrame
 from assets.entry_information import *
 from PIL import ImageTk, Image
 from frames.analysis.dataframes.dataframe import TrackerFrame
+import datetime
+from tkcalendar import Calendar, DateEntry
 
 #  ----- class inheriting from tk.Tk -----
 class InputWindow(tk.Tk):
@@ -50,6 +52,11 @@ class InputWindow(tk.Tk):
         # closing function
         self.protocol("WM_DELETE_WINDOW", self.on_exit)
 
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_columnconfigure(1, weight=0)
+        for n in range(20):
+            self.grid_rowconfigure(n, weight=1)
+
     # ----- Tabs -----
 
         # initiate ttk.Notebook as parent for tabs
@@ -75,7 +82,12 @@ class InputWindow(tk.Tk):
         tabControl.add(longterm_tab, text='Longterm Changes')
 
         # pack tabs - to make them visible 
-        tabControl.pack(expand=1, fill="both", pady=(10,10))
+        # tabControl.pack(expand=0, fill="both", pady=(10,10))
+        tabControl.grid(row=0,column=0, rowspan=20, sticky='EWNS')
+        tabControl.grid_columnconfigure(0, weight=1)
+        for n in range(15):
+            tabControl.grid_rowconfigure(n, weight=1)
+        tk.Button(self,text="Change date NOW",command=self.change_date, borderwidth=0, fg='darkslateblue').grid(row=1,column=1,rowspan=1, sticky='N')
         # print(tabControl.tab(tabControl.select(), "text")) #uncomment for troubleshooting
 
     # ----- Labels ----- 
@@ -101,6 +113,25 @@ class InputWindow(tk.Tk):
         EntryFrame(period_tab, period_info, tabControl.tab(period_tab)['text'], self.df).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
         EntryFrame(longterm_tab, longterm_info, tabControl.tab(longterm_tab)['text'], self.df).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
 
+    # ----- Date Picker -----
+        
+        # select_date = tk.Button( #use tk.Button instead of ttk in order to use 'borderwidth'
+        #         date_frame,
+        #         command=self.change_date,
+        #         text="Change date NOW",
+        #         borderwidth=0,
+        #         fg='darkslateblue'
+        #         )
+        # select_date.pack(anchor="w", pady =15, padx = (5,5))  
+        # self.changeOnHover(select_date, 'blue', 'darkslateblue') #change button color on hover
+        # print(self.winfo_children)
+
+        # ----- Date Picker ------
+        self.cal = DateEntry(self, width=12, background='darkblue',
+                            foreground='white', borderwidth=2)
+        
+          
+
         for tab in all_tabs:
             # get current notebook tab's text
             tab_name = tabControl.tab(tab)['text']
@@ -112,6 +143,31 @@ class InputWindow(tk.Tk):
         self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=1)
         self.rowconfigure(1, weight=1) 
+
+
+        # ----- method toggling date picker and printing selection ------
+    def change_date(self):
+        # function printing selected date from calendar
+        def print_sel(e):
+            old_date = datetime.datetime.now().date()
+            new_date = self.cal.get_date()
+            self.current_date = new_date
+            print(f"Date changed from {old_date} to {new_date}")
+        self.cal.bind("<<DateEntrySelected>>", print_sel) 
+
+        # toggle (=pack/unpack) calendar if it exists 
+        # try:
+        if self.cal.winfo_ismapped():
+            self.cal.grid_remove()
+        else:
+            self.cal.grid(row=3,column=1,rowspan=1, sticky='N')
+            # # create and pack calendar if it does not yet exist and bind it to function
+            # except AttributeError:
+            #     # print(type(e).__name__)
+            #     self.cal = DateEntry(self, width=12, background='darkblue',
+            #                     foreground='white', borderwidth=2)
+            #     self.cal.bind("<<DateEntrySelected>>", print_sel)    #run print_sel() on date entry selection
+            #     self.cal.pack(padx=5, pady=5)   
 
     # ----- funtion to run upon closing the window -----
     def on_exit(self):
