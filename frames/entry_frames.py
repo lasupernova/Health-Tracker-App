@@ -111,23 +111,40 @@ class EntryFrame(tk.Frame):
                 )
         test_plotly.pack(anchor="w", pady =15, padx = (5,5))    
 
-        select_date = ttk.Button(
+        select_date = tk.Button( #use tk.Button instead of ttk in order to use 'borderwidth'
                 self,
                 command=self.change_date,
-                text="Change date"
+                text="Change date",
+                borderwidth=0,
+                fg='darkslateblue'
                 )
-        select_date.pack(anchor="w", pady =15, padx = (5,5))    
+        select_date.pack(anchor="w", pady =15, padx = (5,5))  
+        self.changeOnHover(select_date, 'blue', 'darkslateblue') #change button color on hover
+        print(self.winfo_children)
 
-    # ----- Date Picker -----
-        today = datetime.datetime.now().date() 
+    # # ----- Date Picker -----
+    #     today = datetime.datetime.now().date() 
 
+    # ----- method toggling date picker and printing selection ------
     def change_date(self):
+        # function printing selected date from calendar
         def print_sel(e):
-            print(cal.get_date())
-        cal = DateEntry(self, width=12, background='darkblue',
-                        foreground='white', borderwidth=2)
-        cal.pack(padx=10, pady=10)
-        cal.bind("<<DateEntrySelected>>", print_sel)
+            print(self.cal.get_date())
+
+        # toggle (=pack/unpack) calendar if it exists 
+        try:
+            if self.cal.winfo_ismapped():
+                self.cal.pack_forget()
+            else:
+                self.cal.pack(padx=5, pady=5)
+        # create and pack calendar if it does not yet exist
+        except AttributeError:
+            # print(type(e).__name__)
+            self.cal = DateEntry(self, width=12, background='darkblue',
+                            foreground='white', borderwidth=2)
+            self.cal.bind("<<DateEntrySelected>>", print_sel)    #run print_sel() on date entry selection
+            self.cal.pack(padx=5, pady=5)     
+
 
     # ----- method printing current checkbutton state when clicked and passing them on to dataframe to be saved -----
     def check_options(self, option, topic=None, value=None):
@@ -202,3 +219,15 @@ class EntryFrame(tk.Frame):
         fig = px.scatter(gapminder.query("year==2007"), x="gdpPercap", y="lifeExp", size="pop", color="continent",
                 hover_name="country", log_x=True, size_max=60)
         fig.show()
+
+    # ----- method changing button text/foreground color on hover
+    def changeOnHover(self, button, colorOnHover, colorOnLeave): 
+        # background on cursor entering widget 
+        button.bind("<Enter>", 
+                    func=lambda e: button.config(fg=colorOnHover) 
+                    ) 
+            
+        # background color on cursor leaving widget 
+        button.bind("<Leave>", 
+                    func=lambda e: button.config(fg=colorOnLeave)
+                    )  
