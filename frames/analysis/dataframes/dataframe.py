@@ -45,6 +45,9 @@ class TrackerFrame():
         self.frame.to_csv('saved_frame.csv')
         print(self.frame)
 
+    def get_date(self, date):
+        pass
+
 if __name__ == '__main__':
     TrackerFrame('test_df.csv')
 

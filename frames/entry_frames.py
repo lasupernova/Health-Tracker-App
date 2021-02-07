@@ -2,6 +2,8 @@
 import tkinter as tk
 from tkinter import ttk
 import tkinter.font as tkFont
+from tkcalendar import Calendar, DateEntry
+import datetime
 import os
 from .analysis.dataframes.dataframe import TrackerFrame
 
@@ -21,12 +23,13 @@ class EntryFrame(tk.Frame):
         print(self.tab)
 
 
-        # ----- Frames -----
+    # ----- Frames -----
 
         # create and place containing frame
         # self.entry_frame = tk.Frame(container)        
         # self.grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
 
+        # ------ Health Data Entry ------
         # interate over options
         for option in self.info_list:
 
@@ -93,7 +96,7 @@ class EntryFrame(tk.Frame):
                 #     listbox.insert(index, selection_option) 
 
 
-        # ----- Buttons -----
+    # ----- Buttons -----
         test = ttk.Button(
                 self,
                 command=lambda x=(self.all_options, self.bulding_blocks): self.print_all_selected(*x),
@@ -106,7 +109,25 @@ class EntryFrame(tk.Frame):
                 command=self.show_plotly,
                 text="Open Plotly!"
                 )
-        test_plotly.pack(anchor="w", pady =15, padx = (5,5))       
+        test_plotly.pack(anchor="w", pady =15, padx = (5,5))    
+
+        select_date = ttk.Button(
+                self,
+                command=self.change_date,
+                text="Change date"
+                )
+        select_date.pack(anchor="w", pady =15, padx = (5,5))    
+
+    # ----- Date Picker -----
+        today = datetime.datetime.now().date() 
+
+    def change_date(self):
+        def print_sel(e):
+            print(cal.get_date())
+        cal = DateEntry(self, width=12, background='darkblue',
+                        foreground='white', borderwidth=2)
+        cal.pack(padx=10, pady=10)
+        cal.bind("<<DateEntrySelected>>", print_sel)
 
     # ----- method printing current checkbutton state when clicked and passing them on to dataframe to be saved -----
     def check_options(self, option, topic=None, value=None):
