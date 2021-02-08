@@ -5,3 +5,5 @@ Personalized Health Tracker GUI
 Current Look:<br>
 <!---![Screenshot](media/images/readme.png)--->
 <img align="right" alt="GUI Screenshot" title="Screenshot Feb 3rd 2021" src="media/images/readme.png">
+<br>
+2021-02-08
