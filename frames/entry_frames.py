@@ -307,7 +307,7 @@ class EntryFrame(tk.Frame):
         # update fields
         for option in data.columns:
             try:
-                value = data.loc[date, option].item()
+                value = int(data.loc[date, option].item())
                 print(option,": ", value)
                 try:
                     self.bulding_blocks[option]["selection"].set(str(value))
