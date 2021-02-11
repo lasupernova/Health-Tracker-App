@@ -57,6 +57,9 @@ class InputWindow(tk.Tk):
         for n in range(20):
             self.grid_rowconfigure(n, weight=1)
 
+        # save todays date on attribute
+        self.current_date = datetime.datetime.now().date()
+
     # ----- Tabs -----
 
         # initiate ttk.Notebook as parent for tabs
@@ -101,11 +104,12 @@ class InputWindow(tk.Tk):
 
     # ----- Tracker df -----
 
-        self.df = TrackerFrame('nono.csv') 
+        self.df = TrackerFrame('test_df.csv') 
 
     #  ----- Entry -----
 
-        EntryFrame(mood_tab, mood_info, tabControl.tab(mood_tab)['text'], self.df).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
+        self.mood_frame = EntryFrame(mood_tab, mood_info, tabControl.tab(mood_tab)['text'], self.df)
+        self.mood_frame.grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
         EntryFrame(health_tab, health_info, tabControl.tab(health_tab)['text'], self.df).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
         EntryFrame(food_tab, food_info, tabControl.tab(food_tab)['text'], self.df).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
         EntryFrame(sleep_tab, sleep_info, tabControl.tab(sleep_tab)['text'], self.df).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
@@ -149,10 +153,15 @@ class InputWindow(tk.Tk):
     def change_date(self):
         # function printing selected date from calendar
         def print_sel(e):
-            old_date = datetime.datetime.now().date()
+            try:
+                old_date = self.current_date
+            except:
+                old_date = datetime.datetime.now().date()
             new_date = self.cal.get_date()
             self.current_date = new_date
-            print(f"Date changed from {old_date} to {new_date}")
+            print(f"Date changed from {old_date} to {self.current_date}")
+            date_string = self.current_date.strftime("%Y-%m-%d") #convert datetime object to string in order to be able to pass it to .loc[]
+            self.mood_frame.update_selection(date=date_string) 
         self.cal.bind("<<DateEntrySelected>>", print_sel) 
 
         # toggle (=pack/unpack) calendar if it exists 
@@ -168,6 +177,7 @@ class InputWindow(tk.Tk):
             #                     foreground='white', borderwidth=2)
             #     self.cal.bind("<<DateEntrySelected>>", print_sel)    #run print_sel() on date entry selection
             #     self.cal.pack(padx=5, pady=5)   
+        print('NEW DATE: ', self.current_date)
 
     # ----- funtion to run upon closing the window -----
     def on_exit(self):

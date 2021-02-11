@@ -283,12 +283,39 @@ class EntryFrame(tk.Frame):
         button.bind("<Leave>", 
                     func=lambda e: button.config(fg=colorOnLeave)
                     )  
+    # ----- method updating displayed entries based on selected date -----
+    def update_selection(self, date):
+        # bloat_value = self.bulding_blocks['bloating']["selection"].get()
+        # if bloat_value == '0': #NOTE: selection saved as StringVar() not an IntVar() -> zero is a string 
+        #     print('Is zero')
+        #     self.bulding_blocks['bloating']["selection"].set('1')
+        # else:
+        #     print('NOT zero')
+        #     self.bulding_blocks['bloating']["selection"].set('0')
 
-    def update_selection(self):
-        current_value = self.bulding_blocks['angry']["selection"].get()
-        if current_value == '0':
-            print('Is zero')
-            return self.bulding_blocks['angry']["selection"].set('1')
-        else:
-            print('NOT zero')
-            return self.bulding_blocks['angry']["selection"].set('0')
+        # self.bulding_blocks['RHR']["selection"].set('60')
+
+        # # self.bulding_blocks['medication']["selection"].set(['test1, test2 ,teeeeesttestest'])
+        # self.print_entries(['test1, test2 ,teeeeesttestest'], self.bulding_blocks['medication']['frame'])
+
+        # get todays data
+        data = self.tracker.get_date(date)
+
+        # get tab-relevant data for current EntryFrame()-object
+        data = data[self.tab]
+
+        # update fields
+        for option in data.columns:
+            try:
+                value = data.loc[date, option].item()
+                print(option,": ", value)
+                try:
+                    self.bulding_blocks[option]["selection"].set(str(value))
+                except:
+                    print(f"Selection change not possible for: {option}")
+            except Exception as e:
+                print(f"Data for {date} not available. \n Error: {e}")
+
+
+
+        

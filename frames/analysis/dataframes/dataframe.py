@@ -46,7 +46,10 @@ class TrackerFrame():
         print(self.frame)
 
     def get_date(self, date):
-        pass
+        # get values for date specified
+        date_entries = self.frame[self.frame.index == date]
+        print(type(date_entries))
+        return date_entries
 
 if __name__ == '__main__':
     TrackerFrame('test_df.csv')
