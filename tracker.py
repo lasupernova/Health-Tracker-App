@@ -1,3 +1,10 @@
+"""
+TO DO: write loop to change information in ALL tabs based on date;
+conditional to display retrieved information differently depending on input method;
+try to not save EntryFrames in variables to change displayed info, but instead to retreive them based on .winfo_children() of the root window in tracker.py;
+methods of relevance: tracker.py/change_date ; entry_frames.py/update_selection ; (dataframe.py/get_date)
+""" 
+
 # ----- import libraries and  modules ---
 import tkinter as tk
 from tkinter import ttk
