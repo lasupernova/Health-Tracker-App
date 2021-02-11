@@ -21,31 +21,32 @@ class EntryFrame(tk.Frame):
             self.tab = "longterm"
         else:
             self.tab = tab_name.lower()
-        print('\ntabname: ', self.tab)
-        print('\tContainer children: ', container.winfo_children())
-        print('\tContainer children values: ',container.children.values())
-        print('\tContainer children class: ',container.winfo_class())
-        print('\tContainer parent: ',container.winfo_parent())
-        print('\t\tSiblings: ', container.master.winfo_children())
-        for child in container.master.winfo_children():
-            print(f"Sibling: {child}")
-            for childchild in child.winfo_children():
-                print(f"\tSiblings child: {childchild}")
-                print('\t\tClass:', childchild.winfo_class())
-                if childchild.winfo_class() == 'Frame':
-                    for entryframe in childchild.winfo_children():
-                        print(f"\t\t\tEntryframe: {entryframe}")
-                        for widget in entryframe.winfo_children():
-                            print(f"\t\t\t\tWidget: {widget}")
-                            print('\t\t\t\t\tClass:', widget.winfo_class())
-                        if not entryframe.winfo_children():
-                            print('\t\t\t\t\tNo Children!')
-                            print('\t\t\t\t\tName: ', entryframe.winfo_name())
-                            # entryframe.config(state=tk.DISABLED)
-                            if entryframe.winfo_name() == '!button3':
-                                print('\t\t\t\t\tButton OF INTEREST!')
-                                print('\t\t\t\t\t', entryframe['text'])
-        print("\n\n")
+            
+        # print('\ntabname: ', self.tab)
+        # print('\tContainer children: ', container.winfo_children())
+        # print('\tContainer children values: ',container.children.values())
+        # print('\tContainer children class: ',container.winfo_class())
+        # print('\tContainer parent: ',container.winfo_parent())
+        # print('\t\tSiblings: ', container.master.winfo_children())
+        # for child in container.master.winfo_children():
+        #     print(f"Sibling: {child}")
+        #     for childchild in child.winfo_children():
+        #         print(f"\tSiblings child: {childchild}")
+        #         print('\t\tClass:', childchild.winfo_class())
+        #         if childchild.winfo_class() == 'Frame':
+        #             for entryframe in childchild.winfo_children():
+        #                 print(f"\t\t\tEntryframe: {entryframe}")
+        #                 for widget in entryframe.winfo_children():
+        #                     print(f"\t\t\t\tWidget: {widget}")
+        #                     print('\t\t\t\t\tClass:', widget.winfo_class())
+        #                 if not entryframe.winfo_children():
+        #                     print('\t\t\t\t\tNo Children!')
+        #                     print('\t\t\t\t\tName: ', entryframe.winfo_name())
+        #                     # entryframe.config(state=tk.DISABLED)
+        #                     if entryframe.winfo_name() == '!button3':
+        #                         print('\t\t\t\t\tButton OF INTEREST!')
+        #                         print('\t\t\t\t\t', entryframe['text'])
+        # print("\n\n")
 
 
     # ----- Frames -----
@@ -127,6 +128,18 @@ class EntryFrame(tk.Frame):
                 # for selection_option, index in zip(option[option_name]["selection_menu"],range(1,len(option[option_name]["selection_menu"])+1)):
                 #     listbox.insert(index, selection_option) 
 
+        for key in self.bulding_blocks.keys():
+            for child in self.bulding_blocks[key]["frame"].winfo_children():
+                # print(child.winfo_class())
+                if child.winfo_class() != 'TLabel':
+                    try:
+                        print(child.variable)
+                    except:
+                        print('No variable here!')
+                else:
+                    print('NOPE! Label!')
+            # print(key,':', self.bulding_blocks[key]["frame"].winfo_children())
+        # print(self.bulding_blocks.keys())
 
     # ----- Buttons -----
         test = ttk.Button(
@@ -145,8 +158,8 @@ class EntryFrame(tk.Frame):
 
         select_date = tk.Button( #use tk.Button instead of ttk in order to use 'borderwidth'
                 self,
-                command=self.change_date,
-                text="Change date",
+                command=self.update_selection,
+                text="Update Selection of 'angry'",
                 borderwidth=0,
                 fg='darkslateblue'
                 )
@@ -270,3 +283,12 @@ class EntryFrame(tk.Frame):
         button.bind("<Leave>", 
                     func=lambda e: button.config(fg=colorOnLeave)
                     )  
+
+    def update_selection(self):
+        current_value = self.bulding_blocks['angry']["selection"].get()
+        if current_value == '0':
+            print('Is zero')
+            return self.bulding_blocks['angry']["selection"].set('1')
+        else:
+            print('NOT zero')
+            return self.bulding_blocks['angry']["selection"].set('0')
