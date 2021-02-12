@@ -87,6 +87,7 @@ class EntryFrame(tk.Frame):
                                 *option[option_name]["selection_menu"]).grid(row=0, column=1, sticky="W")
 
             elif option[option_name]["type"] == "Spinbox":
+                self.bulding_blocks[option_name]["increment"] = option[option_name]["increment"]
                 self.bulding_blocks[option_name]["frame"].pack(anchor="w")
                 ttk.Label(self.bulding_blocks[option_name]["frame"] ,text=option_name, width=17).grid(row=0, column=0, sticky="W", padx =(5,0)) #label created separately fron checkbutton (instead of using 'text'-parameter) in order to have label on the left-hand side
                 self.bulding_blocks[option_name]["entry_object"] = tk.Spinbox(self.bulding_blocks[option_name]["frame"],
@@ -307,21 +308,38 @@ class EntryFrame(tk.Frame):
 
         # update fields
         for option in data.columns:
+            print(self.tab)
             try:
-                if self.bulding_blocks[option]["type"] == "Entryfield":
-                    try:
-                        value = int(data.loc[date, option].item())
-                        print(option,": ", value)
+                try: 
+                    value = data.loc[date, option].item() #get value for according field in df
+                    print(option,": ", value)
+
+                    if self.bulding_blocks[option]["type"] == "Checkbox":
                         try:
-                            self.bulding_blocks[option]["selection"].set(str(value))
+                            self.bulding_blocks[option]["selection"].set(str(int(value)))
                         except:
-                            print(f"Selection change not possible for: {option}")
-                    except Exception as e:
-                        print(f"Data for {date} not available. \n Error: {e}")
-                else:
-                    print(f'The {option}-field is of type {self.bulding_blocks[option]["type"]}.')
-            except KeyError as e:
-                print(f"There is no entry field with the value {option}.") 
+                            print(f"{option}: Selection change not possible for: {option}")
+
+                    elif self.bulding_blocks[option]["type"] == "Spinbox":
+                        try:
+                            print(value, ":", type(value))
+                            if self.bulding_blocks[option]["increment"] < 1: 
+                                converted_value = str(value)
+                                self.bulding_blocks[option]["selection"].set(converted_value)
+                            else:
+                                converted_value = str(int(value)) 
+                                self.bulding_blocks[option]["selection"].set(converted_value)
+                            print(f"{option}: Success! Spinbox-field for {option} changed to {converted_value}")
+                        except:
+                            print(f"{option}: Selection change not possible for: {option}")                                          
+                    else:
+                        print(f'{option}: The {option}-field is of type {self.bulding_blocks[option]["type"]}.')
+                except Exception as e:
+                    print(f"{option}: Data for {date} not available. \n\t Error: {e}")  
+            except KeyError as e: #KeyError will be thrown if no entryfield with the current options value exists
+                print(f"{option}: There is no entry field with the value {option}. \n\t Error: {e}") 
+            print("\n\n")
+        print("\n\n\n")
 
 
 
