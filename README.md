@@ -9,7 +9,7 @@ Current Look:<br>
 2021-02-08
 <br>
 <br>
-<video width="320" height="240" controls>
+<video controls>
   <source src="media/videos/README.mp4" type="video/mp4">
 </video>
 <br>
