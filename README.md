@@ -6,11 +6,8 @@ Current Look:<br>
 <!---![Screenshot](media/images/readme.png)--->
 <img align="right" alt="GUI Screenshot" title="Screenshot Feb 3rd 2021" src="media/images/readme.png">
 <br>
-2021-02-08
+<img align="right" alt="GUI Screenshot" title="Screenshot Feb 12th 2021" src="media/images/README.gif">
 <br>
 <br>
-<video controls>
-  <source src="media/videos/README.mp4" type="video/mp4">
-</video>
 <br>
 2021-02-12
