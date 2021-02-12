@@ -311,7 +311,7 @@ class EntryFrame(tk.Frame):
             print(self.tab)
             try:
                 try: 
-                    value = data.loc[date, option].item() #get value for according field in df
+                    value = data.loc[date, option] #get value for according field in df
                     print(option,": ", value)
 
                     if self.bulding_blocks[option]["type"] == "Checkbox":
@@ -322,16 +322,21 @@ class EntryFrame(tk.Frame):
 
                     elif self.bulding_blocks[option]["type"] == "Spinbox":
                         try:
-                            print(value, ":", type(value))
                             if self.bulding_blocks[option]["increment"] < 1: 
                                 converted_value = str(value)
                                 self.bulding_blocks[option]["selection"].set(converted_value)
                             else:
                                 converted_value = str(int(value)) 
                                 self.bulding_blocks[option]["selection"].set(converted_value)
-                            print(f"{option}: Success! Spinbox-field for {option} changed to {converted_value}")
                         except:
                             print(f"{option}: Selection change not possible for: {option}")                                          
+                    elif self.bulding_blocks[option]["type"] == "Entryfield":
+                        try:
+                            entry_string = value.strip("[]").replace("'","") # value is a list as a strin -> to get desired output strip square bracets and remove single quotes
+                            if (value) and (entry_string != 'nan'):
+                                ttk.Label(self.bulding_blocks[option]["frame"], text=entry_string).grid(row=1, column=1, sticky="W") #add label displaying previosu entries under Entryfield
+                        except:
+                            print(f"{option}: Selection change not possible for: {option}")                        
                     else:
                         print(f'{option}: The {option}-field is of type {self.bulding_blocks[option]["type"]}.')
                 except Exception as e:
