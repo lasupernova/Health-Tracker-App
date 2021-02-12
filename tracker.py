@@ -59,6 +59,7 @@ class InputWindow(tk.Tk):
         # closing function
         self.protocol("WM_DELETE_WINDOW", self.on_exit)
 
+        # configure rows and columns
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=0)
         for n in range(20):
@@ -66,6 +67,9 @@ class InputWindow(tk.Tk):
 
         # save todays date on attribute
         self.current_date = datetime.datetime.now().date()
+
+        # list to save EntryFrame objects in to use fot latter iterations
+        self.entry_frames = []
 
     # ----- Tabs -----
 
@@ -80,7 +84,7 @@ class InputWindow(tk.Tk):
         fitness_tab = ttk.Frame(tabControl)
         period_tab = ttk.Frame(tabControl)
         longterm_tab = ttk.Frame(tabControl)
-        all_tabs = [mood_tab, food_tab, fitness_tab, period_tab, longterm_tab, health_tab, sleep_tab]
+        self.all_tabs = [mood_tab, food_tab, fitness_tab, period_tab, longterm_tab, health_tab, sleep_tab]
 
         # add tabs
         tabControl.add(mood_tab, text='Mood')
@@ -115,8 +119,7 @@ class InputWindow(tk.Tk):
 
     #  ----- Entry -----
 
-        self.mood_frame = EntryFrame(mood_tab, mood_info, tabControl.tab(mood_tab)['text'], self.df)
-        self.mood_frame.grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
+        EntryFrame(mood_tab, mood_info, tabControl.tab(mood_tab)['text'], self.df, name='mood_tab').grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
         EntryFrame(health_tab, health_info, tabControl.tab(health_tab)['text'], self.df).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
         EntryFrame(food_tab, food_info, tabControl.tab(food_tab)['text'], self.df).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
         EntryFrame(sleep_tab, sleep_info, tabControl.tab(sleep_tab)['text'], self.df).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
@@ -124,36 +127,29 @@ class InputWindow(tk.Tk):
         EntryFrame(period_tab, period_info, tabControl.tab(period_tab)['text'], self.df).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
         EntryFrame(longterm_tab, longterm_info, tabControl.tab(longterm_tab)['text'], self.df).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
 
-    # ----- Date Picker -----
-        
-        # select_date = tk.Button( #use tk.Button instead of ttk in order to use 'borderwidth'
-        #         date_frame,
-        #         command=self.change_date,
-        #         text="Change date NOW",
-        #         borderwidth=0,
-        #         fg='darkslateblue'
-        #         )
-        # select_date.pack(anchor="w", pady =15, padx = (5,5))  
-        # self.changeOnHover(select_date, 'blue', 'darkslateblue') #change button color on hover
-        # print(self.winfo_children)
 
         # ----- Date Picker ------
         self.cal = DateEntry(self, width=12, background='darkblue',
                             foreground='white', borderwidth=2)
         
-          
 
-        for tab in all_tabs:
+        # ----- iterate over all notebook tabs -----
+        for tab in self.all_tabs:
+
+            # save each tab's EntryFrame object in list for latter use
+            for child in tab.winfo_children():
+                if child.winfo_class() == "Frame":
+                    self.entry_frames.append(child)
+
             # get current notebook tab's text
             tab_name = tabControl.tab(tab)['text']
+
             # create tk.Canvas-objects as plotting area
             cur_tab = PastEntryFrame(tab_name, tab)
             cur_tab.grid(row=1, column=1, sticky="NSEW", padx=10, pady=10)
             cur_tab.display_plots(tab_name)
 
-        self.columnconfigure(0, weight=1)
-        self.columnconfigure(1, weight=1)
-        self.rowconfigure(1, weight=1) 
+        print([obj.winfo_name() for obj in self.entry_frames])
 
 
         # ----- method toggling date picker and printing selection ------
@@ -168,7 +164,9 @@ class InputWindow(tk.Tk):
             self.current_date = new_date
             print(f"Date changed from {old_date} to {self.current_date}")
             date_string = self.current_date.strftime("%Y-%m-%d") #convert datetime object to string in order to be able to pass it to .loc[]
-            self.mood_frame.update_selection(date=date_string) 
+            # update all EntryFrame fields based on date
+            for entry_frame in self.entry_frames:
+                entry_frame.update_selection(date=date_string) 
         self.cal.bind("<<DateEntrySelected>>", print_sel) 
 
         # toggle (=pack/unpack) calendar if it exists 
@@ -184,7 +182,6 @@ class InputWindow(tk.Tk):
             #                     foreground='white', borderwidth=2)
             #     self.cal.bind("<<DateEntrySelected>>", print_sel)    #run print_sel() on date entry selection
             #     self.cal.pack(padx=5, pady=5)   
-        print('NEW DATE: ', self.current_date)
 
     # ----- funtion to run upon closing the window -----
     def on_exit(self):

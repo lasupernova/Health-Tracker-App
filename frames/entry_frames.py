@@ -65,6 +65,7 @@ class EntryFrame(tk.Frame):
             # create building blocks (frame and stringvar - objects) for each option and save in dict - to access in commands on click
             self.bulding_blocks[option_name] = {}
             self.bulding_blocks[option_name]["frame"] = tk.Frame(self)
+            self.bulding_blocks[option_name]["type"] = option[option_name]["type"]
             self.bulding_blocks[option_name]["selection"] = tk.StringVar(value=0)
 
             # create object based on the given type information
@@ -307,14 +308,20 @@ class EntryFrame(tk.Frame):
         # update fields
         for option in data.columns:
             try:
-                value = int(data.loc[date, option].item())
-                print(option,": ", value)
-                try:
-                    self.bulding_blocks[option]["selection"].set(str(value))
-                except:
-                    print(f"Selection change not possible for: {option}")
-            except Exception as e:
-                print(f"Data for {date} not available. \n Error: {e}")
+                if self.bulding_blocks[option]["type"] == "Entryfield":
+                    try:
+                        value = int(data.loc[date, option].item())
+                        print(option,": ", value)
+                        try:
+                            self.bulding_blocks[option]["selection"].set(str(value))
+                        except:
+                            print(f"Selection change not possible for: {option}")
+                    except Exception as e:
+                        print(f"Data for {date} not available. \n Error: {e}")
+                else:
+                    print(f'The {option}-field is of type {self.bulding_blocks[option]["type"]}.')
+            except KeyError as e:
+                print(f"There is no entry field with the value {option}.") 
 
 
 

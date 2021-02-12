@@ -37,8 +37,8 @@ class TrackerFrame():
 
     # ----- save changes to dataframe ------
     def update_frame(self, tab, option, value, date):
-        dateInd = date
-        self.frame.at[dateInd, (tab, option)] = value
+        dateInd = date.strftime("%Y-%m-%d") #convert datetime-object to string in order to pass as index loc
+        self.frame.loc[dateInd, (tab, option)] = value
         # print(self.frame.loc[current_date])
 
     def save_frame(self):
