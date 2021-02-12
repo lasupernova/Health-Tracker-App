@@ -287,18 +287,6 @@ class EntryFrame(tk.Frame):
                     )  
     # ----- method updating displayed entries based on selected date -----
     def update_selection(self, date):
-        # bloat_value = self.bulding_blocks['bloating']["selection"].get()
-        # if bloat_value == '0': #NOTE: selection saved as StringVar() not an IntVar() -> zero is a string 
-        #     print('Is zero')
-        #     self.bulding_blocks['bloating']["selection"].set('1')
-        # else:
-        #     print('NOT zero')
-        #     self.bulding_blocks['bloating']["selection"].set('0')
-
-        # self.bulding_blocks['RHR']["selection"].set('60')
-
-        # # self.bulding_blocks['medication']["selection"].set(['test1, test2 ,teeeeesttestest'])
-        # self.print_entries(['test1, test2 ,teeeeesttestest'], self.bulding_blocks['medication']['frame'])
 
         # get todays data
         data = self.tracker.get_date(date)
@@ -308,43 +296,45 @@ class EntryFrame(tk.Frame):
 
         # update fields
         for option in data.columns:
-            print(self.tab)
             try:
                 try: 
                     value = data.loc[date, option] #get value for according field in df
-                    print(option,": ", value)
+                    # print(option,": ", value) #uncomment for troubleshooting
 
                     if self.bulding_blocks[option]["type"] == "Checkbox":
                         try:
                             self.bulding_blocks[option]["selection"].set(str(int(value)))
                         except:
-                            print(f"{option}: Selection change not possible for: {option}")
+                            print(f"Selection change not possible for: {option}")
 
                     elif self.bulding_blocks[option]["type"] == "Spinbox":
                         try:
-                            if self.bulding_blocks[option]["increment"] < 1: 
+                            if self.bulding_blocks[option]["increment"] < 1: #use float for increments <1
                                 converted_value = str(value)
                                 self.bulding_blocks[option]["selection"].set(converted_value)
-                            else:
+                            else: #use integers for increments > 1 -> otherwise diplay will not update because decimal points cannot be displayed for increments larger than 1
                                 converted_value = str(int(value)) 
                                 self.bulding_blocks[option]["selection"].set(converted_value)
                         except:
-                            print(f"{option}: Selection change not possible for: {option}")                                          
+                            print(f"Selection change not possible for: {option}")                                          
                     elif self.bulding_blocks[option]["type"] == "Entryfield":
                         try:
                             entry_string = value.strip("[]").replace("'","") # value is a list as a strin -> to get desired output strip square bracets and remove single quotes
                             if (value) and (entry_string != 'nan'):
-                                ttk.Label(self.bulding_blocks[option]["frame"], text=entry_string).grid(row=1, column=1, sticky="W") #add label displaying previosu entries under Entryfield
+                                ttk.Label(self.bulding_blocks[option]["frame"], name='former_entries',text=entry_string, foreground='grey', background='whitesmoke').grid(row=1, column=1, sticky="W") #add label displaying previosu entries under Entryfield
+                            else:
+                                for child in self.bulding_blocks[option]["frame"].winfo_children():
+                                    if child.winfo_name() == 'former_entries':
+                                        child.grid_remove()
                         except:
-                            print(f"{option}: Selection change not possible for: {option}")                        
+                            print(f"Selection change not possible for: {option}")                        
                     else:
-                        print(f'{option}: The {option}-field is of type {self.bulding_blocks[option]["type"]}.')
+                        print(f'The {option}-field is of type {self.bulding_blocks[option]["type"]}.')
                 except Exception as e:
-                    print(f"{option}: Data for {date} not available. \n\t Error: {e}")  
+                    print(f"Data for {date} not available. \n\t Error: {e}")  
             except KeyError as e: #KeyError will be thrown if no entryfield with the current options value exists
-                print(f"{option}: There is no entry field with the value {option}. \n\t Error: {e}") 
-            print("\n\n")
-        print("\n\n\n")
+                print(f"There is no entry field with the value {option}. \n\t Error: {e}") 
+
 
 
 
