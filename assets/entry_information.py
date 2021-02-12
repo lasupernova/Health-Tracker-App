@@ -96,6 +96,7 @@ longterm_info =[
             ]
 
 sleep_info = [
+            {'sleep':{"type":"Spinbox", "from":0, "to":24, "increment":0.25}}, 
             {'REM':{"type":"Spinbox", "from":0, "to":1, "increment":0.01}}, 
             {'awake':{"type":"Spinbox", "from":0, "to":1, "increment":0.01}}, 
             {'deep sleep':{"type":"Spinbox", "from":0, "to":1, "increment":0.01}}, 
