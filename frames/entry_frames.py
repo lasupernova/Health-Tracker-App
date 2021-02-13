@@ -302,12 +302,9 @@ class EntryFrame(tk.Frame):
                     value = data.loc[date, option] #get value for according field in df
                     # print(option,": ", value) #uncomment for troubleshooting
 
-                    if (self.bulding_blocks[option]["type"] == "Checkbox") or (self.bulding_blocks[option]["type"] == "MultipleChoice"):
+                    if self.bulding_blocks[option]["type"] == "Checkbox":
                         try:
-                            if value in ['0','1','0.0','1.0']: #value will be a number within a string for Checkbox
-                                self.bulding_blocks[option]["selection"].set(str(int(value))) #get int-version, as only 0 or 1 are accepted for Checkbox
-                            else:
-                                self.bulding_blocks[option]["selection"].set(str(value))
+                            self.bulding_blocks[option]["selection"].set(str(int(value))) #get int-version, as only 0 or 1 are accepted for Checkbox
                         except:
                             print(f"Selection change not possible for: {option}")
 
@@ -331,7 +328,13 @@ class EntryFrame(tk.Frame):
                                     if child.winfo_name() == 'former_entries':
                                         child.grid_remove()
                         except:
-                            print(f"Selection change not possible for: {option}")          
+                            print(f"Selection change not possible for: {option}") 
+                              
+                    elif self.bulding_blocks[option]["type"] == "MultipleChoice":
+                        try:
+                            self.bulding_blocks[option]["selection"].set(value) #get int-version, as only 0 or 1 are accepted for Checkbox
+                        except:
+                            print(f"Selection change not possible for: {option}")                               
                     else:
                         print(f'The {option}-field is of type {self.bulding_blocks[option]["type"]}.')
                 except Exception as e:
