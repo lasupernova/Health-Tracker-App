@@ -14,13 +14,6 @@ import datetime
 from tkcalendar import Calendar, DateEntry
 import sys
 
-#check for command line arguments
-if len(sys.argv) > 1:
-    print(f"Currently running: {sys.argv[0]}")
-    print(f"Data loading from: {sys.argv[1]}")
-else:
-    print('No data...creating new Tracker-object.')
-
 #  ----- class inheriting from tk.Tk -----
 class InputWindow(tk.Tk):
     #  ----- initialize -----
@@ -31,6 +24,16 @@ class InputWindow(tk.Tk):
         icon_path = f"media{os.sep}icons" #use os.sep for tracker to work in different OS
         # print(icon_path) #uncomment for troubleshooting
         self.img = ImageTk.PhotoImage(Image.open(f"media{os.sep}icons{os.sep}main.png"))
+
+    # ----- Data ------
+    #check for command line arguments
+        if len(sys.argv) > 1:
+            print(f"Currently running: {sys.argv[0]}")
+            print(f"Data loading from: {sys.argv[1]}")
+            self.tracker = sys.argv[1]
+        else:
+            print('No data...creating new Tracker-object.')
+            self.tracker = ''
 
 
     # ----- Styles -----
@@ -118,7 +121,7 @@ class InputWindow(tk.Tk):
 
     # ----- Tracker df -----
 
-        self.df = TrackerFrame('test_df.csv') 
+        self.df = TrackerFrame(self.tracker) 
 
     #  ----- Entry -----
 
