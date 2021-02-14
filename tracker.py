@@ -12,6 +12,14 @@ from PIL import ImageTk, Image
 from frames.analysis.dataframes.dataframe import TrackerFrame
 import datetime
 from tkcalendar import Calendar, DateEntry
+import sys
+
+#check for command line arguments
+if len(sys.argv) > 1:
+    print(f"Currently running: {sys.argv[0]}")
+    print(f"Data loading from: {sys.argv[1]}")
+else:
+    print('No data...creating new Tracker-object.')
 
 #  ----- class inheriting from tk.Tk -----
 class InputWindow(tk.Tk):
@@ -99,7 +107,8 @@ class InputWindow(tk.Tk):
         # print(tabControl.tab(tabControl.select(), "text")) #uncomment for troubleshooting
 
     # ----- Labels ----- 
-        ttk.Label(mood_tab,  text ="How's your head feeling? \n", font={'size':12}).grid(row=0, column=0, columnspan=2)
+        fontLab = tkFont.Font(family='Verdana', size=40, weight='bold', slant='roman')
+        ttk.Label(mood_tab,  text ="How's your head feeling? \n", font=fontLab).grid(row=0, column=0, columnspan=2)
         ttk.Label(food_tab,  text ="How's your stomach feeling? \n", font={'size':12}).grid(row=0, column=0, columnspan=2)
         ttk.Label(fitness_tab,  text ="How's your muscles feeling? \n", font={'size':12}).grid(row=0, column=0, columnspan=2)
         ttk.Label(period_tab,  text ="How's your uterus feeling? \n", font={'size':12}).grid(row=0, column=0, columnspan=2)
@@ -143,7 +152,7 @@ class InputWindow(tk.Tk):
             cur_tab.grid(row=1, column=1, sticky="NSEW", padx=10, pady=10)
             cur_tab.display_plots(tab_name)
 
-        print([obj.winfo_name() for obj in self.entry_frames])
+        # print([obj.winfo_name() for obj in self.entry_frames])
 
 
         # ----- method toggling date picker and printing selection ------

@@ -130,16 +130,16 @@ class EntryFrame(tk.Frame):
                 # for selection_option, index in zip(option[option_name]["selection_menu"],range(1,len(option[option_name]["selection_menu"])+1)):
                 #     listbox.insert(index, selection_option) 
 
-        for key in self.bulding_blocks.keys():
-            for child in self.bulding_blocks[key]["frame"].winfo_children():
-                # print(child.winfo_class())
-                if child.winfo_class() != 'TLabel':
-                    try:
-                        print(child.variable)
-                    except:
-                        print('No variable here!')
-                else:
-                    print('NOPE! Label!')
+        # for key in self.bulding_blocks.keys():
+        #     for child in self.bulding_blocks[key]["frame"].winfo_children():
+        #         # print(child.winfo_class())
+        #         if child.winfo_class() != 'TLabel':
+        #             try:
+        #                 print(child.variable)
+        #             except:
+        #                 print('No variable here!')
+        #         else:
+        #             print('NOPE! Label!')
             # print(key,':', self.bulding_blocks[key]["frame"].winfo_children())
         # print(self.bulding_blocks.keys())
 
@@ -206,12 +206,12 @@ class EntryFrame(tk.Frame):
         if value:
             value = value
             self.tracker.update_frame(self.tab, option, value, self.current_date)
-            print(value)
+            # print(value) #uncomment for troubleshooting
         else:
             # print checkbutton variable value (=value of tk.Stringvar-object saved in topic-dict for current option)
             value = topic[option]["selection"].get()
             self.tracker.update_frame(self.tab, option, value, self.current_date)
-            print(value)
+            # print(value) #uncomment for troubleshooting
 
 
     # ----- method printing all current checkbutton states -----
@@ -233,7 +233,7 @@ class EntryFrame(tk.Frame):
     # ----- method adding entries from tk.Entry()-fields -----
     def add_entry(self, entry_info_dict, option_name):
 
-        print(option_name)
+        # print(option_name) #uncomment for troubleshooting
         # get information and objects from dict
         field_list = entry_info_dict[option_name]["entries"]
         entry = entry_info_dict[option_name]["selection"].get()
@@ -246,11 +246,11 @@ class EntryFrame(tk.Frame):
         # print entries (including new entry) to screen (next to entry field)
         self.print_entries(field_list, container)
 
-        # for troubleshooting
-        print(field_list)
+        # # for troubleshooting
+        # print(field_list)
 
         # save changes to dataframe
-        print(option_name)
+        # print(option_name) #uncomment for troubleshooting
         self.check_options(option=option_name, value=field_list)
 
         # clear text typed in entry-fieldc
