@@ -21,10 +21,6 @@ print(type(idx)) # check that idx is a datetime object
 # initiate dash-object - similar to flask
 app = dash.Dash()
 
-np.random.seed(42)
-random_x = np.random.randint(1,101,100)
-random_y = np.random.randint(1,101,100)
-
 app.layout = html.Div([
     dcc.Graph(
         id='scatter3',
