@@ -2,7 +2,7 @@
 Personalized Health Tracker GUI
 
 Usage:<br>
-'''python tracker.py [OPTIONAL: path_to_csv_file]'''
+`python tracker.py [OPTIONAL: path_to_csv_file]`
 
 ----- Under Construction -----<br><br>
 Current Look:<br>
