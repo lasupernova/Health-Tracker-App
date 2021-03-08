@@ -31,7 +31,10 @@ class LoginWindow(tk.Tk):
         self.title("Log In")
 
         # make fullscreen
-        self.state('zoomed')
+        # self.state('zoomed')
+
+        # set size
+        self.geometry("300x200")
 
         # closing function
         self.protocol("WM_DELETE_WINDOW", self.on_exit)
@@ -46,7 +49,7 @@ class LoginWindow(tk.Tk):
     #----- Login Screen -----
 
         # initiate login screen
-        login = ttk.Frame(self)
+        login = ttk.Frame(self, width=50)
         login.grid(row=0,column=0, rowspan=7, columnspan=2, sticky='EWNS')
         login.grid_columnconfigure(0, weight=1)
         login.grid_columnconfigure(1, weight=1)
@@ -77,12 +80,12 @@ class LoginWindow(tk.Tk):
         self.submit_button.grid(row=3, column=0, sticky="NSEW", columnspan=2, padx =(5,5), pady =(5,5))
         self.changeOnHover(self.submit_button, 'blue', 'darkslateblue') #change button color on hover
 
-        self.signup_button = tk.Button(login, command=self.sign_up, text="Sign Up", borderwidth=0, fg='blue')
-        self.signup_button.grid(row=4, column=0, sticky="NSEW", padx =(5,5), pady =(5,0))
+        self.signup_button = tk.Button(login, command=self.sign_up, text="Sign Up", borderwidth=0, fg='blue', bg="#DCDAD5")
+        self.signup_button.grid(row=4, column=0, sticky="NEW", padx =(5,5), pady =(5,0))
         self.changeOnHover(self.signup_button, 'red', 'blue') #change button color on hover
 
-        self.forgotPW_button = tk.Button(login, command=self.forgot_pw, text="Forgot Password", borderwidth=0, fg='blue')
-        self.forgotPW_button.grid(row=4, column=1, sticky="NSEW", padx =(5,5), pady =(5,0))
+        self.forgotPW_button = tk.Button(login, command=self.forgot_pw, text="Forgot Password", borderwidth=0, fg='blue', bg="#DCDAD5")
+        self.forgotPW_button.grid(row=4, column=1, sticky="NEW", padx =(5,5), pady =(5,0))
         self.changeOnHover(self.forgotPW_button, 'red', 'blue') #change button color on hover
 
 
