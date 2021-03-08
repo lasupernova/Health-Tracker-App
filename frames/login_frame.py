@@ -38,8 +38,7 @@ class LoginWindow(tk.Tk):
 
         # configure rows and columns
         self.grid_columnconfigure(0, weight=1)
-        for n in range(7):
-            self.grid_rowconfigure(n, weight=1)
+        self.grid_rowconfigure(1, weight=1)
 
         # save todays date on attribute
         self.current_date = datetime.datetime.now().date()
@@ -51,6 +50,8 @@ class LoginWindow(tk.Tk):
         login.grid(row=0,column=0, rowspan=7, columnspan=2, sticky='EWNS')
         login.grid_columnconfigure(0, weight=1)
         login.grid_columnconfigure(1, weight=1)
+        for n in range(7):
+            login.grid_rowconfigure(n, weight=1)
 
         # initiate textvariables to fill in using Entryfields
         self.username = tk.StringVar(value='Username')
@@ -73,7 +74,7 @@ class LoginWindow(tk.Tk):
 
         #Buttons
         self.submit_button = tk.Button(login, command=self.check_credentials, text="Login",borderwidth=1, fg='darkslateblue')
-        self.submit_button.grid(row=3, column=0, sticky="NSEW", columnspan=2, padx =(5,5), pady =(5,0))
+        self.submit_button.grid(row=3, column=0, sticky="NSEW", columnspan=2, padx =(5,5), pady =(5,5))
         self.changeOnHover(self.submit_button, 'blue', 'darkslateblue') #change button color on hover
 
         self.signup_button = tk.Button(login, command=self.sign_up, text="Sign Up", borderwidth=0, fg='blue')
