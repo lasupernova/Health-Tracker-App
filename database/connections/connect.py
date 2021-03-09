@@ -51,8 +51,26 @@ def create_db(user='postgres', host='localhost', port='5432', database='health_t
         connection.close()
         print('Done')
 
+def create_table(table_name, user='postgres', host='localhost', port='5432', database='health_tracker', password='postgres'):
 
+    # connect to db or create db if it does not exist
+    try:
+        connection = psycopg2.connect(f"user={user} host={host} database={database} password={password} port={port}")
+        print(f'Connected to database named {database}.')
+    except:
+        create_db()
+        connection = psycopg2.connect(f"user={user} host={host} database={database} password={password} port={port}")
 
+    # query to create table only if it doesn't exist yet
+    query = f'''CREATE TABLE IF NOT EXISTS myschema.{table_name} (
+                                                                  	user_id serial PRIMARY KEY,
+                                                                    username VARCHAR ( 50 ) UNIQUE NOT NULL,
+                                                                    password VARCHAR ( 50 ) NOT NULL,
+                                                                );'''
+
+    # create cursor and run query
+    cur = connection.cursor()
+    cur.execute(query)
 
 
 # connection = psycopg2.connect(f"user='postgres' host='localhost' dbname='health_tracker' password={database_pw} port='5432'")
