@@ -20,63 +20,61 @@ s += " FROM information_schema.tables"
 s += " ORDER BY table_schema, table_name;"
 
 
-connection = None
-try:
-    # In PostgreSQL, default username is 'postgres' and password is 'postgres'.
-    # And also there is a default database exist named as 'postgres'.
-    # Default host is 'localhost' or '127.0.0.1'
-    # And default port is '54322'.
-    connection = psycopg2.connect(f"user='postgres' host='localhost' database ='health_tracker' password={database_pw} port='5432'")
-    print('Database connected.')
+def create_db(user='postgres', host='localhost', port='5432', database='health_tracker', password='postgres'):
 
-except:
-    print('Database not connected.')
+    connection = None
 
-if connection is not None:
-    connection.autocommit = True
+    # connect to server
+    try:
+        connection = psycopg2.connect(f"user={user} host={host} password={password} port={port}")
+        print(f'Connected to database named {database}.')
 
-    cur = connection.cursor()
+    except:
+        print('Database not connected.')
 
-    cur.execute("SELECT 1 FROM pg_catalog.pg_database WHERE datname = 'health_tracker';")
+    # create database if it does not yet exist
+    if connection is not None:
+        connection.autocommit = True
 
-    exists = cur.fetchone()
-    if not exists:
-        cur.execute('CREATE DATABASE health_tracker')
-    else:
-        print(f"Database with name {exists} already exists.")
+        # postgreSQL does not have an 'IF NOT EXISTS' statement for 'CREATE DATABASE <db_name>'
+        cur = connection.cursor()
 
-    # list_database = cur.fetchall()
-    # print(list_database)
+        cur.execute("SELECT 1 FROM pg_catalog.pg_database WHERE datname = 'health_tracker';")
 
-    # database_name = input('Enter database name to check exist or not: ')
+        exists = cur.fetchone()
 
-    # if (database_name,) in list_database:
-    #     print("'{}' Database already exist".format(database_name))
-    # else:
-    #     print("'{}' Database not exist.".format(database_name))
-    connection.close()
-    print('Done')
+        if not exists:
+            cur.execute('CREATE DATABASE health_tracker')
+        else:
+            print(f"Database with name {exists} already exists.")
 
-connection = psycopg2.connect(f"user='postgres' host='localhost' dbname='health_tracker' password={database_pw} port='5432'")
-print('\n\nHealth Tracker connected.')
+        connection.close()
+        print('Done')
 
-cur = connection.cursor()
 
-cur.execute("""SELECT table_name FROM information_schema.tables
-       WHERE table_schema = 'public'""")
 
-if cur.fetchall():
-    for table in cur.fetchall():
-        print(table)
-else:
-    print('No tables in database yet')
-    create_user_table = """CREATE TABLE IF NOT EXISTS user_table (
-                                        username varchar(80) NOT NULL,
-                                        password varchar(450) NOT NULL,
-                                        PRIMARY KEY (username)
-                                    );"""
-    cur.execute(create_user_table)
-    connection.commit()
-    print("""Table names 'user_table' created.
-            This table stores username and password.""")
-connection.close()
+
+
+# connection = psycopg2.connect(f"user='postgres' host='localhost' dbname='health_tracker' password={database_pw} port='5432'")
+# print('\n\nHealth Tracker connected.')
+
+# cur = connection.cursor()
+
+# cur.execute("""SELECT table_name FROM information_schema.tables
+#        WHERE table_schema = 'public'""")
+
+# if cur.fetchall():
+#     for table in cur.fetchall():
+#         print(table)
+# else:
+#     print('No tables in database yet')
+#     create_user_table = """CREATE TABLE IF NOT EXISTS user_table (
+#                                         username varchar(80) NOT NULL,
+#                                         password varchar(450) NOT NULL,
+#                                         PRIMARY KEY (username)
+#                                     );"""
+#     cur.execute(create_user_table)
+#     connection.commit()
+#     print("""Table names 'user_table' created.
+#             This table stores username and password.""")
+# connection.close()
