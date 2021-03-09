@@ -7,6 +7,8 @@ from PIL import ImageTk, Image
 import datetime
 from tkcalendar import Calendar, DateEntry
 import sys
+from database.connections import connect #NOTE: use python -m frames.login_frame in order to circumvent relative import issue
+
 
 #  ----- class inheriting from tk.Tk -----
 class LoginWindow(tk.Tk):
@@ -102,7 +104,6 @@ class LoginWindow(tk.Tk):
         Get's inserted value on focus out or adds placeholder prompting for input if no input was given;
         Works for both the username and the password - fields
         '''
-
         def process_input(text_var, field_name):
             if text_var != '':
                 return text_var
@@ -139,7 +140,7 @@ class LoginWindow(tk.Tk):
     def check_credentials(self):
         user = self.username.get()
         pw= self.password.get()
-        print('To be passed to database for check: ',user, pw)
+        connect.add_user(user, pw)
 
     def sign_up(self):
         print("Switch to sign up page!")
