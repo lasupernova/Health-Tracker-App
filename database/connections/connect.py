@@ -68,9 +68,12 @@ def create_table(table_name, user='postgres', host='localhost', port='5432', dat
                                                                     password VARCHAR ( 50 ) NOT NULL,
                                                                 );'''
 
-    # create cursor and run query
+    # create cursor, run query, commit and close connection
     cur = connection.cursor()
     cur.execute(query)
+    print(f"Created table named {table_name} in database named 'health_tracker'")
+    connection.commit()
+    connection.close()
 
 
 # connection = psycopg2.connect(f"user='postgres' host='localhost' dbname='health_tracker' password={database_pw} port='5432'")
