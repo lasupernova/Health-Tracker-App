@@ -141,7 +141,25 @@ queries = {
         date TIMESTAMP NOT NULL,
         user_id INT,
         FOREIGN KEY (user_id) REFERENCES users ON DELETE CASCADE
-        );"""
+        );""",
+
+    'fitness' : f"""CREATE TABLE IF NOT EXISTS fitness (
+        entry_id serial PRIMARY KEY,
+        cycling BOOLEAN NOT NULL,
+        cycling_time INT CHECK (cycling_time > 0),
+        gym BOOLEAN NOT NULL,
+        gym_time INT CHECK (gym_time > 0),
+        cardio BOOLEAN NOT NULL,
+        cardio_time INT CHECK (cardio_time > 0),
+        stretching BOOLEAN NOT NULL,
+        stretching_time INT CHECK (stretching_time > 0),
+        yoga BOOLEAN NOT NULL,
+        yoga_time INT CHECK (yoga_time > 0),
+        other BOOLEAN NOT NULL,
+        other_time INT CHECK (other_time > 0),
+        user_id INT,
+        FOREIGN KEY (user_id) REFERENCES users ON DELETE CASCADE
+        );""",
 }
     
 create_db(password=database_pw)
