@@ -187,6 +187,21 @@ queries = {
         FOREIGN KEY (user_id) REFERENCES users ON DELETE CASCADE
         );""",
 
+    'sleep' : f"""CREATE TABLE IF NOT EXISTS sleep (
+        entry_id serial PRIMARY KEY,
+        sleep INT CHECK ((sleep > 0) AND (sleep < 24)),
+        REM REAL CHECK ((REM > 0.0) AND (REM < 1.0)),
+        awake REAL CHECK ((awake > 0.0) AND (awake < 1.0)),
+        deep_sleep REAL CHECK ((deep_sleep > 0.0) AND (deep_sleep < 1.0)),
+        light_sleep REAL CHECK ((light_sleep > 0.0) AND (light_sleep < 1.0)),
+        sleep_score INT CHECK ((sleep_score > 0) AND (sleep_score < 100)),
+        insomnia BOOLEAN NOT NULL,
+        freq_wakes BOOLEAN NOT NULL,
+        sleep_meds TEXT,
+        tz_change BOOLEAN NOT NULL DEFAULT '0',
+        user_id INT,
+        FOREIGN KEY (user_id) REFERENCES users ON DELETE CASCADE
+        );"""
 }
     
 create_db(password=database_pw)
