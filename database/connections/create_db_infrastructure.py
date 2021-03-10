@@ -44,7 +44,7 @@ def create_db(user='postgres', host='localhost', port='5432', database='health_t
         connection.close()
         print('Done')
 
-def create_table(user='postgres', host='localhost', port='5432', database='health_tracker', password='postgres'):
+def create_table(query, table_name, user='postgres', host='localhost', port='5432', database='health_tracker', password='postgres'):
 
     # connect to db or create db if it does not exist
     try:
@@ -57,15 +57,25 @@ def create_table(user='postgres', host='localhost', port='5432', database='healt
     # enable autocommit
     connection.autocommit = True
 
+    # create cursor, run query, commit and close connection
+    cur = connection.cursor()
+
+    cur.execute(query)
+    print(f"Created table named {table_name} in database named 'health_tracker'")
+
+    connection.commit()
+    connection.close()
+
+queries = {
     # queries to create tables - only if they don't exist yet
-    query_user = f"""CREATE TABLE IF NOT EXISTS users (
+    'user' : f"""CREATE TABLE IF NOT EXISTS users (
         user_id serial PRIMARY KEY,
         username VARCHAR ( 50 ) UNIQUE NOT NULL,
         password VARCHAR ( 50 ) NOT NULL,
         created_on TIMESTAMP NOT NULL default CURRENT_TIMESTAMP
-        );"""
+        );""",
 
-    query_mood = f"""CREATE TABLE IF NOT EXISTS mood (
+    'mood' : f"""CREATE TABLE IF NOT EXISTS mood (
         entry_id serial PRIMARY KEY,
         angry BOOLEAN NOT NULL,
         anxious BOOLEAN NOT NULL,
@@ -88,18 +98,38 @@ def create_table(user='postgres', host='localhost', port='5432', database='healt
         date TIMESTAMP NOT NULL,
         user_id INT,
         FOREIGN KEY (user_id) REFERENCES users ON DELETE CASCADE
+        );""",
+
+    'health' : f"""CREATE TABLE IF NOT EXISTS health (
+        entry_id serial PRIMARY KEY,
+        acidity BOOLEAN NOT NULL,
+        backpain BOOLEAN NOT NULL,
+        bloating BOOLEAN NOT NULL,
+        breakouts BOOLEAN NOT NULL,
+        chestpain BOOLEAN NOT NULL,
+        constipation BOOLEAN NOT NULL,
+        defecation BOOLEAN NOT NULL,
+        diarrhea BOOLEAN NOT NULL,
+        dizziness BOOLEAN NOT NULL,
+        hard_stool BOOLEAN NOT NULL,
+        headache BOOLEAN NOT NULL,
+        indigestion BOOLEAN NOT NULL,
+        medication TEXT,
+        nausea BOOLEAN NOT NULL,
+        numbness TEXT,
+        other_symptoms TEXT,
+        palpitations BOOLEAN NOT NULL,
+        panic_attack BOOLEAN NOT NULL,
+        breathlessness BOOLEAN NOT NULL,
+        sick TEXT,
+        stomachpain BOOLEAN NOT NULL,
+        date TIMESTAMP NOT NULL,
+        user_id INT,
+        FOREIGN KEY (user_id) REFERENCES users ON DELETE CASCADE
         );"""
-
-    queries = [query_user, query_mood]
-    table_names = ['users', 'mood']
-
-    # create cursor, run query, commit and close connection
-    cur = connection.cursor()
-    for query, table in zip(queries, table_names):
-        cur.execute(query)
-        print(f"Created table named {table} in database named 'health_tracker'")
-    connection.commit()
-    connection.close()
-
+}
+    
 create_db(password=database_pw)
-create_table(password=database_pw)
+
+for name, query in queries.items():
+    create_table(query, name, password=database_pw)
