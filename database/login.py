@@ -6,7 +6,7 @@ class Poll:
     def __init__(self, user: str, password: str, _id: int = None):
         self.id = _id
         self.user = user
-        self.password = owner
+        self.password = password
 
     def __repr__(self):
         return f"Login({self.user!r}: password hidden, ID hidden)"
