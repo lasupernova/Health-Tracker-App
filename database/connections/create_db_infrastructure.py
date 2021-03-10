@@ -160,6 +160,21 @@ queries = {
         user_id INT,
         FOREIGN KEY (user_id) REFERENCES users ON DELETE CASCADE
         );""",
+
+    'period' : f"""CREATE TABLE IF NOT EXISTS period (
+        entry_id serial PRIMARY KEY,
+        cramps BOOLEAN NOT NULL,
+        cramps_level INT CHECK ((cramps_level > 0) AND (cramps_level <5)),
+        cycle_day INT NOT NULL,
+        infection TEXT,
+        ovulation BOOLEAN NOT NULL,
+        period BOOLEAN NOT NULL,
+        intercourse BOOLEAN NOT NULL,
+        spotting BOOLEAN NOT NULL,
+        spotting_level INT CHECK ((spotting_level > 0) AND (spotting_level <4)),
+        user_id INT,
+        FOREIGN KEY (user_id) REFERENCES users ON DELETE CASCADE
+        );""",
 }
     
 create_db(password=database_pw)
