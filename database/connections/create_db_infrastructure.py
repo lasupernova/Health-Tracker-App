@@ -66,6 +66,8 @@ def create_table(query, table_name, user='postgres', host='localhost', port='543
     connection.commit()
     connection.close()
 
+# table names and queries to pass to cur.execute()
+# NOTE: the key (=tablename) is not essential for creating the tables, they are only used for the print statement
 queries = {
     # queries to create tables - only if they don't exist yet
     'user' : f"""CREATE TABLE IF NOT EXISTS users (
