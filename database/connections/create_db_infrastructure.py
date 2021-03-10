@@ -126,6 +126,21 @@ queries = {
         date TIMESTAMP NOT NULL,
         user_id INT,
         FOREIGN KEY (user_id) REFERENCES users ON DELETE CASCADE
+        );""",
+
+    'food' : f"""CREATE TABLE IF NOT EXISTS food (
+        entry_id serial PRIMARY KEY,
+        animal_products TEXT,
+        cereal TEXT,
+        unhealthy_food TEXT,
+        enough_water BOOLEAN NOT NULL,
+        fruits TEXT,
+        healthy BOOLEAN NOT NULL,
+        laxatives TEXT,
+        supplements TEXT,
+        date TIMESTAMP NOT NULL,
+        user_id INT,
+        FOREIGN KEY (user_id) REFERENCES users ON DELETE CASCADE
         );"""
 }
     
