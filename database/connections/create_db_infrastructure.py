@@ -175,6 +175,18 @@ queries = {
         user_id INT,
         FOREIGN KEY (user_id) REFERENCES users ON DELETE CASCADE
         );""",
+
+    'longterm' : f"""CREATE TABLE IF NOT EXISTS longterm (
+        entry_id serial PRIMARY KEY,
+        anatomical TEXT,
+        climate TEXT,
+        hormonal TEXT,
+        nutritional TEXT,
+        social TEXT,
+        user_id INT,
+        FOREIGN KEY (user_id) REFERENCES users ON DELETE CASCADE
+        );""",
+
 }
     
 create_db(password=database_pw)
