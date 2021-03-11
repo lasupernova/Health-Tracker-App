@@ -7,14 +7,15 @@ from PIL import ImageTk, Image
 import datetime
 from tkcalendar import Calendar, DateEntry
 import sys
-from database.connections import connect #NOTE: use python -m frames.login_frame in order to circumvent relative import issue
+from database.connections import db_transact #NOTE: use python -m frames.login_frame in order to circumvent relative import issue
+# from signup_frame import SignupWindow
 
 
 #  ----- class inheriting from tk.Tk -----
-class LoginWindow(tk.Tk):
+class LoginWindow(tk.Frame):
     #  ----- initialize -----
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, parent, switch_frame, *args, **kwargs):
+        super().__init__(None)
 
     # ----- Styles -----
 
@@ -30,16 +31,16 @@ class LoginWindow(tk.Tk):
     # ----- customize -----
 
         # title
-        self.title("Log In")
+        # self.title("Log In")
 
         # make fullscreen
         # self.state('zoomed')
 
-        # set size
-        self.geometry("300x200")
+        # # set size
+        # self.geometry("300x200")
 
-        # closing function
-        self.protocol("WM_DELETE_WINDOW", self.on_exit)
+        # # closing function
+        # self.protocol("WM_DELETE_WINDOW", self.on_exit)
 
         # configure rows and columns
         self.grid_columnconfigure(0, weight=1)
@@ -82,7 +83,7 @@ class LoginWindow(tk.Tk):
         self.submit_button.grid(row=3, column=0, sticky="NSEW", columnspan=2, padx =(5,5), pady =(5,5))
         self.changeOnHover(self.submit_button, 'blue', 'darkslateblue') #change button color on hover
 
-        self.signup_button = tk.Button(login, command=self.sign_up, text="Sign Up", borderwidth=0, fg='blue', bg="#DCDAD5")
+        self.signup_button = tk.Button(login, command=switch_frame, text="Sign Up", borderwidth=0, fg='blue', bg="#DCDAD5")
         self.signup_button.grid(row=4, column=0, sticky="NEW", padx =(5,5), pady =(5,0))
         self.changeOnHover(self.signup_button, 'red', 'blue') #change button color on hover
 
@@ -140,18 +141,25 @@ class LoginWindow(tk.Tk):
     def check_credentials(self):
         user = self.username.get()
         pw= self.password.get()
-        connect.add_user(user, pw)
+        db_transact.add_user(user, pw)
 
-    def sign_up(self):
+    def sign_up(self, container):
         print("Switch to sign up page!")
+        # indicate which frame to bring to front
+        frame = self.frames[container]
+        #brings indicated frame to the front
+        frame.tkraise() 
+        # if timer is not running, automatically reset time on frame change to changes times
+        if not self.timer_frame.timer_running:
+            self.timer_frame.reset_timer()  
 
     def forgot_pw(self):
         print("Switch to password recovery page!")
 
 
 
-# ----- run app -----
-if __name__ == '__main__':
-    app = LoginWindow() 
+# # ----- run app -----
+# if __name__ == '__main__':
+#     app = LoginWindow() 
 
-    app.mainloop()
+#     app.mainloop()
