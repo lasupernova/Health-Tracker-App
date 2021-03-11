@@ -76,6 +76,13 @@ class InputWindow(tk.Tk):
         # list to save EntryFrame objects in to use fot latter iterations
         self.entry_frames = []
 
+    #----- Login Screen -----
+
+        # initiate login screen
+        login = ttk.Frame(self)
+        login.grid(row=0,column=0, rowspan=20, sticky='EWNS')
+        login.lift()
+
     # ----- Tabs -----
 
         # initiate ttk.Notebook as parent for tabs
