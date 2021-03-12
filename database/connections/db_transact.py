@@ -31,6 +31,7 @@ def add_user(user, password):
     connection.commit()    
     print("New user signed up!")
     print(f"\t username: {user}; password: {password}")
+    connection.close()
 
 
 # add_user('tester','pw123')
