@@ -1,3 +1,5 @@
+# TO DO: make TrackerFrame() work within this script --> line 14, 40 and 47
+
 # ----- import libraries and  modules ---
 import tkinter as tk
 from tkinter import ttk
@@ -9,6 +11,7 @@ import sys
 # from database.connections import db_transact #NOTE: use python -m frames.login_frame in order to circumvent relative import issue
 from frames.signup_frame import SignupWindow
 from frames.login_frame import LoginWindow
+# from tracker import TrackerFrame
 
 #  ----- class inheriting from tk.Tk -----
 class MainWindow(tk.Tk):
@@ -26,17 +29,22 @@ class MainWindow(tk.Tk):
         # create dictionary to keep track of frames
         self.frames = dict()
 
-        # add timer frame that is placed within "container"
+        # add login frame that is placed within "container"
         self.login_frame = LoginWindow(container, lambda: self.switch_frame(SignupWindow)) #initiate Timer-class and pass self as the controller
         self.login_frame.grid(row=0, column=0, sticky="NESW") #configure timer frame placed in the first row and first column and to fill the entire frame ("container")
 
-        # add settings frame 
+        # add signup frame 
         self.signup_frame = SignupWindow(container, lambda: self.switch_frame(LoginWindow))
         self.signup_frame.grid(row=0, column=0, sticky="NESW") 
+
+        # # # add tracker frame 
+        # self.tracker_frame = TrackerFrame('test_df.csv')
+        # self.tracker_frame.grid(row=0, column=0, sticky="NESW") 
 
         # add both frames to dict
         self.frames[LoginWindow] = self.login_frame
         self.frames[SignupWindow] = self.signup_frame
+        # self.frames[TrackerFrame] = self.tracker_frame
 
         # start with timer_frame in front
         self.switch_frame(LoginWindow)
