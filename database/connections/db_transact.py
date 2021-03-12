@@ -31,32 +31,6 @@ def add_user(user, password):
     connection.commit()    
     print("New user signed up!")
     print(f"\t username: {user}; password: {password}")
-    connection.close()
+    connection.close() #TO DO: modify code to use "with connection:" instead
 
 
-# add_user('tester','pw123')
-
-
-# connection = psycopg2.connect(f"user='postgres' host='localhost' dbname='health_tracker' password={database_pw} port='5432'")
-# print('\n\nHealth Tracker connected.')
-
-# cur = connection.cursor()
-
-# cur.execute("""SELECT table_name FROM information_schema.tables
-#        WHERE table_schema = 'public'""")
-
-# if cur.fetchall():
-#     for table in cur.fetchall():
-#         print(table)
-# else:
-#     print('No tables in database yet')
-#     create_user_table = """CREATE TABLE IF NOT EXISTS user_table (
-#                                         username varchar(80) NOT NULL,
-#                                         password varchar(450) NOT NULL,
-#                                         PRIMARY KEY (username)
-#                                     );"""
-#     cur.execute(create_user_table)
-#     connection.commit()
-#     print("""Table names 'user_table' created.
-#             This table stores username and password.""")
-# connection.close()
