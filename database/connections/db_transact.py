@@ -38,8 +38,7 @@ def login_user(user, password):
 
     query = f"""SELECT password FROM users WHERE username=%s;"""
 
-    with con:
-        cur = con.cursor()
+    with con.cursor() as cur:
         cur.execute(query, (user, ))
 
         rows = cur.fetchone() #there will be 1 amnd only 1 entry per username
