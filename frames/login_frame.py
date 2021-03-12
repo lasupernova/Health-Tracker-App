@@ -30,17 +30,7 @@ class LoginWindow(tk.Frame):
 
     # ----- customize -----
 
-        # title
-        # self.title("Log In")
-
-        # make fullscreen
-        # self.state('zoomed')
-
-        # # set size
-        # self.geometry("300x200")
-
-        # # closing function
-        # self.protocol("WM_DELETE_WINDOW", self.on_exit)
+        self.switch_frame = switch_frame
 
         # configure rows and columns
         self.grid_columnconfigure(0, weight=1)
@@ -83,9 +73,9 @@ class LoginWindow(tk.Frame):
         self.submit_button.grid(row=3, column=0, sticky="NSEW", columnspan=2, padx =(5,5), pady =(5,5))
         self.changeOnHover(self.submit_button, 'blue', 'darkslateblue') #change button color on hover
 
-        self.signup_button = tk.Button(login, command=switch_frame, text="Sign Up", borderwidth=0, fg='blue', bg="#DCDAD5")
+        self.signup_button = tk.Button(login, command=lambda: switch_frame('SignupWindow'), text="Sign Up", borderwidth=0, fg='blue', bg="#DCDAD5")
         self.signup_button.grid(row=4, column=0, sticky="NEW", padx =(5,5), pady =(5,0))
-        self.changeOnHover(self.signup_button, 'red', 'blue') #change button color on hover
+        self.changeOnHover(self.signup_button, 'red', 'blue') #change button color on hover 
 
         self.forgotPW_button = tk.Button(login, command=self.forgot_pw, text="Forgot Password", borderwidth=0, fg='blue', bg="#DCDAD5")
         self.forgotPW_button.grid(row=4, column=1, sticky="NEW", padx =(5,5), pady =(5,0))
@@ -143,6 +133,12 @@ class LoginWindow(tk.Frame):
         pw= self.password.get()
         status = db_transact.login_user(user, pw)
         print('Logged in!' if status==1 else 'Wrong password!' if status==0 else 'User does not exist!' if status==-1 else 'Unknown error!')
+        if status == 1:
+            self.switch_frame('TC') #To DO: once df data is loaded into database -> load user data into TC-frame
+        elif status == 0:
+            pass #pop-up label with 'wrong password' here
+        elif status == -1:
+            pass #pop-up label with 'user not found' here
 
     def sign_up(self, container):
         print("Switch to sign up page!")
@@ -157,10 +153,3 @@ class LoginWindow(tk.Frame):
     def forgot_pw(self):
         print("Switch to password recovery page!")
 
-
-
-# # ----- run app -----
-# if __name__ == '__main__':
-#     app = LoginWindow() 
-
-#     app.mainloop()

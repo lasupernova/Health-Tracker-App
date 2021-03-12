@@ -30,7 +30,7 @@ class MainWindow(tk.Tk):
         self.frames = dict()
 
         # add login frame that is placed within "container"
-        self.login_frame = LoginWindow(container, lambda: self.switch_frame(SignupWindow)) #initiate Timer-class and pass self as the controller
+        self.login_frame = LoginWindow(container, self.switch_frame) #initiate Timer-class and pass self as the controller
         self.login_frame.grid(row=0, column=0, sticky="NESW") #configure timer frame placed in the first row and first column and to fill the entire frame ("container")
 
         # add signup frame 
