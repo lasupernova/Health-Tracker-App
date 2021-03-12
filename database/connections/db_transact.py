@@ -24,10 +24,10 @@ def connect_db(user='postgres', host='localhost', port='5432', database='health_
     return psycopg2.connect(f"user={user} host={host} dbname={database} password={password} port={port}")
 
 def add_data(table, user, password):
-    table_cols = get_column_names
+    table_cols = get_column_names(table)
     con = connect_db(password=database_pw)
     cur = con.cursor()
-    query = f"""INSERT INTO users (username, password) VALUES (%s, %s);""" #To Do: add password encryption (in database)
+    query = f"""INSERT INTO users ({table_cols}) VALUES (%s, %s);""" #To Do: add password encryption (in database)
     # crypt_pw = crypt(password, gen_salt('bf'))
     cur.execute(query, (user, password)) 
     con.commit()    
@@ -57,8 +57,9 @@ def login_user(user, password):
 def get_column_names(table):
     '''
     Get all column names from specified table;
-    Create tuple with all column names separated by commas;
-    Return columns-tuple to pass on to subsequent function for use in query
+    Create string with all column names separated by commas;
+    Create string with placeholder for number of values to pass to query - based on number of columns in columns-string;
+    Return columns-string to pass on to subsequent function for use in query
     '''
     con = connect_db(password=database_pw)
     query = f"""SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME=%s;"""
@@ -71,8 +72,14 @@ def get_column_names(table):
     for row in rows:
         cols.append(row[0])
 
-    cols=tuple(cols)
-    return cols
+    cols = ", ".join(str(x) for x in cols[1:-1])
+
+    val_PH = ['%s']*len(cols) #placeholder-string for values in query
+    val_PH = ', '.join(str(x) for x in val_PH)
+
+    return cols, val_PH
+
+add_data('users','gabri','ela')
 
 
 
