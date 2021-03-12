@@ -23,7 +23,8 @@ s += " ORDER BY table_schema, table_name;"
 def connect_db(user='postgres', host='localhost', port='5432', database='health_tracker', password='postgres'):
     return psycopg2.connect(f"user={user} host={host} dbname={database} password={password} port={port}")
 
-def add_user(user, password):
+def add_data(table, user, password):
+    table_cols = get_column_names
     con = connect_db(password=database_pw)
     cur = con.cursor()
     query = f"""INSERT INTO users (username, password) VALUES (%s, %s);""" #To Do: add password encryption (in database)
@@ -56,8 +57,8 @@ def login_user(user, password):
 def get_column_names(table):
     '''
     Get all column names from specified table;
-    Create string with all column names separated by commas;
-    Return columns-string to pass on to subsequent function for use in query
+    Create tuple with all column names separated by commas;
+    Return columns-tuple to pass on to subsequent function for use in query
     '''
     con = connect_db(password=database_pw)
     query = f"""SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME=%s;"""
@@ -66,13 +67,11 @@ def get_column_names(table):
         cur.execute(query, (table, ))
         rows=cur.fetchall() 
     
-    cols = ''
+    cols = []
     for row in rows:
-        if len(cols) != 0:
-            cols+= ', '+row[0]
-        else:
-            cols+=row[0]
-    
+        cols.append(row[0])
+
+    cols=tuple(cols)
     return cols
 
 
