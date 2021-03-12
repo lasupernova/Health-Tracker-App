@@ -24,13 +24,31 @@ def connect_db(user='postgres', host='localhost', port='5432', database='health_
     return psycopg2.connect(f"user={user} host={host} dbname={database} password={password} port={port}")
 
 def add_user(user, password):
-    connection = connect_db(password=database_pw)
-    cur = connection.cursor()
+    con = connect_db(password=database_pw)
+    cur = con.cursor()
     query = f"""INSERT INTO users (username, password) VALUES (%s, %s);"""
     cur.execute(query, (user, password))
-    connection.commit()    
+    con.commit()    
     print("New user signed up!")
     print(f"\t username: {user}; password: {password}")
-    connection.close() #TO DO: modify code to use "with connection:" instead
+    con.close() #TO DO: modify code to use "with connection:" instead
 
+def login_user(user, password):
+    con = connect_db(password=database_pw)
 
+    query = f"""SELECT password FROM users WHERE username=%s;"""
+
+    with con:
+        cur = con.cursor()
+        cur.execute(query, (user, ))
+
+        rows = cur.fetchone() #there will be 1 amnd only 1 entry per username
+
+        pw = rows[0]
+
+        if password == pw:
+            print('Logged in!')
+        else:
+            print('Username of password wrong!')
+
+login_user('test1334','willthiswork?')
