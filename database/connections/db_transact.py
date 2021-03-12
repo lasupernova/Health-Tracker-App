@@ -24,10 +24,10 @@ def connect_db(user='postgres', host='localhost', port='5432', database='health_
     return psycopg2.connect(f"user={user} host={host} dbname={database} password={password} port={port}")
 
 def add_data(table, user, password):
-    table_cols = get_column_names(table)
+    table_cols, val_placeholders = get_column_names(table)
     con = connect_db(password=database_pw)
     cur = con.cursor()
-    query = f"""INSERT INTO users ({table_cols}) VALUES (%s, %s);""" #To Do: add password encryption (in database)
+    query = f"""INSERT INTO users ({table_cols}) VALUES ({val_placeholders});""" #To Do: add password encryption (in database)
     # crypt_pw = crypt(password, gen_salt('bf'))
     cur.execute(query, (user, password)) 
     con.commit()    
@@ -72,14 +72,14 @@ def get_column_names(table):
     for row in rows:
         cols.append(row[0])
 
-    cols = ", ".join(str(x) for x in cols[1:-1])
-
-    val_PH = ['%s']*len(cols) #placeholder-string for values in query
+    val_PH = ['%s']*(len(cols)-2) #placeholder-string for values in query; create BEFORE converting cols into string!
     val_PH = ', '.join(str(x) for x in val_PH)
 
-    return cols, val_PH
+    cols = ", ".join(str(x) for x in cols[1:-1])
 
-add_data('users','gabri','ela')
+    print(val_PH)
+
+    return cols, val_PH
 
 
 
