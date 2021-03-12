@@ -44,12 +44,36 @@ def login_user(user, password):
 
         rows = cur.fetchone() #there will be 1 amnd only 1 entry per username
 
-        if rows:
+        if rows: #compare password input to database pw, if query returns something
             pw = rows[0]
-
             if password == pw:
                 return 1
             else:
                 return 0
-        else:
+        else: #if query does not return result -> no entry for this specific user
             return -1
+
+def get_column_names(table):
+    '''
+    Get all column names from specified table;
+    Create string with all column names separated by commas;
+    Return columns-string to pass on to subsequent function for use in query
+    '''
+    con = connect_db(password=database_pw)
+    query = f"""SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME=%s;"""
+
+    with con.cursor() as cur:
+        cur.execute(query, (table, ))
+        rows=cur.fetchall() 
+    
+    cols = ''
+    for row in rows:
+        if len(cols) != 0:
+            cols+= ', '+row[0]
+        else:
+            cols+=row[0]
+    
+    return cols
+
+
+
