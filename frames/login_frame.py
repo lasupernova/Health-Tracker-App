@@ -141,7 +141,8 @@ class LoginWindow(tk.Frame):
     def check_credentials(self):
         user = self.username.get()
         pw= self.password.get()
-        db_transact.add_user(user, pw)
+        status = db_transact.login_user(user, pw)
+        print('Logged in!' if status==1 else 'Wrong password!' if status==0 else 'User does not exist!' if status==-1 else 'Unknown error!')
 
     def sign_up(self, container):
         print("Switch to sign up page!")

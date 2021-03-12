@@ -32,12 +32,14 @@ def create_db(user='postgres', host='localhost', port='5432', database='health_t
         cur = connection.cursor()
 
         cur.execute(f"SELECT 1 FROM pg_catalog.pg_database WHERE datname = '{database}';")
+        connection.commit()
 
         exists = cur.fetchone()
 
         if not exists:
             cur.execute(f'CREATE DATABASE {database}')
-            print(f"Database named '{database}' created.")
+            cur.execute('CREATE EXTENSION IF NOT EXISTS pgcrypto;')
+            print(f"Database named '{database}' created.") 
         else:
             print(f"Database with name {database} already exists.")
 
@@ -73,7 +75,7 @@ queries = {
     'user' : f"""CREATE TABLE IF NOT EXISTS users (
         user_id serial PRIMARY KEY,
         username VARCHAR ( 50 ) UNIQUE NOT NULL,
-        password VARCHAR ( 50 ) NOT NULL,
+        password text NOT NULL,
         created_on TIMESTAMP NOT NULL default CURRENT_TIMESTAMP
         );""",
 

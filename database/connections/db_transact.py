@@ -26,8 +26,9 @@ def connect_db(user='postgres', host='localhost', port='5432', database='health_
 def add_user(user, password):
     con = connect_db(password=database_pw)
     cur = con.cursor()
-    query = f"""INSERT INTO users (username, password) VALUES (%s, %s);"""
-    cur.execute(query, (user, password))
+    query = f"""INSERT INTO users (username, password) VALUES (%s, %s);""" #To Do: add password encryption (in database)
+    # crypt_pw = crypt(password, gen_salt('bf'))
+    cur.execute(query, (user, password)) 
     con.commit()    
     print("New user signed up!")
     print(f"\t username: {user}; password: {password}")
@@ -43,11 +44,12 @@ def login_user(user, password):
 
         rows = cur.fetchone() #there will be 1 amnd only 1 entry per username
 
-        pw = rows[0]
+        if rows:
+            pw = rows[0]
 
-        if password == pw:
-            print('Logged in!')
+            if password == pw:
+                return 1
+            else:
+                return 0
         else:
-            print('Username of password wrong!')
-
-login_user('test1334','willthiswork?')
+            return -1
