@@ -149,19 +149,43 @@ queries = {
 
     'fitness' : f"""CREATE TABLE IF NOT EXISTS fitness (
         entry_id serial PRIMARY KEY,
-        cycling BOOLEAN NOT NULL,
-        cycling_time INT CHECK (cycling_time > 0),
-        gym BOOLEAN NOT NULL,
-        gym_time INT CHECK (gym_time > 0),
-        cardio BOOLEAN NOT NULL,
-        cardio_time INT CHECK (cardio_time > 0),
-        stretching BOOLEAN NOT NULL,
-        stretching_time INT CHECK (stretching_time > 0),
-        yoga BOOLEAN NOT NULL,
-        yoga_time INT CHECK (yoga_time > 0),
-        other BOOLEAN NOT NULL,
-        other_time INT CHECK (other_time > 0),
+        cycling BOOLEAN,
+        cycling_time INT,
+        gym BOOLEAN,
+        gym_time INT,
+        cardio BOOLEAN,
+        cardio_time INT,
+        stretching BOOLEAN,
+        stretching_time INT,
+        yoga BOOLEAN,
+        yoga_time INT,
+        other BOOLEAN,
+        other_time,
         user_id INT,
+        CONSTRAINT CHECK
+            ((cycling IS NULL AND cycling_time IS NULL)
+            OR(cycling = 0 AND cycling_time = 0)
+            OR(cycling = 1 AND cycling_time > 0)),
+        CONSTRAINT CHECK
+            ((gym IS NULL AND gym_time IS NULL)
+            OR(gym = 0 AND gym_time = 0)
+            OR(gym = 1 AND gym_time > 0)),
+        CONSTRAINT CHECK
+            ((cardio IS NULL AND cardio_time IS NULL)
+            OR(cardio = 0 AND cardio_time = 0)
+            OR(cardio = 1 AND cardio_time > 0)),
+        CONSTRAINT CHECK
+            ((stretching IS NULL AND stretching_time IS NULL)
+            OR(stretching = 0 AND stretching_time = 0)
+            OR(stretching = 1 AND stretching_time > 0)),
+        CONSTRAINT CHECK
+            ((yoga IS NULL AND yoga_time IS NULL)
+            OR(yoga = 0 AND yoga_time = 0)
+            OR(yoga = 1 AND yoga_time > 0)),
+        CONSTRAINT CHECK
+            ((other IS NULL AND other_time IS NULL)
+            OR(other = 0 AND other_time = 0)
+            OR(other = 1 AND other_time > 0)),
         FOREIGN KEY (user_id) REFERENCES users ON DELETE CASCADE
         );""",
 
