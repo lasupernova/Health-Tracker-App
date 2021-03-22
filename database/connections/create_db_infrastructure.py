@@ -199,7 +199,7 @@ queries = {
         period BOOLEAN NOT NULL,
         intercourse BOOLEAN NOT NULL,
         spotting BOOLEAN NOT NULL,
-        spotting_level INT CHECK ((spotting_level > 0) AND (spotting_level <4)),
+        spotting_level INT CHECK ((spotting_level > 0) AND (spotting_level <3)),
         user_id INT,
         FOREIGN KEY (user_id) REFERENCES users ON DELETE CASCADE
         );""",
