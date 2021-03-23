@@ -49,12 +49,16 @@ class LoginWindow(tk.Frame):
         for n in range(7):
             login.grid_rowconfigure(n, weight=1)
 
-        # initiate textvariables to fill in using Entryfields
+        # initiate textvariables to fill in using Entryfields or labels
         self.username = tk.StringVar(value='Username')
         self.password = tk.StringVar(value='Password')
+        self.warning = tk.StringVar(value=None)
 
         # label
         ttk.Label(login, text='Log into your account', width=17).grid(row=0, column=0, sticky="NSEW", padx =(5,5)) 
+        ttk.Label(login, textvariable=self.warning, foreground='red').grid(row=3, column=0, sticky="N", columnspan=2, padx =(5,5)) 
+
+        #lbl.grid_forget()
 
 
         # Entry-fields 
@@ -70,15 +74,15 @@ class LoginWindow(tk.Frame):
 
         #Buttons
         self.submit_button = tk.Button(login, command=self.check_credentials, text="Login",borderwidth=1, fg='darkslateblue')
-        self.submit_button.grid(row=3, column=0, sticky="NSEW", columnspan=2, padx =(5,5), pady =(5,5))
+        self.submit_button.grid(row=4, column=0, sticky="NSEW", columnspan=2, padx =(5,5), pady =(5,5))
         self.changeOnHover(self.submit_button, 'blue', 'darkslateblue') #change button color on hover
 
         self.signup_button = tk.Button(login, command=lambda: switch_frame('SignupWindow'), text="Sign Up", borderwidth=0, fg='blue', bg="#DCDAD5")
-        self.signup_button.grid(row=4, column=0, sticky="NEW", padx =(5,5), pady =(5,0))
+        self.signup_button.grid(row=5, column=0, sticky="NEW", padx =(5,5), pady =(5,0))
         self.changeOnHover(self.signup_button, 'red', 'blue') #change button color on hover 
 
         self.forgotPW_button = tk.Button(login, command=self.forgot_pw, text="Forgot Password", borderwidth=0, fg='blue', bg="#DCDAD5")
-        self.forgotPW_button.grid(row=4, column=1, sticky="NEW", padx =(5,5), pady =(5,0))
+        self.forgotPW_button.grid(row=5, column=1, sticky="NEW", padx =(5,5), pady =(5,0))
         self.changeOnHover(self.forgotPW_button, 'red', 'blue') #change button color on hover
 
 
@@ -136,9 +140,9 @@ class LoginWindow(tk.Frame):
         if status == 1:
             self.switch_frame('TC') #To DO: once df data is loaded into database -> load user data into TC-frame
         elif status == 0:
-            pass #pop-up label with 'wrong password' here
+            self.warning.set("Wrong Password, please try again!") #pop-up label with 'wrong password' here
         elif status == -1:
-            pass #pop-up label with 'user not found' here
+            self.warning.set("User not found!") #pop-up label with 'user not found' here
 
     def sign_up(self, container):
         print("Switch to sign up page!")
