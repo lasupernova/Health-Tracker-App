@@ -7,7 +7,7 @@ from PIL import ImageTk, Image
 import datetime
 from tkcalendar import Calendar, DateEntry
 import sys
-from database.connections import db_transact #NOTE: use python -m frames.login_frame in order to circumvent relative import issue
+from database.connections import db_transact #NOTE: use python -m frames.login_frame in order to circumvent relative import issue OR add to tracker.py script in root directory and run from there
 
 
 #  ----- class inheriting from tk.Tk -----
@@ -28,6 +28,8 @@ class SignupWindow(tk.Frame):
         # customed_style.configure('Custom.TNotebook.Tab', padding=[12, 12], font=('Helvetica', 10))
 
     # ----- customize -----
+
+        self.switch_frame = switch_frame
 
         # # title
         # self.title("Log In")
@@ -61,9 +63,11 @@ class SignupWindow(tk.Frame):
         # initiate textvariables to fill in using Entryfields
         self.username = tk.StringVar(value='Username')
         self.password = tk.StringVar(value='Password')
+        self.warning = tk.StringVar(value=None)
 
         # label
-        ttk.Label(signup, text='Log into your account', width=17).grid(row=0, column=0, sticky="NSEW", padx =(5,5)) 
+        ttk.Label(signup, text='Sign Up', width=17).grid(row=0, column=0, sticky="NSEW", padx =(5,5)) 
+        ttk.Label(signup, textvariable=self.warning, foreground='red').grid(row=3, column=0, sticky="N", columnspan=2, padx =(5,5)) 
 
 
         # Entry-fields 
@@ -78,16 +82,16 @@ class SignupWindow(tk.Frame):
         self.pw_entry.bind("<FocusOut>", lambda event, field=self.pw_entry, field_name='password': self.focus_out(event, field, field_name))
 
         #Buttons
-        self.submit_button = tk.Button(signup, command=self.check_credentials, text="Sign Up!",borderwidth=1, fg='darkslateblue')
-        self.submit_button.grid(row=3, column=0, sticky="NSEW", columnspan=2, padx =(5,5), pady =(5,5))
+        self.submit_button = tk.Button(signup, command=self.sign_up, text="Sign Up!",borderwidth=1, fg='darkslateblue')
+        self.submit_button.grid(row=4, column=0, sticky="NSEW", columnspan=2, padx =(5,5), pady =(5,5))
         self.changeOnHover(self.submit_button, 'blue', 'darkslateblue') #change button color on hover
 
-        self.login_button = tk.Button(signup, command=switch_frame, text="⟵ Back to Login", borderwidth=0, fg='blue', bg="#DCDAD5")
-        self.login_button.grid(row=4, column=0, sticky="NEW", padx =(5,5), pady =(5,0))
+        self.login_button = tk.Button(signup, command=lambda: switch_frame('LoginWindow'), text="⟵ Back to Login", borderwidth=0, fg='blue', bg="#DCDAD5")
+        self.login_button.grid(row=5, column=0, sticky="NEW", padx =(5,5), pady =(5,0))
         self.changeOnHover(self.login_button, 'red', 'blue') #change button color on hover
 
         self.forgotPW_button = tk.Button(signup, command=self.funfact, text="Fun fact of the day", borderwidth=0, fg='blue', bg="#DCDAD5")
-        self.forgotPW_button.grid(row=4, column=1, sticky="NEW", padx =(5,5), pady =(5,0))
+        self.forgotPW_button.grid(row=5, column=1, sticky="NEW", padx =(5,5), pady =(5,0))
         self.changeOnHover(self.forgotPW_button, 'red', 'blue') #change button color on hover
 
 
@@ -137,13 +141,18 @@ class SignupWindow(tk.Frame):
                     func=lambda e: button.config(fg=colorOnLeave)
                     )  
 
-    def check_credentials(self):
+    def sign_up(self):
         user = self.username.get()
         pw= self.password.get()
-        db_transact.add_user(user, pw)
+        status = db_transact.sign_up(user, pw)
+        print('Signed Up!' if status==1 else 'Something went wrong! Please try again' if status==0 else 'A user with that name already exist. Please choose another username!' if status==-1 else 'Unknown error!')
+        if status == 1:
+            self.switch_frame('LoginWindow') #To DO: once df data is loaded into database -> load user data into TC-frame
+        elif status == 0:
+            self.warning.set("Something went wrong. Please try again")
+        elif status == -1:
+            self.warning.set("User already exists!")
 
-    def sign_up(self):
-        print("Switch to sign up page!")
 
     def funfact(self):
         print("Switch to password recovery page!")
