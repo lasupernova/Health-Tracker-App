@@ -160,32 +160,33 @@ queries = {
         yoga BOOLEAN,
         yoga_time INT,
         other BOOLEAN,
-        other_time,
+        other_time INT,
+        date TIMESTAMP NOT NULL,
         user_id INT,
-        CONSTRAINT CHECK
+        CONSTRAINT cycling_check CHECK
             ((cycling IS NULL AND cycling_time IS NULL)
-            OR(cycling = 0 AND cycling_time = 0)
-            OR(cycling = 1 AND cycling_time > 0)),
-        CONSTRAINT CHECK
+            OR(cycling = False AND cycling_time = 0)
+            OR(cycling = True AND cycling_time > 0)),
+        CONSTRAINT gym_check CHECK
             ((gym IS NULL AND gym_time IS NULL)
-            OR(gym = 0 AND gym_time = 0)
-            OR(gym = 1 AND gym_time > 0)),
-        CONSTRAINT CHECK
+            OR(gym = False AND gym_time = 0)
+            OR(gym = True AND gym_time > 0)),
+        CONSTRAINT cardio_check CHECK
             ((cardio IS NULL AND cardio_time IS NULL)
-            OR(cardio = 0 AND cardio_time = 0)
-            OR(cardio = 1 AND cardio_time > 0)),
-        CONSTRAINT CHECK
+            OR(cardio = False AND cardio_time = 0)
+            OR(cardio = True AND cardio_time > 0)),
+        CONSTRAINT stretch_check CHECK
             ((stretching IS NULL AND stretching_time IS NULL)
-            OR(stretching = 0 AND stretching_time = 0)
-            OR(stretching = 1 AND stretching_time > 0)),
-        CONSTRAINT CHECK
+            OR(stretching = False AND stretching_time = 0)
+            OR(stretching = True AND stretching_time > 0)),
+        CONSTRAINT yogqa_check CHECK
             ((yoga IS NULL AND yoga_time IS NULL)
-            OR(yoga = 0 AND yoga_time = 0)
-            OR(yoga = 1 AND yoga_time > 0)),
-        CONSTRAINT CHECK
+            OR(yoga = False AND yoga_time = 0)
+            OR(yoga = True AND yoga_time > 0)),
+        CONSTRAINT other_check CHECK
             ((other IS NULL AND other_time IS NULL)
-            OR(other = 0 AND other_time = 0)
-            OR(other = 1 AND other_time > 0)),
+            OR(other = False AND other_time = 0)
+            OR(other = True AND other_time > 0)),
         FOREIGN KEY (user_id) REFERENCES users ON DELETE CASCADE
         );""",
 
@@ -200,6 +201,7 @@ queries = {
         intercourse BOOLEAN NOT NULL,
         spotting BOOLEAN NOT NULL,
         spotting_level INT CHECK ((spotting_level > 0) AND (spotting_level <3)),
+        date TIMESTAMP NOT NULL,
         user_id INT,
         FOREIGN KEY (user_id) REFERENCES users ON DELETE CASCADE
         );""",
@@ -211,6 +213,7 @@ queries = {
         hormonal TEXT,
         nutritional TEXT,
         social TEXT,
+        date TIMESTAMP NOT NULL,
         user_id INT,
         FOREIGN KEY (user_id) REFERENCES users ON DELETE CASCADE
         );""",
@@ -227,6 +230,7 @@ queries = {
         freq_wakes BOOLEAN NOT NULL,
         sleep_meds TEXT,
         tz_change BOOLEAN NOT NULL DEFAULT '0',
+        date TIMESTAMP NOT NULL,
         user_id INT,
         FOREIGN KEY (user_id) REFERENCES users ON DELETE CASCADE
         );"""
