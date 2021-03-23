@@ -81,5 +81,78 @@ def get_column_names(table):
 
     return cols, val_PH
 
+def sign_up(user, password):
+    try:
+        con = connect_db(password=database_pw)
+
+        query_check = f"""SELECT * FROM users WHERE username=%s;"""
+
+        query_ins = f"""INSERT INTO users (username, password) VALUES (%s, %s);"""
+
+        with con.cursor() as cur: #closes transaction, but does NOT close the connection itself
+            cur.execute(query_check, (user, ))
+            rows = cur.fetchone()
+            if rows: #if user already exists, return -1 to display error message
+                return -1
+            else:
+                cur.execute(query_ins, (user, password)) 
+                return 1
+    
+    except Exception as e:
+        print(e)
+        return 0
+    
+    finally:
+        con.close()
+
+
+def query_data_by_date(date, user):
+    try:
+        con = connect_db(password=database_pw)
+
+        query = f"""SELECT * FROM fitness 
+                          WHERE date(date) = %s and user_id = %s;"""  #date() is a type cast and can also be written as created_date::date or cast(created_data as date)
+
+        uid = get_uid_by_username(user)
+        
+        with con.cursor() as cur: #closes transaction, but does NOT close the connection itself
+            cur.execute(query, (date, uid)) 
+            rows = cur.fetchone()
+            if rows: #if user already exists, return -1 to display error message
+                print(rows)
+                return rows
+            else:
+                print("No data available for that date!")
+                return 0
+    
+    except Exception as e:
+        print(e)
+        return 0
+    
+    finally:
+        con.close()
+
+
+def get_uid_by_username(user):
+    try:
+        con = connect_db(password=database_pw)
+
+        query = f"""SELECT user_id FROM users WHERE username=%s;"""
+
+        with con.cursor() as cur: #closes transaction, but does NOT close the connection itself
+            cur.execute(query, (user, )) 
+            rows = cur.fetchone()
+            if rows:
+                return rows[0]
+            else:
+                return -1
+    
+    except Exception as e:
+        print(e)
+        return 0
+    
+    finally:
+        con.close()
+
 
 
