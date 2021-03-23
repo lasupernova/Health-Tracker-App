@@ -94,7 +94,7 @@ class InputWindow(tk.Tk):
         self.login_frame.grid(row=0,column=0, rowspan=20, sticky='EWNS') #configure timer frame placed in the first row and first column and to fill the entire frame ("container")
 
         # add signup frame 
-        self.signup_frame = SignupWindow(self, lambda: self.switch_frame('LoginWindow'))
+        self.signup_frame = SignupWindow(self, self.switch_frame)
         self.signup_frame.grid(row=0,column=0, rowspan=20, sticky='EWNS')
 
     # ----- Tabs -----
