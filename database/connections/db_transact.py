@@ -203,6 +203,35 @@ def get_columns_from_table(table_name):
         con.close()
 
 
+def get_table_data(table_name, date, user):
+    try:
+        con = connect_db(password=database_pw)
+        
+        query_data = f"""SELECT * 
+                         FROM {table_name}
+                         WHERE date(date) = %s and user_id = %s
+                         ;"""  #date() is a type cast and can also be written as created_date::date or cast(created_data as date)
+        
+        with con.cursor() as cur:  
+
+            cur.execute(query_data, (date, user)) 
+
+            data = cur.fetchall()
+
+        if not data:
+            return 0
+        
+        else:
+            return data[0]
+
+    except Exception as e:
+        print(e)
+        return 0
+    
+    finally:
+        con.close()
+
+
 def get_uid_by_username(user):
     try:
         con = connect_db(password=database_pw)
