@@ -172,6 +172,37 @@ def get_table_list():
         con.close()
 
 
+def get_columns_from_table(table_name):
+    try:
+        con = connect_db(password=database_pw)
+        
+        query_columns = f"""SELECT *
+                        FROM information_schema.columns
+                        WHERE table_schema = 'public'
+                        AND table_name   = %s
+                        ;"""
+        
+        with con.cursor() as cur:  
+
+            cur.execute(query_columns, (table_name, )) 
+
+            col_info = cur.fetchall()
+
+        if not col_info:
+            return 0
+        
+        else:
+            col_names = [column[3] for column in col_info]
+            return col_names
+
+    except Exception as e:
+        print(e)
+        return 0
+    
+    finally:
+        con.close()
+
+
 def get_uid_by_username(user):
     try:
         con = connect_db(password=database_pw)
