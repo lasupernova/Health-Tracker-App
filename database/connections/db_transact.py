@@ -1,3 +1,5 @@
+##To DO: modify add_data() in order to use get_columns_from_table(table_name) instead of get_column_names()
+
 # import libraries and modules
 import psycopg2
 from dotenv import load_dotenv 
@@ -21,10 +23,19 @@ s += " ORDER BY table_schema, table_name;"
 
 
 def connect_db(user='postgres', host='localhost', port='5432', database='health_tracker', password='postgres'):
+    '''
+    Connects to specific database
+    '''
+
     return psycopg2.connect(f"user={user} host={host} dbname={database} password={password} port={port}")
 
+
 def add_data(table, user, password):
-    table_cols, val_placeholders = get_column_names(table)
+    '''
+    Inserts data into table for specific user
+    '''
+
+    table_cols, val_placeholders = get_column_names(table) 
     con = connect_db(password=database_pw)
     cur = con.cursor()
     query = f"""INSERT INTO users ({table_cols}) VALUES ({val_placeholders});""" #To Do: add password encryption (in database)
@@ -35,7 +46,12 @@ def add_data(table, user, password):
     print(f"\t username: {user}; password: {password}")
     con.close() #TO DO: modify code to use "with connection:" instead
 
+
 def login_user(user, password):
+    '''
+    Checks if inserted credentials match to login user in GUI
+    '''
+
     con = connect_db(password=database_pw)
 
     query = f"""SELECT password FROM users WHERE username=%s;"""
@@ -53,6 +69,7 @@ def login_user(user, password):
                 return 0
         else: #if query does not return result -> no entry for this specific user
             return -1
+
 
 def get_column_names(table):
     '''
@@ -81,7 +98,12 @@ def get_column_names(table):
 
     return cols, val_PH
 
+
 def sign_up(user, password):
+    '''
+    Inserts new user into users table in order to sign up new user to health tracker app
+    '''
+
     try:
         con = connect_db(password=database_pw)
 
@@ -108,6 +130,10 @@ def sign_up(user, password):
 
 
 def query_data_by_date_and_user(date, user):
+    '''
+    Returns dict of all health data for a specified user and a specified data
+    '''
+
     try:
         con = connect_db(password=database_pw)
 
@@ -146,6 +172,10 @@ def query_data_by_date_and_user(date, user):
 
 
 def get_table_list():
+    '''
+    Returns list of all table names in database
+    '''
+
     try:
         con = connect_db(password=database_pw)
 
@@ -173,6 +203,11 @@ def get_table_list():
 
 
 def get_columns_from_table(table_name):
+    '''
+    Get all column information for all columns in specified table;
+    Create tuple with only columns name information for each column;
+    Return columns name tuple to pass on to subsequent function to create data-dict to be passed on to health tracker
+    '''
     try:
         con = connect_db(password=database_pw)
         
@@ -204,6 +239,11 @@ def get_columns_from_table(table_name):
 
 
 def get_table_data(table_name, date, user):
+    '''
+    Retrieve data from specified database table for specified user and date;
+    Return information as a tuple with one value per column;
+    '''
+
     try:
         con = connect_db(password=database_pw)
         
