@@ -103,28 +103,40 @@ def sign_up(user, password):
         return 0
     
     finally:
+        con.commit()
         con.close()
 
 
-def query_data_by_date(date, user):
+def query_data_by_date_and_user(date, user):
     try:
         con = connect_db(password=database_pw)
 
-        query = f"""SELECT * FROM fitness 
-                          WHERE date(date) = %s and user_id = %s;"""  #date() is a type cast and can also be written as created_date::date or cast(created_data as date)
-
         uid = get_uid_by_username(user)
-        
-        with con.cursor() as cur: #closes transaction, but does NOT close the connection itself
-            cur.execute(query, (date, uid)) 
-            rows = cur.fetchone()
-            if rows: #if user already exists, return -1 to display error message
-                print(rows)
-                return rows
-            else:
-                print("No data available for that date!")
-                return 0
-    
+
+        table_names = get_table_list()
+
+        if table_names == 0: #if exception was thrown calling get_table_list()
+            return 0
+
+        else:
+            data_dict = {}
+
+            for table in table_names:
+
+                data_dict[table] = {}
+
+                col_names = get_columns_from_table(table)
+
+                data = get_table_data(table, date, uid)
+
+                for col, value in zip(col_names, data):
+                    if col == 'user_id' or col == 'entry_id' or col == 'date':  #exclude these three ocolumns, as they do not contain health data
+                        pass
+                    else:
+                        data_dict[table][str(col)] = value if str(value) != 'nan' else None
+
+        return data_dict
+
     except Exception as e:
         print(e)
         return 0
