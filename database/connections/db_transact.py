@@ -145,6 +145,33 @@ def query_data_by_date_and_user(date, user):
         con.close()
 
 
+def get_table_list():
+    try:
+        con = connect_db(password=database_pw)
+
+        query_tables = """SELECT * 
+                          FROM information_schema.tables 
+                          WHERE table_schema = 'public' 
+                          AND table_type = 'BASE TABLE'
+                          ;""" #NOTE: 'BASE TABLE' will only list tables and exclude views
+        
+        with con.cursor() as cur:  #closes transaction, but does NOT close the connection itself
+            cur.execute(query_tables) 
+
+            tables = cur.fetchall()  #returns a list of tuples with table_information
+
+            table_names = [table[2] for table in tables if table[2]!='users'] #exclude 'users'-table as it does not contain any health data
+
+        return table_names
+    
+    except Exception as e:
+        print(e)
+        return 0
+    
+    finally:
+        con.close()
+
+
 def get_uid_by_username(user):
     try:
         con = connect_db(password=database_pw)
