@@ -74,34 +74,6 @@ def login_user(user, password):
             return -1
 
 
-def get_column_names(table):
-    '''
-    Get all column names from specified table;
-    Create string with all column names separated by commas;
-    Create string with placeholder for number of values to pass to query - based on number of columns in columns-string;
-    Return columns-string to pass on to subsequent function for use in query
-    '''
-    con = connect_db(password=database_pw)
-    query = f"""SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME=%s;"""
-
-    with con.cursor() as cur:
-        cur.execute(query, (table, ))
-        rows=cur.fetchall() 
-    
-    cols = []
-    for row in rows:
-        cols.append(row[0])
-
-    val_PH = ['%s']*(len(cols)-2) #placeholder-string for values in query; create BEFORE converting cols into string!
-    val_PH = ', '.join(str(x) for x in val_PH)
-
-    cols = ", ".join(str(x) for x in cols[1:-1])
-
-    print(val_PH)
-
-    return cols, val_PH
-
-
 def sign_up(user, password):
     '''
     Inserts new user into users table in order to sign up new user to health tracker app
