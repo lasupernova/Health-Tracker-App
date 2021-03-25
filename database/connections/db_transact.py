@@ -37,14 +37,11 @@ def add_data(table, user, password):
 
     cols_list = list(get_columns_from_table(table))
     cols = ', '.join(cols_list[1:-1])
-    print(cols)
     val_placeholders = ['%s']*(len(cols_list)-2)
     val_placeholders = ', '.join(str(x) for x in val_placeholders)
-    print(val_placeholders)
     con = connect_db(password=database_pw)
     cur = con.cursor()
     query = f"""INSERT INTO users ({cols}) VALUES ({val_placeholders});""" #To Do: add password encryption (in database)
-    print(query)
     # crypt_pw = crypt(password, gen_salt('bf'))
     cur.execute(query, (user, password)) 
     con.commit()    
@@ -298,7 +295,3 @@ def get_uid_by_username(user):
     
     finally:
         con.close()
-
-
-
-add_data('users', 'test', 'test123')
