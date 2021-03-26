@@ -1,4 +1,4 @@
-##To DO: modify add_data() in order to use get_columns_from_table(table_name) instead of get_column_names()
+#To Do: add password encryption (in database)
 
 # import libraries and modules
 import psycopg2
@@ -35,19 +35,25 @@ def add_data(table, user, password):
     Inserts data into table for specific user
     '''
 
+    # get column names for specified table
     cols_list = list(get_columns_from_table(table))
     cols = ', '.join(cols_list[1:-1])
+
+    # create value placeholder string with correct number of columns values - to pass on to query
     val_placeholders = ['%s']*(len(cols_list)-2)
     val_placeholders = ', '.join(str(x) for x in val_placeholders)
+
+    # connection + query
     con = connect_db(password=database_pw)
     cur = con.cursor()
-    query = f"""INSERT INTO users ({cols}) VALUES ({val_placeholders});""" #To Do: add password encryption (in database)
-    # crypt_pw = crypt(password, gen_salt('bf'))
+    query = f"""INSERT INTO users ({cols}) VALUES ({val_placeholders});""" 
     cur.execute(query, (user, password)) 
-    con.commit()    
+    con.commit()   
+    con.close() #TO DO: modify code to use "with connection:" instead 
+
+    # info message
     print("New user signed up!")
-    print(f"\t username: {user}; password: {password}")
-    con.close() #TO DO: modify code to use "with connection:" instead
+    print(f"\t username: {user}; password: {password}")  
 
 
 def login_user(user, password):
