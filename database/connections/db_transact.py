@@ -1,4 +1,5 @@
 #To Do: add password encryption (in database)
+#TO DO: investigate "with connection:" and replace 
 
 # import libraries and modules
 import psycopg2
@@ -30,30 +31,44 @@ def connect_db(user='postgres', host='localhost', port='5432', database='health_
     return psycopg2.connect(f"user={user} host={host} dbname={database} password={password} port={port}")
 
 
-def add_data(table, user, password):
+def add_data(table, *args):
     '''
-    Inserts data into table for specific user
+    Inserts data into table for specific user;
+    New data passed as **kwargs;
     '''
 
-    # get column names for specified table
-    cols_list = list(get_columns_from_table(table))
-    cols = ', '.join(cols_list[1:-1])
+    # extract info from arguments
+    table = table.lower()
+    data, user = args
 
-    # create value placeholder string with correct number of columns values - to pass on to query
-    val_placeholders = ['%s']*(len(cols_list)-2)
-    val_placeholders = ', '.join(str(x) for x in val_placeholders)
+    # get user_if from username and add to data-dict
+    user_id = get_uid_by_username(user)
+    data['user_id'] = user_id
+
+    # get cols and corresponding values from completed data-dict
+    cols_list = list(data.keys())
+    vals = tuple(data.values())
+
+
+    val_placeholders = ', '.join(['%s']*len(vals)) 
+    col_str = ', '.join(cols_list)
 
     # connection + query
     con = connect_db(password=database_pw)
     cur = con.cursor()
-    query = f"""INSERT INTO users ({cols}) VALUES ({val_placeholders});""" 
-    cur.execute(query, (user, password)) 
+    query = f"""INSERT INTO {table} ({col_str}) VALUES ({val_placeholders});""" 
+    cur.execute(query, (vals)) 
     con.commit()   
-    con.close() #TO DO: modify code to use "with connection:" instead 
+    con.close() 
 
-    # info message
-    print("New user signed up!")
-    print(f"\t username: {user}; password: {password}")  
+    # # info message
+    print(table)
+    print(col_str)
+    print(vals)
+    print(val_placeholders)
+    print(f"User: {user}, User_id: {user_id}")
+    print(query)
+
 
 
 def login_user(user, password):

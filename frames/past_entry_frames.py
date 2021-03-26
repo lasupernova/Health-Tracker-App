@@ -11,7 +11,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 # from .analysis.plots.test import make_plot
 
 class PastEntryFrame(tk.Frame):
-    def __init__(self, tab_name, container, *args, **kwargs):
+    def __init__(self, container, tab_name, *args, **kwargs):
         # self.tc = tabcontrol
         self.tab_name = tab_name
         super().__init__(container, *args, **kwargs)

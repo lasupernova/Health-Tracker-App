@@ -188,6 +188,11 @@ class EntryFrame(tk.Frame):
 
             # grab outer key for current dict --> each outer dict has only one outer key
             option_name = [*option][0]
+            if option_name == 'cramps' or option_name == 'spotting':  # workaround loop that is going to be removed once .csv usage is completely removed
+                continue
+
+            # convert GUI options text to database-conform text
+            option_name_db = self.cols_to_db_name(option_name)
 
             # check option entry type
             if option[option_name]["type"] == "Entryfield":
@@ -197,8 +202,12 @@ class EntryFrame(tk.Frame):
                 value = self.building_blocks[option_name]["selection"].get()
                 print(option_name,": ", value) #any otherfields take one entry saved in a tk.StringVar-object
 
+            # account for empty lists
+            if len(value) == 0:
+                value = None
+
             # add info of current entry-field to dict
-            data_dict[option_name] = value
+            data_dict[option_name_db] = value
 
         return data_dict
 
@@ -313,8 +322,49 @@ class EntryFrame(tk.Frame):
             except KeyError as e: #KeyError will be thrown if no entryfield with the current options value exists
                 print(f"There is no entry field with the value {option}. \n\t Error: {e}") 
 
+    def insert_database(self, user, date):
+        '''
+        Insert selection of current tab to database for specified date and logged in user
+        '''
+        
+        # get selection
+        data = self.get_all_selected()
 
+        # append user and date to data
+        data['date'] = date  #do not use today's date, in case Date Picker was used to change current health tracker date
 
+        # insert into database
+        db_transact.add_data(self.tab, data, user)
 
+    def cols_to_db_name(self, option_name):
+        '''
+        Work-aound function until .csv file usage is completely removed -- to be removed
+        '''
+        gui_options = ['REM', 'frequent wakeups', 'sleep medication', 'timezone change', 'cheats/sweets/unhealthy']
+        db_col_names = ['rem', 'freq_wakes', 'sleep_meds', 'tz_change', 'unhealthy_food']
+
+        for gui, db in zip(gui_options, db_col_names):
+            if option_name in gui:
+                print(f"Before: .{option_name}.")
+                print(f"To be : .{gui}.")
+                option_name_translated = option_name.replace(gui, db)
+                print(f"After: .{option_name_translated}.")
+                return option_name_translated
+            elif option_name == 'frequent wakeups':
+                return 'freq_wakes'
+            elif option_name == 'sleep medication':
+                return 'sleep_meds'
+            elif option_name == 'timezone change':
+                return 'tz_change'
+            elif option_name == 'cheats/sweets/unhealthy':
+                return 'unhealthy_food'
+            elif option_name == 'hiking':
+                return 'cardio'
+            else:
+                print(f"Before: .{option_name}.")
+                option_name_translated = option_name.replace(" ", "_")
+                option_name_translated = option_name_translated.replace("?", "")
+                print(f"After: .{option_name_translated}.")
+                return option_name_translated
 
         

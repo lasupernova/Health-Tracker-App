@@ -129,6 +129,7 @@ class SignupWindow(tk.Frame):
             pw = process_input(text_var, field_name)
             self.password.set(pw)
 
+
         # ----- method changing button text/foreground color on hover
     def changeOnHover(self, button, colorOnHover, colorOnLeave): 
         # background on cursor entering widget 

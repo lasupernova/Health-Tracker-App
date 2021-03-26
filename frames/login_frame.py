@@ -143,6 +143,7 @@ class LoginWindow(tk.Frame):
         if status == 1:
             self.parent.user = user  #save logged in user to main tracker frame
             self.switch_frame('TC')  #To DO: once df data is loaded into database -> load user data into TC-frame
+            self.parent.tabControl.bind("<<NotebookTabChanged>>", self.parent.on_tab_change)
         elif status == 0:
             self.warning.set("Wrong Password, please try again!") #pop-up label with 'wrong password' here
         elif status == -1:

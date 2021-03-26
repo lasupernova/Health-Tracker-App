@@ -127,7 +127,7 @@ queries = {
         other_symptoms TEXT,
         palpitations BOOLEAN,
         panic_attack BOOLEAN,
-        breathlessness BOOLEAN,
+        breathless BOOLEAN,
         RHR INT,
         sick TEXT,
         stomachpain BOOLEAN,
@@ -224,7 +224,7 @@ queries = {
 
     'sleep' : f"""CREATE TABLE IF NOT EXISTS sleep (
         entry_id serial PRIMARY KEY,
-        sleep INT CHECK ((sleep > 0) AND (sleep < 24) OR NULL),
+        sleep REAL CHECK ((sleep > 0.0) AND (sleep < 24.0) OR NULL),
         REM REAL CHECK ((REM > 0.0) AND (REM < 1.0) OR NULL),
         awake REAL CHECK ((awake > 0.0) AND (awake < 1.0) OR NULL),
         deep_sleep REAL CHECK ((deep_sleep > 0.0) AND (deep_sleep < 1.0) OR NULL),

@@ -80,6 +80,9 @@ class InputWindow(tk.Tk):
         # list to save EntryFrame objects in to use fot latter iterations
         self.entry_frames = []
 
+        # variable to save info about loggin in user
+        self.user = None
+
     # # ----- Frame Container -----
 
     #     # save a ttk frame - object in a variable named "container" 
@@ -154,6 +157,10 @@ class InputWindow(tk.Tk):
         EntryFrame(period_tab, period_info, self.tabControl.tab(period_tab)['text'], self.df).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
         EntryFrame(longterm_tab, longterm_info, self.tabControl.tab(longterm_tab)['text'], self.df).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
 
+        # current tab
+        tabName = self.tabControl.select() #get name of current tab
+        self.active_tab = self.tabControl.nametowidget(tabName) #the current tab is a frame that contains 3 children: a label, an EntryFrame = a Past_Entry_Frame
+
         # create dictionary to keep track of frames
         self.frames = dict()
 
@@ -177,7 +184,7 @@ class InputWindow(tk.Tk):
             tab_name = self.tabControl.tab(tab)['text']
 
             # create tk.Canvas-objects as plotting area
-            cur_tab = PastEntryFrame(tab_name, tab)
+            cur_tab = PastEntryFrame(tab, tab_name)
             cur_tab.grid(row=1, column=1, sticky="NSEW", padx=10, pady=10)
             cur_tab.display_plots(tab_name)
 
@@ -219,6 +226,21 @@ class InputWindow(tk.Tk):
             #     self.cal.bind("<<DateEntrySelected>>", print_sel)    #run print_sel() on date entry selection
             #     self.cal.pack(padx=5, pady=5)   
 
+    def on_tab_change(self, event):
+        import tkinter.messagebox as tkmb
+        info_message = f"Event: {event}\nWidget:{event.widget}"
+        print(self.tabControl.tab(self.tabControl.select(), "text"))
+
+        #get EntryFrame of interest from current tab and insert tab data in database
+        active_entryframe = self.active_tab.winfo_children()[1] 
+        active_entryframe.insert_database(self.user, self.current_date)
+
+        # change value of self.active_tab, as the tab was changed - done AFTER calling active_entryframe.insert_database(), otherwise the un-filled newly opened tab info is inserted to database
+        tabName = self.tabControl.select() 
+        self.active_tab = self.tabControl.nametowidget(tabName) 
+
+        tkmb.showinfo("Tab Change!!!", info_message)
+
     # ----- funtion to run upon closing the window -----
     def on_exit(self):
         self.df.save_frame() #save GUI-entries to .csv file
@@ -231,6 +253,7 @@ class InputWindow(tk.Tk):
         #brings indicated frame to the front
         frame.tkraise() 
         print("WORKS!")
+        print(f'User: {self.user}')
 
 # ----- run app -----
 if __name__ == '__main__':

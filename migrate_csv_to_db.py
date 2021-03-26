@@ -118,7 +118,7 @@ print(sorted(list(health.columns)))
 
 num_cols = ('%s, '*22)
 
-health_query = f'''INSERT INTO health (acidity, backpain, bloating, breakouts, chestpain, constipation, defecation, diarrhea, dizziness, hard_stool, headache, indigestion, medication, nausea, numbness, other_symptoms, palpitations, panic_attack, breathlessness, sick, stomachpain, date, user_id)
+health_query = f'''INSERT INTO health (acidity, backpain, bloating, breakouts, chestpain, constipation, defecation, diarrhea, dizziness, hard_stool, headache, indigestion, medication, nausea, numbness, other_symptoms, palpitations, panic_attack, breathless, sick, stomachpain, date, user_id)
                 VALUES ({num_cols} {uid_oi})'''
 
 for idx in health.index:
@@ -141,12 +141,12 @@ for idx in health.index:
     other_symptoms = bool(health.loc[idx, 'other symptoms']) if str(health.loc[idx, 'other symptoms']) != '[nan]' else None
     palpitations = bool(health.loc[idx, 'palpitations'])  
     panic_attack = bool(health.loc[idx, 'panic attack'])  
-    breathlessness = bool(health.loc[idx, 'shortness of breath']) 
+    breathless = bool(health.loc[idx, 'shortness of breath']) 
     sick = bool(health.loc[idx, 'sick?']) if str(health.loc[idx, 'sick?']) != '[nan]' else None
     stomachpain = bool(health.loc[idx, 'stomachpain'])
 
     with conn.cursor() as cur:
-        cur.execute(health_query, (acidity, backache, bloating, breakouts, chestpain, constipation, defecation, diarrhea, dizziness, hard_stool, headache, indigestion, medication, nausea, numbness, other_symptoms, palpitations, panic_attack, breathlessness, sick, stomachpain, date))
+        cur.execute(health_query, (acidity, backache, bloating, breakouts, chestpain, constipation, defecation, diarrhea, dizziness, hard_stool, headache, indigestion, medication, nausea, numbness, other_symptoms, palpitations, panic_attack, breathless, sick, stomachpain, date))
         conn.commit()
 
 period = df.period
