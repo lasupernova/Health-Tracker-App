@@ -6,7 +6,7 @@ from tkcalendar import Calendar, DateEntry
 import datetime
 import os
 from .analysis.dataframes.dataframe import TrackerFrame
-import database.connections.db_transact
+import database.connections.db_transact as db_transact
 
 class EntryFrame(tk.Frame):
     def __init__(self, container, info_list:dict, tab_name, tracker, *args, **kwargs):
@@ -158,47 +158,6 @@ class EntryFrame(tk.Frame):
                 text="Open Plotly!"
                 )
         test_plotly.pack(anchor="w", pady =15, padx = (5,5))    
-
-        select_date = tk.Button( #use tk.Button instead of ttk in order to use 'borderwidth'
-                self,
-                command=self.update_selection,
-                text="Update Selection of 'angry'",
-                borderwidth=0,
-                fg='darkslateblue'
-                )
-        select_date.pack(anchor="w", pady =15, padx = (5,5))  
-        self.changeOnHover(select_date, 'blue', 'darkslateblue') #change button color on hover
-        # print(self.winfo_children)
-
-        # ----- Date Picker ------
-        self.cal = DateEntry(self, width=12, background='darkblue',
-                            foreground='white', borderwidth=2)
-        
-
-
-    # ----- method toggling date picker and printing selection ------
-    def change_date(self):
-        # function printing selected date from calendar
-        def print_sel(e):
-            old_date = self.current_date
-            new_date = self.cal.get_date()
-            self.current_date = new_date
-            print(f"Date changed from {old_date} to {new_date}")
-        self.cal.bind("<<DateEntrySelected>>", print_sel) 
-
-        # toggle (=pack/unpack) calendar if it exists 
-        # try:
-        if self.cal.winfo_ismapped():
-            self.cal.pack_forget()
-        else:
-            self.cal.pack(padx=5, pady=5)
-        # # create and pack calendar if it does not yet exist and bind it to function
-        # except AttributeError:
-        #     # print(type(e).__name__)
-        #     self.cal = DateEntry(self, width=12, background='darkblue',
-        #                     foreground='white', borderwidth=2)
-        #     self.cal.bind("<<DateEntrySelected>>", print_sel)    #run print_sel() on date entry selection
-        #     self.cal.pack(padx=5, pady=5)     
 
 
     # ----- method printing current checkbutton state when clicked and passing them on to dataframe to be saved -----
@@ -354,12 +313,7 @@ class EntryFrame(tk.Frame):
             except KeyError as e: #KeyError will be thrown if no entryfield with the current options value exists
                 print(f"There is no entry field with the value {option}. \n\t Error: {e}") 
 
-    def insert_database(self):
-        '''
-        Insert selection of current tab to database for specified date and logged in user
-        '''
-        
-        data = self.get_all_selected()
+
 
 
 
