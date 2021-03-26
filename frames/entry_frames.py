@@ -111,7 +111,7 @@ class EntryFrame(tk.Frame):
                                 )
                 self.bulding_blocks[option_name]["entry_object"].grid(row=0, column=1, sticky="W")
                 self.bulding_blocks[option_name]["entries"] = []
-                self.bulding_blocks[option_name]["entry_object"].bind("<Return>", lambda event, x=(self.bulding_blocks, option_name): self.add_entry(*x))
+                self.bulding_blocks[option_name]["entry_object"].bind("<Return>", lambda event, x=(self.bulding_blocks, option_name): self.add_entry_to_entrylist(entry_info_dict, option_name)(*x))
 
             else:
                 pass
@@ -205,12 +205,12 @@ class EntryFrame(tk.Frame):
 
         if value:
             value = value
-            self.tracker.update_frame(self.tab, option, value, self.current_date)
             # print(value) #uncomment for troubleshooting
         else:
             # print checkbutton variable value (=value of tk.Stringvar-object saved in topic-dict for current option)
             value = topic[option]["selection"].get()
-            self.tracker.update_frame(self.tab, option, value, self.current_date)
+            
+        self.tracker.update_frame(self.tab, option, value, self.current_date)
             # print(value) #uncomment for troubleshooting
 
 
@@ -229,9 +229,8 @@ class EntryFrame(tk.Frame):
             else:
                 print(option_name,": ", topic[option_name]["selection"].get()) #any otherfields take one entry saved in a tk.StringVar-object
 
-
     # ----- method adding entries from tk.Entry()-fields -----
-    def add_entry(self, entry_info_dict, option_name):
+    def add_entry_to_entrylist(self, entry_info_dict, option_name):
 
         # print(option_name) #uncomment for troubleshooting
         # get information and objects from dict
@@ -255,7 +254,6 @@ class EntryFrame(tk.Frame):
 
         # clear text typed in entry-fieldc
         entry_info_dict[option_name]["entry_object"].delete(0, "end")
-
 
     # ----- method displaying tk.Entry()-field entries to new tk.Label()-field next to entry field -----
     def print_entries(self, entry_list, container):
