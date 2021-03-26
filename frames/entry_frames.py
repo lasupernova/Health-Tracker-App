@@ -147,7 +147,7 @@ class EntryFrame(tk.Frame):
     # ----- Buttons -----
         test = ttk.Button(
                 self,
-                command=self.print_all_selected,
+                command=self.get_all_selected,
                 text="Print Selection"
                 )
         test.pack(anchor="w", pady =15, padx = (5,5))
@@ -216,7 +216,7 @@ class EntryFrame(tk.Frame):
 
 
     # ----- method printing all current checkbutton states -----
-    def print_all_selected(self):
+    def get_all_selected(self):
         '''
         Gets all selected values from current EntryFrame;
         Saves data in dict to pass on to database-functions;
@@ -359,7 +359,7 @@ class EntryFrame(tk.Frame):
         Insert selection of current tab to database for specified date and logged in user
         '''
         
-        data = self.print_all_selected(options, topic)
+        data = self.get_all_selected()
 
 
 
