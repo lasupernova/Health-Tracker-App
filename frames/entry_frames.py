@@ -6,6 +6,7 @@ from tkcalendar import Calendar, DateEntry
 import datetime
 import os
 from .analysis.dataframes.dataframe import TrackerFrame
+import database.connections.db_transact
 
 class EntryFrame(tk.Frame):
     def __init__(self, container, info_list:dict, tab_name, tracker, *args, **kwargs):
@@ -13,7 +14,7 @@ class EntryFrame(tk.Frame):
 
         # ----- Parameters -----
         self.info_list = info_list
-        self.bulding_blocks = {}
+        self.building_blocks = {}
         self.all_options = [[*option][0] for option in info_list]
         self.tracker = tracker
         self.current_date = datetime.datetime.now().date()
@@ -63,55 +64,55 @@ class EntryFrame(tk.Frame):
             option_name = [*option][0]
 
             # create building blocks (frame and stringvar - objects) for each option and save in dict - to access in commands on click
-            self.bulding_blocks[option_name] = {}
-            self.bulding_blocks[option_name]["frame"] = tk.Frame(self)
-            self.bulding_blocks[option_name]["type"] = option[option_name]["type"]
-            self.bulding_blocks[option_name]["selection"] = tk.StringVar(value=0)
+            self.building_blocks[option_name] = {}
+            self.building_blocks[option_name]["frame"] = tk.Frame(self)
+            self.building_blocks[option_name]["type"] = option[option_name]["type"]
+            self.building_blocks[option_name]["selection"] = tk.StringVar(value=0)
 
             # create object based on the given type information
             if option[option_name]["type"] == "Checkbox":
-                self.bulding_blocks[option_name]["frame"].pack(anchor="w")
-                ttk.Label(self.bulding_blocks[option_name]["frame"] ,text=option_name, width=17).grid(row=0, column=0, sticky="W", padx =(5,0)) #label created separately fron checkbutton (instead of using 'text'-parameter) in order to have label on the left-hand side
-                ttk.Checkbutton(self.bulding_blocks[option_name]["frame"],
-                                command=lambda option=option_name, topic=self.bulding_blocks: self.check_options(option, topic), #lambda command refering to method in order to be able to pass current option name as variable
-                                variable=self.bulding_blocks[option_name]["selection"]).grid(row=0, column=1, sticky="W")
+                self.building_blocks[option_name]["frame"].pack(anchor="w")
+                ttk.Label(self.building_blocks[option_name]["frame"] ,text=option_name, width=17).grid(row=0, column=0, sticky="W", padx =(5,0)) #label created separately fron checkbutton (instead of using 'text'-parameter) in order to have label on the left-hand side
+                ttk.Checkbutton(self.building_blocks[option_name]["frame"],
+                                command=lambda option=option_name, topic=self.building_blocks: self.check_options(option, topic), #lambda command refering to method in order to be able to pass current option name as variable
+                                variable=self.building_blocks[option_name]["selection"]).grid(row=0, column=1, sticky="W")
 
             elif option[option_name]["type"] == "MultipleChoice":
                 # print("optionmenu", option_name) #uncomment for troubleshooting
-                self.bulding_blocks[option_name]["selection"].set(option[option_name]["selection_menu"][0])
-                self.bulding_blocks[option_name]["frame"].pack(anchor="w")
-                ttk.Label(self.bulding_blocks[option_name]["frame"] ,text=option_name, width=17).grid(row=0, column=0, sticky="W", padx =(5,0)) #label created separately fron checkbutton (instead of using 'text'-parameter) in order to have label on the left-hand side
-                tk.OptionMenu(self.bulding_blocks[option_name]["frame"],
-                                # command=lambda x=(option_name, self.bulding_blocks): self.check_options(*x), #lambda command refering to method in order to be able to pass current option name as variable
-                                self.bulding_blocks[option_name]["selection"],
+                self.building_blocks[option_name]["selection"].set(option[option_name]["selection_menu"][0])
+                self.building_blocks[option_name]["frame"].pack(anchor="w")
+                ttk.Label(self.building_blocks[option_name]["frame"] ,text=option_name, width=17).grid(row=0, column=0, sticky="W", padx =(5,0)) #label created separately fron checkbutton (instead of using 'text'-parameter) in order to have label on the left-hand side
+                tk.OptionMenu(self.building_blocks[option_name]["frame"],
+                                # command=lambda x=(option_name, self.building_blocks): self.check_options(*x), #lambda command refering to method in order to be able to pass current option name as variable
+                                self.building_blocks[option_name]["selection"],
                                 *option[option_name]["selection_menu"]).grid(row=0, column=1, sticky="W")
 
             elif option[option_name]["type"] == "Spinbox":
-                self.bulding_blocks[option_name]["increment"] = option[option_name]["increment"]
-                self.bulding_blocks[option_name]["frame"].pack(anchor="w")
-                ttk.Label(self.bulding_blocks[option_name]["frame"] ,text=option_name, width=17).grid(row=0, column=0, sticky="W", padx =(5,0)) #label created separately fron checkbutton (instead of using 'text'-parameter) in order to have label on the left-hand side
-                self.bulding_blocks[option_name]["entry_object"] = tk.Spinbox(self.bulding_blocks[option_name]["frame"],
-                                command=lambda option=option_name, topic=self.bulding_blocks: self.check_options(option, topic), #lambda command refering to method in order to be able to pass current option name as variable
-                                textvariable=self.bulding_blocks[option_name]["selection"],
+                self.building_blocks[option_name]["increment"] = option[option_name]["increment"]
+                self.building_blocks[option_name]["frame"].pack(anchor="w")
+                ttk.Label(self.building_blocks[option_name]["frame"] ,text=option_name, width=17).grid(row=0, column=0, sticky="W", padx =(5,0)) #label created separately fron checkbutton (instead of using 'text'-parameter) in order to have label on the left-hand side
+                self.building_blocks[option_name]["entry_object"] = tk.Spinbox(self.building_blocks[option_name]["frame"],
+                                command=lambda option=option_name, topic=self.building_blocks: self.check_options(option, topic), #lambda command refering to method in order to be able to pass current option name as variable
+                                textvariable=self.building_blocks[option_name]["selection"],
                                 from_=option[option_name]["from"],
                                 to=option[option_name]["to"],
                                 increment=option[option_name]["increment"],
                                 justify="center",
                                 width=5)
-                self.bulding_blocks[option_name]["entry_object"].grid(row=0, column=1, sticky="W")
-                self.bulding_blocks[option_name]["entry_object"].bind("<FocusOut>", lambda event, option=option_name, topic=self.bulding_blocks: self.check_options(option, topic))
+                self.building_blocks[option_name]["entry_object"].grid(row=0, column=1, sticky="W")
+                self.building_blocks[option_name]["entry_object"].bind("<FocusOut>", lambda event, option=option_name, topic=self.building_blocks: self.check_options(option, topic))
 
             elif option[option_name]["type"] == "Entryfield":  
-                self.bulding_blocks[option_name]["selection"].set(f"Type info + ENTER")      
-                self.bulding_blocks[option_name]["frame"].pack(anchor="w")
-                ttk.Label(self.bulding_blocks[option_name]["frame"] ,text=option_name, width=17).grid(row=0, column=0, sticky="W", padx =(5,0)) #label created separately fron checkbutton (instead of using 'text'-parameter) in order to have label on the left-hand side
-                self.bulding_blocks[option_name]["entry_object"] = tk.Entry(self.bulding_blocks[option_name]["frame"],
-                                # command=lambda x=(option_name, self.bulding_blocks): self.check_options(*x), #lambda command refering to method in order to be able to pass current option name as variable
-                                textvariable=self.bulding_blocks[option_name]["selection"],
+                self.building_blocks[option_name]["selection"].set(f"Type info + ENTER")      
+                self.building_blocks[option_name]["frame"].pack(anchor="w")
+                ttk.Label(self.building_blocks[option_name]["frame"] ,text=option_name, width=17).grid(row=0, column=0, sticky="W", padx =(5,0)) #label created separately fron checkbutton (instead of using 'text'-parameter) in order to have label on the left-hand side
+                self.building_blocks[option_name]["entry_object"] = tk.Entry(self.building_blocks[option_name]["frame"],
+                                # command=lambda x=(option_name, self.building_blocks): self.check_options(*x), #lambda command refering to method in order to be able to pass current option name as variable
+                                textvariable=self.building_blocks[option_name]["selection"],
                                 )
-                self.bulding_blocks[option_name]["entry_object"].grid(row=0, column=1, sticky="W")
-                self.bulding_blocks[option_name]["entries"] = []
-                self.bulding_blocks[option_name]["entry_object"].bind("<Return>", lambda event, x=(self.bulding_blocks, option_name): self.add_entry_to_entrylist(entry_info_dict, option_name)(*x))
+                self.building_blocks[option_name]["entry_object"].grid(row=0, column=1, sticky="W")
+                self.building_blocks[option_name]["entries"] = []
+                self.building_blocks[option_name]["entry_object"].bind("<Return>", lambda event, x=(self.building_blocks, option_name): self.add_entry_to_entrylist(entry_info_dict, option_name)(*x))
 
             else:
                 pass
@@ -130,8 +131,8 @@ class EntryFrame(tk.Frame):
                 # for selection_option, index in zip(option[option_name]["selection_menu"],range(1,len(option[option_name]["selection_menu"])+1)):
                 #     listbox.insert(index, selection_option) 
 
-        # for key in self.bulding_blocks.keys():
-        #     for child in self.bulding_blocks[key]["frame"].winfo_children():
+        # for key in self.building_blocks.keys():
+        #     for child in self.building_blocks[key]["frame"].winfo_children():
         #         # print(child.winfo_class())
         #         if child.winfo_class() != 'TLabel':
         #             try:
@@ -140,13 +141,13 @@ class EntryFrame(tk.Frame):
         #                 print('No variable here!')
         #         else:
         #             print('NOPE! Label!')
-            # print(key,':', self.bulding_blocks[key]["frame"].winfo_children())
-        # print(self.bulding_blocks.keys())
+            # print(key,':', self.building_blocks[key]["frame"].winfo_children())
+        # print(self.building_blocks.keys())
 
     # ----- Buttons -----
         test = ttk.Button(
                 self,
-                command=lambda x=(self.all_options, self.bulding_blocks): self.print_all_selected(*x),
+                command=self.print_all_selected,
                 text="Print Selection"
                 )
         test.pack(anchor="w", pady =15, padx = (5,5))
@@ -210,13 +211,19 @@ class EntryFrame(tk.Frame):
             # print checkbutton variable value (=value of tk.Stringvar-object saved in topic-dict for current option)
             value = topic[option]["selection"].get()
             
-        self.tracker.update_frame(self.tab, option, value, self.current_date)
-            # print(value) #uncomment for troubleshooting
+        # self.tracker.update_frame(self.tab, option, value, self.current_date) #update for when using .csv-file as storage
+        print(value) #uncomment for troubleshooting
 
 
     # ----- method printing all current checkbutton states -----
-    def print_all_selected(self, options, topic):
+    def print_all_selected(self):
+        '''
+        Gets all selected values from current EntryFrame;
+        Saves data in dict to pass on to database-functions;
+        Return dict for each entry field: key - entry-field (option), value - entered value
+        '''
 
+        data_dict = {}
         # iterate over info_dicts within list
         for option in self.info_list:
 
@@ -225,9 +232,16 @@ class EntryFrame(tk.Frame):
 
             # check option entry type
             if option[option_name]["type"] == "Entryfield":
-                print(option_name,": ", topic[option_name]["entries"]) #Entryfields take multiple entries saved in a list
+                value = self.building_blocks[option_name]["entries"]
+                print(option_name,": ", value) #Entryfields take multiple entries saved in a list
             else:
-                print(option_name,": ", topic[option_name]["selection"].get()) #any otherfields take one entry saved in a tk.StringVar-object
+                value = self.building_blocks[option_name]["selection"].get()
+                print(option_name,": ", value) #any otherfields take one entry saved in a tk.StringVar-object
+
+            # add info of current entry-field to dict
+            data_dict[option_name] = value
+
+        return data_dict
 
     # ----- method adding entries from tk.Entry()-fields -----
     def add_entry_to_entrylist(self, entry_info_dict, option_name):
@@ -300,46 +314,52 @@ class EntryFrame(tk.Frame):
                     value = data.loc[date, option] #get value for according field in df
                     # print(option,": ", value) #uncomment for troubleshooting
 
-                    if self.bulding_blocks[option]["type"] == "Checkbox":
+                    if self.building_blocks[option]["type"] == "Checkbox":
                         try:
-                            self.bulding_blocks[option]["selection"].set(str(int(value))) #get int-version, as only 0 or 1 are accepted for Checkbox
+                            self.building_blocks[option]["selection"].set(str(int(value))) #get int-version, as only 0 or 1 are accepted for Checkbox
                         except:
                             print(f"Selection change not possible for: {option}")
 
-                    elif self.bulding_blocks[option]["type"] == "Spinbox":
+                    elif self.building_blocks[option]["type"] == "Spinbox":
                         try:
-                            if self.bulding_blocks[option]["increment"] < 1: #use float for increments <1
+                            if self.building_blocks[option]["increment"] < 1: #use float for increments <1
                                 converted_value = str(value)
-                                self.bulding_blocks[option]["selection"].set(converted_value)
+                                self.building_blocks[option]["selection"].set(converted_value)
                             else: #use integers for increments > 1 -> otherwise diplay will not update because decimal points cannot be displayed for increments larger than 1
                                 converted_value = str(int(value)) 
-                                self.bulding_blocks[option]["selection"].set(converted_value)
+                                self.building_blocks[option]["selection"].set(converted_value)
                         except:
                             print(f"Selection change not possible for: {option}")                                          
-                    elif self.bulding_blocks[option]["type"] == "Entryfield":
+                    elif self.building_blocks[option]["type"] == "Entryfield":
                         try:
                             entry_string = value.strip("[]").replace("'","") # value is a list as a strin -> to get desired output strip square bracets and remove single quotes
                             if (value) and (entry_string != 'nan'):
-                                ttk.Label(self.bulding_blocks[option]["frame"], name='former_entries',text=entry_string, foreground='grey', background='whitesmoke').grid(row=1, column=1, sticky="W") #add label displaying previosu entries under Entryfield
+                                ttk.Label(self.building_blocks[option]["frame"], name='former_entries',text=entry_string, foreground='grey', background='whitesmoke').grid(row=1, column=1, sticky="W") #add label displaying previosu entries under Entryfield
                             else:
-                                for child in self.bulding_blocks[option]["frame"].winfo_children():
+                                for child in self.building_blocks[option]["frame"].winfo_children():
                                     if child.winfo_name() == 'former_entries':
                                         child.grid_remove()
                         except:
                             print(f"Selection change not possible for: {option}") 
                               
-                    elif self.bulding_blocks[option]["type"] == "MultipleChoice":
+                    elif self.building_blocks[option]["type"] == "MultipleChoice":
                         try:
-                            self.bulding_blocks[option]["selection"].set(value) #get int-version, as only 0 or 1 are accepted for Checkbox
+                            self.building_blocks[option]["selection"].set(value) #get int-version, as only 0 or 1 are accepted for Checkbox
                         except:
                             print(f"Selection change not possible for: {option}")                               
                     else:
-                        print(f'The {option}-field is of type {self.bulding_blocks[option]["type"]}.')
+                        print(f'The {option}-field is of type {self.building_blocks[option]["type"]}.')
                 except Exception as e:
                     print(f"Data for {date} not available. \n\t Error: {e}")  
             except KeyError as e: #KeyError will be thrown if no entryfield with the current options value exists
                 print(f"There is no entry field with the value {option}. \n\t Error: {e}") 
 
+    def insert_database(self):
+        '''
+        Insert selection of current tab to database for specified date and logged in user
+        '''
+        
+        data = self.print_all_selected(options, topic)
 
 
 
