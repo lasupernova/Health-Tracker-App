@@ -1,9 +1,13 @@
 #To Do: add password encryption (in database)
 #TO DO: investigate "with connection:" and replace 
+# To Do: add Constraint to allow only Unique day per user_id for each table
+# TO DO: get data-dict values from keys as dicts do not have an order and same order needs to be ensured in extrcated cols and extracted values
 
 # import libraries and modules
 import psycopg2
+import psycopg2.errorcodes
 from dotenv import load_dotenv 
+import datetime
 import os
 
 # load environmental variables required for connection
@@ -34,7 +38,7 @@ def connect_db(user='postgres', host='localhost', port='5432', database='health_
 def add_data(table, *args):
     '''
     Inserts data into table for specific user;
-    New data passed as **kwargs;
+    New data passed as *args;
     '''
 
     # extract info from arguments
@@ -46,30 +50,69 @@ def add_data(table, *args):
     data['user_id'] = user_id
 
     # get cols and corresponding values from completed data-dict
+    col_str, val_placeholders, vals = extract_query_data_from_dict(data)
+
+    try:
+        # connection + query
+        con = connect_db(password=database_pw)
+        with con.cursor() as cur:
+            query = f"""INSERT INTO {table} ({col_str}) VALUES ({val_placeholders});""" 
+            cur.execute(query, (tuple(vals)))
+    except psycopg2.errors.UniqueViolation as e:  #update if entry already exists for table - pkey
+        print("ERROR CAUGHT!")
+        # con.close()
+        update_data(table, data)
+    finally:
+        con.commit()   
+        con.close() 
+
+
+def update_data(table, data):
+    '''
+    Update specified table based on information in data dict
+    '''
+
+    # extract date from dict and pop (date+user_id) as these are not going to be updated but are going to be used in the WHERE clause
+    date = data['date']
+    data.pop('date')
+    user_id = data['user_id']
+    data.pop('user_id')
+    print(data)
+
+    # extract variables to pass to SQL-query and execute statement from data-dict
+    col_str, val_placeholders, vals = extract_query_data_from_dict(data)
+
+    # extend date and user_id -- list mutable tuple not --> convert to tuple after
+    vals.extend([date, user_id])
+
+    con = connect_db(password=database_pw)
+    with con.cursor() as cur:
+        query = f"""UPDATE {table} SET ({col_str}) = ({val_placeholders}) WHERE (date = %s and user_id = %s) RETURNING *;""" 
+        # query = f"""SELECT * FROM {table} WHERE (date = %s and user_id = %s);""" 
+        cur.execute(query, (vals)) #, date, user_id
+        print(cur.rowcount)
+    # print(f'SUCCESS! Updated database table "{table}" for user_id "{user_id}" and date "{date}"')
+    con.commit()
+    con.close()
+
+
+def extract_query_data_from_dict(data):
+    '''
+    Takes data-dict with columns specified in keys and column-values in dict-values;
+    Extracts columns-list from keys and value-tuple from dict-values;
+    Creates placeholder string for SQL-query and converts column-list into a string for SQL-query;
+    Returns col_str and val_placeholder to pass to SQL-query and vals-list to pass to psycopg2-execute statement to replace query-placeholders;
+    '''
+
+    # extract data from data-dict
     cols_list = list(data.keys())
-    vals = tuple(data.values())
+    vals = list(data.values())
 
-
+    # create additional variables to pass to SQL-statement
     val_placeholders = ', '.join(['%s']*len(vals)) 
     col_str = ', '.join(cols_list)
 
-    # connection + query
-    con = connect_db(password=database_pw)
-    cur = con.cursor()
-    query = f"""INSERT INTO {table} ({col_str}) VALUES ({val_placeholders});""" 
-    cur.execute(query, (vals)) 
-    con.commit()   
-    con.close() 
-
-    # # info message
-    print(table)
-    print(col_str)
-    print(vals)
-    print(val_placeholders)
-    print(f"User: {user}, User_id: {user_id}")
-    print(query)
-
-
+    return col_str, val_placeholders, vals
 
 def login_user(user, password):
     '''
