@@ -62,6 +62,7 @@ class EntryFrame(tk.Frame):
 
             # get option string
             option_name = [*option][0]
+            label_name = option[option_name]['label']
 
             # create building blocks (frame and stringvar - objects) for each option and save in dict - to access in commands on click
             self.building_blocks[option_name] = {}
@@ -72,7 +73,7 @@ class EntryFrame(tk.Frame):
             # create object based on the given type information
             if option[option_name]["type"] == "Checkbox":
                 self.building_blocks[option_name]["frame"].pack(anchor="w")
-                ttk.Label(self.building_blocks[option_name]["frame"] ,text=option_name, width=17).grid(row=0, column=0, sticky="W", padx =(5,0)) #label created separately fron checkbutton (instead of using 'text'-parameter) in order to have label on the left-hand side
+                ttk.Label(self.building_blocks[option_name]["frame"] ,text=label_name, width=17).grid(row=0, column=0, sticky="W", padx =(5,0)) #label created separately fron checkbutton (instead of using 'text'-parameter) in order to have label on the left-hand side
                 ttk.Checkbutton(self.building_blocks[option_name]["frame"],
                                 command=lambda option=option_name, topic=self.building_blocks: self.check_options(option, topic), #lambda command refering to method in order to be able to pass current option name as variable
                                 variable=self.building_blocks[option_name]["selection"]).grid(row=0, column=1, sticky="W")
@@ -81,7 +82,7 @@ class EntryFrame(tk.Frame):
                 # print("optionmenu", option_name) #uncomment for troubleshooting
                 self.building_blocks[option_name]["selection"].set(option[option_name]["selection_menu"][0])
                 self.building_blocks[option_name]["frame"].pack(anchor="w")
-                ttk.Label(self.building_blocks[option_name]["frame"] ,text=option_name, width=17).grid(row=0, column=0, sticky="W", padx =(5,0)) #label created separately fron checkbutton (instead of using 'text'-parameter) in order to have label on the left-hand side
+                ttk.Label(self.building_blocks[option_name]["frame"] ,text=label_name, width=17).grid(row=0, column=0, sticky="W", padx =(5,0)) #label created separately fron checkbutton (instead of using 'text'-parameter) in order to have label on the left-hand side
                 tk.OptionMenu(self.building_blocks[option_name]["frame"],
                                 # command=lambda x=(option_name, self.building_blocks): self.check_options(*x), #lambda command refering to method in order to be able to pass current option name as variable
                                 self.building_blocks[option_name]["selection"],
@@ -90,7 +91,7 @@ class EntryFrame(tk.Frame):
             elif option[option_name]["type"] == "Spinbox":
                 self.building_blocks[option_name]["increment"] = option[option_name]["increment"]
                 self.building_blocks[option_name]["frame"].pack(anchor="w")
-                ttk.Label(self.building_blocks[option_name]["frame"] ,text=option_name, width=17).grid(row=0, column=0, sticky="W", padx =(5,0)) #label created separately fron checkbutton (instead of using 'text'-parameter) in order to have label on the left-hand side
+                ttk.Label(self.building_blocks[option_name]["frame"] ,text=label_name, width=17).grid(row=0, column=0, sticky="W", padx =(5,0)) #label created separately fron checkbutton (instead of using 'text'-parameter) in order to have label on the left-hand side
                 self.building_blocks[option_name]["entry_object"] = tk.Spinbox(self.building_blocks[option_name]["frame"],
                                 command=lambda option=option_name, topic=self.building_blocks: self.check_options(option, topic), #lambda command refering to method in order to be able to pass current option name as variable
                                 textvariable=self.building_blocks[option_name]["selection"],
@@ -105,7 +106,7 @@ class EntryFrame(tk.Frame):
             elif option[option_name]["type"] == "Entryfield":  
                 self.building_blocks[option_name]["selection"].set(f"Type info + ENTER")      
                 self.building_blocks[option_name]["frame"].pack(anchor="w")
-                ttk.Label(self.building_blocks[option_name]["frame"] ,text=option_name, width=17).grid(row=0, column=0, sticky="W", padx =(5,0)) #label created separately fron checkbutton (instead of using 'text'-parameter) in order to have label on the left-hand side
+                ttk.Label(self.building_blocks[option_name]["frame"] ,text=label_name, width=17).grid(row=0, column=0, sticky="W", padx =(5,0)) #label created separately fron checkbutton (instead of using 'text'-parameter) in order to have label on the left-hand side
                 self.building_blocks[option_name]["entry_object"] = tk.Entry(self.building_blocks[option_name]["frame"],
                                 # command=lambda x=(option_name, self.building_blocks): self.check_options(*x), #lambda command refering to method in order to be able to pass current option name as variable
                                 textvariable=self.building_blocks[option_name]["selection"],
@@ -309,7 +310,7 @@ class EntryFrame(tk.Frame):
 
     def cols_to_db_name(self, option_name):
         '''
-        Work-aound function until .csv file usage is completely removed -- to be removed
+        Work-around function until .csv file usage is completely removed -- to be removed
         '''
         gui_options = ['REM', 'frequent wakeups', 'sleep medication', 'timezone change', 'cheats/sweets/unhealthy']
         db_col_names = ['rem', 'freq_wakes', 'sleep_meds', 'tz_change', 'unhealthy_food']
