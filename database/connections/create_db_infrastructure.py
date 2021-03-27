@@ -83,7 +83,8 @@ queries = {
         );""",
 
     'mood' : f"""CREATE TABLE IF NOT EXISTS mood (
-        entry_id serial PRIMARY KEY,
+        date TIMESTAMP NOT NULL,
+        user_id INT NOT NULL,
         angry BOOLEAN,
         anxious BOOLEAN,
         calm BOOLEAN,
@@ -102,13 +103,13 @@ queries = {
         sensitive BOOLEAN,
         stressed BOOLEAN,
         tired BOOLEAN,
-        date TIMESTAMP NOT NULL,
-        user_id INT NOT NULL,
+        PRIMARY KEY (user_id, date),
         FOREIGN KEY (user_id) REFERENCES users ON DELETE CASCADE
         );""",
 
     'health' : f"""CREATE TABLE IF NOT EXISTS health (
-        entry_id serial PRIMARY KEY,
+        date TIMESTAMP NOT NULL,
+        user_id INT NOT NULL,
         acidity BOOLEAN,
         backpain BOOLEAN,
         bloating BOOLEAN,
@@ -131,13 +132,13 @@ queries = {
         RHR INT,
         sick TEXT,
         stomachpain BOOLEAN,
-        date TIMESTAMP NOT NULL,
-        user_id INT NOT NULL,
+        PRIMARY KEY (user_id, date),
         FOREIGN KEY (user_id) REFERENCES users ON DELETE CASCADE
         );""",
 
     'food' : f"""CREATE TABLE IF NOT EXISTS food (
-        entry_id serial PRIMARY KEY,
+        date TIMESTAMP NOT NULL,
+        user_id INT NOT NULL,
         animal_products TEXT,
         cereal TEXT,
         unhealthy_food TEXT,
@@ -146,13 +147,13 @@ queries = {
         healthy BOOLEAN,
         laxatives TEXT,
         supplements TEXT,
-        date TIMESTAMP NOT NULL,
-        user_id INT NOT NULL,
+        PRIMARY KEY (user_id, date),
         FOREIGN KEY (user_id) REFERENCES users ON DELETE CASCADE
         );""",
 
     'fitness' : f"""CREATE TABLE IF NOT EXISTS fitness (
-        entry_id serial PRIMARY KEY,
+        date TIMESTAMP NOT NULL,
+        user_id INT NOT NULL,
         cycling BOOLEAN,
         cycling_time INT,
         gym BOOLEAN,
@@ -165,8 +166,7 @@ queries = {
         yoga_time INT,
         other BOOLEAN,
         other_time INT,
-        date TIMESTAMP NOT NULL,
-        user_id INT NOT NULL,
+        PRIMARY KEY (user_id, date),
         CONSTRAINT cycling_check CHECK
             ((cycling IS NULL AND cycling_time IS NULL)
             OR(cycling = False AND cycling_time = 0)
@@ -183,7 +183,7 @@ queries = {
             ((stretching IS NULL AND stretching_time IS NULL)
             OR(stretching = False AND stretching_time = 0)
             OR(stretching = True AND stretching_time > 0)),
-        CONSTRAINT yogqa_check CHECK
+        CONSTRAINT yoga_check CHECK
             ((yoga IS NULL AND yoga_time IS NULL)
             OR(yoga = False AND yoga_time = 0)
             OR(yoga = True AND yoga_time > 0)),
@@ -195,7 +195,8 @@ queries = {
         );""",
 
     'period' : f"""CREATE TABLE IF NOT EXISTS period (
-        entry_id serial PRIMARY KEY,
+        date TIMESTAMP NOT NULL,
+        user_id INT NOT NULL,
         cramps BOOLEAN,
         cramps_level INT CHECK ((cramps_level > 0) AND (cramps_level <5) OR NULL),
         cycle_day INT NOT NULL,
@@ -205,25 +206,25 @@ queries = {
         intercourse BOOLEAN,
         spotting BOOLEAN,
         spotting_level INT CHECK ((spotting_level > 0) AND (spotting_level <3) OR NULL),
-        date TIMESTAMP NOT NULL,
-        user_id INT NOT NULL,
+        PRIMARY KEY (user_id, date),
         FOREIGN KEY (user_id) REFERENCES users ON DELETE CASCADE
         );""",
 
     'longterm' : f"""CREATE TABLE IF NOT EXISTS longterm (
-        entry_id serial PRIMARY KEY,
+        date TIMESTAMP NOT NULL,
+        user_id INT NOT NULL,
         anatomical TEXT,
         climate TEXT,
         hormonal TEXT,
         nutritional TEXT,
         social TEXT,
-        date TIMESTAMP NOT NULL,
-        user_id INT NOT NULL,
+        PRIMARY KEY (user_id, date),
         FOREIGN KEY (user_id) REFERENCES users ON DELETE CASCADE
         );""",
 
     'sleep' : f"""CREATE TABLE IF NOT EXISTS sleep (
-        entry_id serial PRIMARY KEY,
+        date TIMESTAMP NOT NULL,
+        user_id INT NOT NULL,
         sleep REAL CHECK ((sleep > 0.0) AND (sleep < 24.0) OR NULL),
         REM REAL CHECK ((REM > 0.0) AND (REM < 1.0) OR NULL),
         awake REAL CHECK ((awake > 0.0) AND (awake < 1.0) OR NULL),
@@ -234,8 +235,7 @@ queries = {
         freq_wakes BOOLEAN,
         sleep_meds TEXT,
         tz_change BOOLEAN NOT NULL DEFAULT '0',
-        date TIMESTAMP NOT NULL,
-        user_id INT NOT NULL,
+        PRIMARY KEY (user_id, date),
         FOREIGN KEY (user_id) REFERENCES users ON DELETE CASCADE
         );"""
 }
