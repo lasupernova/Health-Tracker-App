@@ -60,7 +60,6 @@ def add_data(table, *args):
             cur.execute(query, (tuple(vals)))
     except psycopg2.errors.UniqueViolation as e:  #update if entry already exists for table - pkey
         print("ERROR CAUGHT!")
-        # con.close()
         update_data(table, data)
     finally:
         con.commit()   
@@ -72,12 +71,11 @@ def update_data(table, data):
     Update specified table based on information in data dict
     '''
 
-    # extract date from dict and pop (date+user_id) as these are not going to be updated but are going to be used in the WHERE clause
+    # extract date from dict and pop (date+user_id) as these are not going to be updated but are going to be used in the WHERE clause + need to be at the end of list
     date = data['date']
     data.pop('date')
     user_id = data['user_id']
     data.pop('user_id')
-    print(data)
 
     # extract variables to pass to SQL-query and execute statement from data-dict
     col_str, val_placeholders, vals = extract_query_data_from_dict(data)
@@ -87,11 +85,10 @@ def update_data(table, data):
 
     con = connect_db(password=database_pw)
     with con.cursor() as cur:
-        query = f"""UPDATE {table} SET ({col_str}) = ({val_placeholders}) WHERE (date = %s and user_id = %s) RETURNING *;""" 
+        query = f"""UPDATE {table} SET ({col_str}) = ({val_placeholders}) WHERE (date = %s and user_id = %s);""" 
         # query = f"""SELECT * FROM {table} WHERE (date = %s and user_id = %s);""" 
         cur.execute(query, (vals)) #, date, user_id
-        print(cur.rowcount)
-    # print(f'SUCCESS! Updated database table "{table}" for user_id "{user_id}" and date "{date}"')
+
     con.commit()
     con.close()
 
@@ -113,6 +110,7 @@ def extract_query_data_from_dict(data):
     col_str = ', '.join(cols_list)
 
     return col_str, val_placeholders, vals
+
 
 def login_user(user, password):
     '''
@@ -174,8 +172,6 @@ def query_data_by_date_and_user(date, user):
     '''
 
     try:
-        con = connect_db(password=database_pw)
-
         uid = get_uid_by_username(user)
 
         table_names = get_table_list()
@@ -195,7 +191,7 @@ def query_data_by_date_and_user(date, user):
                 data = get_table_data(table, date, uid)
 
                 for col, value in zip(col_names, data):
-                    if col == 'user_id' or col == 'entry_id' or col == 'date':  #exclude these three ocolumns, as they do not contain health data
+                    if col == 'user_id' or col == 'date':  #exclude these two columns, as they do not contain health data
                         pass
                     else:
                         data_dict[table][str(col)] = value if str(value) != 'nan' else None
@@ -205,9 +201,6 @@ def query_data_by_date_and_user(date, user):
     except Exception as e:
         print(e)
         return 0
-    
-    finally:
-        con.close()
 
 
 def get_table_list():
@@ -331,3 +324,4 @@ def get_uid_by_username(user):
     
     finally:
         con.close()
+

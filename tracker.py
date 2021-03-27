@@ -1,4 +1,6 @@
 
+
+# TO DO: add daving all info to db to _on_exit()-method
 # NOTE: tk.Frame does NOT have access to ttk.Notebook!
 # --> convert tracker.py into a main.py instead!!!
 # ----- import libraries and  modules ---
@@ -11,12 +13,13 @@ from frames.entry_frames import EntryFrame
 from frames.past_entry_frames import PastEntryFrame
 from assets.entry_information import *
 from PIL import ImageTk, Image
-from frames.analysis.dataframes.dataframe import TrackerFrame
+# from frames.analysis.dataframes.dataframe import TrackerFrame
 import datetime
 from tkcalendar import Calendar, DateEntry
 import sys
 from frames.signup_frame import SignupWindow
 from frames.login_frame import LoginWindow
+import database.connections.db_transact as db_transact
 
 #  ----- class inheriting from tk.Tk -----
 class InputWindow(tk.Tk):
@@ -34,10 +37,10 @@ class InputWindow(tk.Tk):
         if len(sys.argv) > 1:
             print(f"Currently running: {sys.argv[0]}")
             print(f"Data loading from: {sys.argv[1]}")
-            self.tracker = sys.argv[1]
+            # self.tracker = sys.argv[1]
         else:
             print('No data...creating new Tracker-object.')
-            self.tracker = ''
+            # self.tracker = ''
 
 
     # ----- Styles -----
@@ -145,17 +148,17 @@ class InputWindow(tk.Tk):
 
     # ----- Tracker df -----
 
-        self.df = TrackerFrame(self.tracker) 
+        # self.df = TrackerFrame(self.tracker) 
 
     #  ----- Entry -----
 
-        EntryFrame(mood_tab, mood_info, self.tabControl.tab(mood_tab)['text'], self.df, name='mood_tab').grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
-        EntryFrame(health_tab, health_info, self.tabControl.tab(health_tab)['text'], self.df).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
-        EntryFrame(food_tab, food_info, self.tabControl.tab(food_tab)['text'], self.df).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
-        EntryFrame(sleep_tab, sleep_info, self.tabControl.tab(sleep_tab)['text'], self.df).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
-        EntryFrame(fitness_tab, fitness_info, self.tabControl.tab(fitness_tab)['text'], self.df).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
-        EntryFrame(period_tab, period_info, self.tabControl.tab(period_tab)['text'], self.df).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
-        EntryFrame(longterm_tab, longterm_info, self.tabControl.tab(longterm_tab)['text'], self.df).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
+        EntryFrame(mood_tab, mood_info, self.tabControl.tab(mood_tab)['text'], name='mood_tab').grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
+        EntryFrame(health_tab, health_info, self.tabControl.tab(health_tab)['text']).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
+        EntryFrame(food_tab, food_info, self.tabControl.tab(food_tab)['text']).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
+        EntryFrame(sleep_tab, sleep_info, self.tabControl.tab(sleep_tab)['text']).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
+        EntryFrame(fitness_tab, fitness_info, self.tabControl.tab(fitness_tab)['text']).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
+        EntryFrame(period_tab, period_info, self.tabControl.tab(period_tab)['text']).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
+        EntryFrame(longterm_tab, longterm_info, self.tabControl.tab(longterm_tab)['text']).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
 
         # current tab
         tabName = self.tabControl.select() #get name of current tab
@@ -207,24 +210,18 @@ class InputWindow(tk.Tk):
             self.current_date = new_date
             print(f"Date changed from {old_date} to {self.current_date}")
             date_string = self.current_date.strftime("%Y-%m-%d") #convert datetime object to string in order to be able to pass it to .loc[]
+            # get data
+            data = db_transact.query_data_by_date_and_user(date_string, self.user)
             # update all EntryFrame fields based on date
             for entry_frame in self.entry_frames:
-                entry_frame.update_selection(date=date_string) 
+                entry_frame.update_selection(data, date_string) 
         self.cal.bind("<<DateEntrySelected>>", print_sel) 
 
-        # toggle (=pack/unpack) calendar if it exists 
-        # try:
         if self.cal.winfo_ismapped():
             self.cal.grid_remove()
         else:
             self.cal.grid(row=3,column=1,rowspan=1, sticky='N')
-            # # create and pack calendar if it does not yet exist and bind it to function
-            # except AttributeError:
-            #     # print(type(e).__name__)
-            #     self.cal = DateEntry(self, width=12, background='darkblue',
-            #                     foreground='white', borderwidth=2)
-            #     self.cal.bind("<<DateEntrySelected>>", print_sel)    #run print_sel() on date entry selection
-            #     self.cal.pack(padx=5, pady=5)   
+
 
     def on_tab_change(self, event):
         import tkinter.messagebox as tkmb
@@ -243,7 +240,7 @@ class InputWindow(tk.Tk):
 
     # ----- funtion to run upon closing the window -----
     def on_exit(self):
-        self.df.save_frame() #save GUI-entries to .csv file
+        # self.df.save_frame() #save GUI-entries to .csv file
         self.destroy() #destroy window
 
     # ----- function that brings frame on the back to the front -----

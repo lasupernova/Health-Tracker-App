@@ -5,18 +5,18 @@ import tkinter.font as tkFont
 from tkcalendar import Calendar, DateEntry
 import datetime
 import os
-from .analysis.dataframes.dataframe import TrackerFrame
+# from .analysis.dataframes.dataframe import TrackerFrame
 import database.connections.db_transact as db_transact
 
 class EntryFrame(tk.Frame):
-    def __init__(self, container, info_list:dict, tab_name, tracker, *args, **kwargs):
+    def __init__(self, container, info_list:dict, tab_name, *args, **kwargs):
         super().__init__(container, *args, **kwargs)
 
         # ----- Parameters -----
         self.info_list = info_list
         self.building_blocks = {}
         self.all_options = [[*option][0] for option in info_list]
-        self.tracker = tracker
+        # self.tracker = tracker
         self.current_date = datetime.datetime.now().date()
         if tab_name == "Longterm Changes":
             self.tab = "longterm"
@@ -117,33 +117,6 @@ class EntryFrame(tk.Frame):
             else:
                 pass
 
-        # #----- Date Picker Frame -----
-        # self.date_frame = tk.Frame(
-        #     container,
-        #     bg='blue'
-        # )
-        # self.date_frame.grid()
-
-                # insert elements by their 
-                # index and names. 
-                # for i in range(1,len(option[option_name]["selection_menu"])+1):
-                #     print(i)
-                # for selection_option, index in zip(option[option_name]["selection_menu"],range(1,len(option[option_name]["selection_menu"])+1)):
-                #     listbox.insert(index, selection_option) 
-
-        # for key in self.building_blocks.keys():
-        #     for child in self.building_blocks[key]["frame"].winfo_children():
-        #         # print(child.winfo_class())
-        #         if child.winfo_class() != 'TLabel':
-        #             try:
-        #                 print(child.variable)
-        #             except:
-        #                 print('No variable here!')
-        #         else:
-        #             print('NOPE! Label!')
-            # print(key,':', self.building_blocks[key]["frame"].winfo_children())
-        # print(self.building_blocks.keys())
-
     # ----- Buttons -----
         test = ttk.Button(
                 self,
@@ -172,7 +145,6 @@ class EntryFrame(tk.Frame):
             
         # self.tracker.update_frame(self.tab, option, value, self.current_date) #update for when using .csv-file as storage
         print(value) #uncomment for troubleshooting
-
 
     # ----- method printing all current checkbutton states -----
     def get_all_selected(self):
@@ -267,19 +239,18 @@ class EntryFrame(tk.Frame):
                     )  
 
     # ----- method updating displayed entries based on selected date -----
-    def update_selection(self, date):
-
-        # get todays data
-        data = self.tracker.get_date(date)
+    def update_selection(self, data_dict, date):
 
         # get tab-relevant data for current EntryFrame()-object
-        data = data[self.tab]
+        data = data_dict[self.tab]
 
         # update fields
-        for option in data.columns:
+        # for option in data.columns:
+        for option in data.keys():
             try:
                 try: 
-                    value = data.loc[date, option] #get value for according field in df
+                    # value = data.loc[date, option] #get value for according field in df
+                    value = data[option] #get value for according field in df
                     # print(option,": ", value) #uncomment for troubleshooting
 
                     if self.building_blocks[option]["type"] == "Checkbox":
@@ -345,10 +316,7 @@ class EntryFrame(tk.Frame):
 
         for gui, db in zip(gui_options, db_col_names):
             if option_name in gui:
-                print(f"Before: .{option_name}.")
-                print(f"To be : .{gui}.")
                 option_name_translated = option_name.replace(gui, db)
-                print(f"After: .{option_name_translated}.")
                 return option_name_translated
             elif option_name == 'frequent wakeups':
                 return 'freq_wakes'
@@ -361,10 +329,8 @@ class EntryFrame(tk.Frame):
             elif option_name == 'hiking':
                 return 'cardio'
             else:
-                print(f"Before: .{option_name}.")
                 option_name_translated = option_name.replace(" ", "_")
                 option_name_translated = option_name_translated.replace("?", "")
-                print(f"After: .{option_name_translated}.")
                 return option_name_translated
 
         
