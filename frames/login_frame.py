@@ -80,7 +80,7 @@ class LoginWindow(tk.Frame):
         self.submit_button.grid(row=4, column=0, sticky="NSEW", columnspan=2, padx =(5,5), pady =(5,5))
         self.changeOnHover(self.submit_button, 'blue', 'darkslateblue') #change button color on hover
 
-        self.signup_button = tk.Button(login, command=lambda: switch_frame('SignupWindow'), text="Sign Up", borderwidth=0, fg='blue', bg="#DCDAD5")
+        self.signup_button = tk.Button(login, command=lambda: self.switch_frame_advanced('SignupWindow'), text="Sign Up", borderwidth=0, fg='blue', bg="#DCDAD5")
         self.signup_button.grid(row=5, column=0, sticky="NEW", padx =(5,5), pady =(5,0))
         self.changeOnHover(self.signup_button, 'red', 'blue') #change button color on hover 
 
@@ -146,8 +146,10 @@ class LoginWindow(tk.Frame):
             self.parent.tabControl.bind("<<NotebookTabChanged>>", self.parent.on_tab_change)
         elif status == 0:
             self.warning.set("Wrong Password, please try again!") #pop-up label with 'wrong password' here
+            self.reset_entry_fields()
         elif status == -1:
             self.warning.set("User not found!") #pop-up label with 'user not found' here
+            self.reset_entry_fields()
 
     def sign_up(self, container):
         print("Switch to sign up page!")
@@ -161,4 +163,13 @@ class LoginWindow(tk.Frame):
 
     def forgot_pw(self):
         print("Switch to password recovery page!")
+
+    def switch_frame_advanced(self, next_frame):
+        self.warning.set("")  #reset warning message on tab switch
+        self.reset_entry_fields()
+        self.switch_frame(next_frame)
+
+    def reset_entry_fields(self):
+        self.username.set("Username")
+        self.password.set("Password")
 
