@@ -86,7 +86,7 @@ class SignupWindow(tk.Frame):
         self.submit_button.grid(row=4, column=0, sticky="NSEW", columnspan=2, padx =(5,5), pady =(5,5))
         self.changeOnHover(self.submit_button, 'blue', 'darkslateblue') #change button color on hover
 
-        self.login_button = tk.Button(signup, command=lambda: switch_frame('LoginWindow'), text="⟵ Back to Login", borderwidth=0, fg='blue', bg="#DCDAD5")
+        self.login_button = tk.Button(signup, command=lambda: self.switch_frame_advanced('LoginWindow'), text="⟵ Back to Login", borderwidth=0, fg='blue', bg="#DCDAD5")
         self.login_button.grid(row=5, column=0, sticky="NEW", padx =(5,5), pady =(5,0))
         self.changeOnHover(self.login_button, 'red', 'blue') #change button color on hover
 
@@ -151,14 +151,23 @@ class SignupWindow(tk.Frame):
             self.switch_frame('LoginWindow') #To DO: once df data is loaded into database -> load user data into TC-frame
         elif status == 0:
             self.warning.set("Something went wrong. Please try again")
+            self.reset_entry_fields()
         elif status == -1:
             self.warning.set("User already exists!")
+            self.reset_entry_fields()
 
 
     def funfact(self):
         print("Switch to password recovery page!")
 
+    def switch_frame_advanced(self, next_frame):
+        self.warning.set("")  #reset warning message on tab switch
+        self.reset_entry_fields()
+        self.switch_frame(next_frame)
 
+    def reset_entry_fields(self):
+        self.username.set("Username")
+        self.password.set("Password")
 
 # # ----- run app -----
 # if __name__ == '__main__':
