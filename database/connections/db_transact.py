@@ -1,6 +1,5 @@
 #To Do: add password encryption (in database)
 #TO DO: investigate "with connection:" and replace 
-# To Do: add Constraint to allow only Unique day per user_id for each table
 # TO DO: get data-dict values from keys as dicts do not have an order and same order needs to be ensured in extrcated cols and extracted values
 
 # import libraries and modules
@@ -14,17 +13,6 @@ import os
 load_dotenv()
 database_pw = os.environ["DATABASE_PASSWORD"]
 print(database_pw)
-
-s = ""
-s += "SELECT"
-s += " table_schema"
-s += ", table_name"
-s += " FROM information_schema.tables"
-# s += " WHERE"
-# s += " ("
-# s += " table_schema = 'public'"
-# s += " )"
-s += " ORDER BY table_schema, table_name;"
 
 
 def connect_db(user='postgres', host='localhost', port='5432', database='health_tracker', password='postgres'):
