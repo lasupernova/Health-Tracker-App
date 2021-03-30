@@ -127,14 +127,14 @@ class InputWindow(tk.Tk):
         self.tabControl.add(period_tab, text='Period')
         self.tabControl.add(longterm_tab, text='Longterm Changes')
 
-        # pack tabs - to make them visible 
-        # tabControl.pack(expand=0, fill="both", pady=(10,10))
-        self.tabControl.grid(row=0,column=0, rowspan=20, sticky='EWNS')
-        self.tabControl.grid_columnconfigure(0, weight=1)
-        for n in range(15):
-            self.tabControl.grid_rowconfigure(n, weight=1)
-        tk.Button(self,text="Change date NOW",command=self.change_date, borderwidth=0, fg='darkslateblue').grid(row=1,column=1,rowspan=1, sticky='N')
-        # print(tabControl.tab(tabControl.select(), "text")) #uncomment for troubleshooting
+        # # pack tabs - to make them visible 
+        # # tabControl.pack(expand=0, fill="both", pady=(10,10))
+        # self.tabControl.grid(row=0,column=0, rowspan=20, sticky='EWNS')
+        # self.tabControl.grid_columnconfigure(0, weight=1)
+        # for n in range(15):
+        #     self.tabControl.grid_rowconfigure(n, weight=1)
+        # tk.Button(self,text="Change date NOW",command=self.change_date, borderwidth=0, fg='darkslateblue').grid(row=1,column=1,rowspan=1, sticky='N')
+        # # print(tabControl.tab(tabControl.select(), "text")) #uncomment for troubleshooting
 
     # ----- Labels ----- 
         fontLab = tkFont.Font(family='Verdana', size=40, weight='bold', slant='roman')
@@ -166,6 +166,7 @@ class InputWindow(tk.Tk):
 
         # create dictionary to keep track of frames
         self.frames = dict()
+        self.frames_visibility = dict()
 
         # add both frames to dict
         self.frames['LoginWindow'] = self.login_frame
@@ -174,22 +175,12 @@ class InputWindow(tk.Tk):
 
         # start with timer_frame in front
         self.switch_frame('LoginWindow')
-        
-    # ----- iterate over all notebook tabs -----
-        for tab in self.all_tabs:
 
-            # save each tab's EntryFrame object in list for latter use
-            for child in tab.winfo_children():
-                if child.winfo_class() == "Frame":
-                    self.entry_frames.append(child)
-
-            # get current notebook tab's text
-            tab_name = self.tabControl.tab(tab)['text']
-
-            # create tk.Canvas-objects as plotting area
-            cur_tab = PastEntryFrame(tab, tab_name)
-            cur_tab.grid(row=1, column=1, sticky="NSEW", padx=10, pady=10)
-            cur_tab.display_plots(tab_name)
+        self.tabControl.grid(row=0,column=0, rowspan=20, sticky='EWNS')
+        self.tabControl.grid_columnconfigure(0, weight=1)
+        for n in range(15):
+            self.tabControl.grid_rowconfigure(n, weight=1)
+        self.date_button = tk.Button(self,text="Change date NOW",command=self.change_date, borderwidth=0, fg='darkslateblue')
 
     # ----- Date Picker ------
         self.cal = DateEntry(self, width=12, background='darkblue',
@@ -243,10 +234,33 @@ class InputWindow(tk.Tk):
         # self.df.save_frame() #save GUI-entries to .csv file
         self.destroy() #destroy window
 
+    def add_plots(self):
+        # ----- iterate over all notebook tabs -----
+        for tab in self.all_tabs:
+
+            # save each tab's EntryFrame object in list for latter use
+            for child in tab.winfo_children():
+                if child.winfo_class() == "Frame":
+                    self.entry_frames.append(child)
+                    self.date_button.grid(row=1,column=1,rowspan=1, sticky='N')
+
+            # get current notebook tab's text
+            tab_name = self.tabControl.tab(tab)['text']
+
+            # create tk.Canvas-objects as plotting area
+            cur_tab = PastEntryFrame(tab, tab_name)
+            cur_tab.grid(row=1, column=1, sticky="NSEW", padx=10, pady=10)
+            cur_tab.display_plots(tab_name)
+
     # ----- function that brings frame on the back to the front -----
     def switch_frame(self, container):
         # indicate which frame to bring to front
         frame = self.frames[container]
+
+        # create UI if frame to switch to is 'TC'
+        if frame == self.frames['TC']:
+            self.add_plots()
+
         #brings indicated frame to the front
         frame.tkraise() 
         print("WORKS!")
