@@ -68,9 +68,9 @@ def plot_cycle(user, date):
     lastDate = df.index.max()+datetime.timedelta(days=total_days/20) #add days for readability
     plt.text(x=lastDate, y=cycleLengthMean-0.3, s= f'mean cycle length',color='pink',size=big_fonts)
     plt.axhline(y=ovulation,xmin=0.04,xmax=0.98,color='purple',lw=0.5)
-    plt.text(x=lastDate, y=ovulation-0.6, s= f'Ovulation (Cycle Day {ovulation})',color='purple',size=big_fonts)
+    plt.text(x=lastDate, y=ovulation-0.5, s= f'Ovulation (Cycle Day {ovulation})',color='purple',size=big_fonts)
     plt.axhspan(ymin=fertile_start, ymax=fertile_trail, xmin=0.04, xmax=0.98,color='purple',alpha=0.1, zorder=-1)
-    plt.text(x=lastDate, y=fertile_start-1, s= f'cycle day {fertile_start}',color='purple',size=small_fonts,alpha=0.25)
+    plt.text(x=lastDate, y=fertile_start-0.5, s= f'cycle day {fertile_start}',color='purple',size=small_fonts,alpha=0.25)
     plt.axhspan(ymin=fertile_high, ymax=ovulation, xmin=0.04, xmax=0.98,color='purple',alpha=0.2, zorder=-1)
     plt.text(x=lastDate, y=fertile_high-0.3, s= f'cycle day {fertile_high}',color='purple',size=small_fonts,alpha=0.5)
 
