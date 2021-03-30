@@ -154,7 +154,7 @@ def sign_up(user, password):
         con.close()
 
 
-def query_data_by_date_and_user(date, user):
+def query_data_by_date_and_user(date, user, end_date=None):
     '''
     Returns dict of all health data for a specified user and a specified data
     '''
@@ -176,7 +176,10 @@ def query_data_by_date_and_user(date, user):
 
                 col_names = get_columns_from_table(table)
 
-                data = get_table_data(table, date, uid)
+                if end_date==None:
+                    data = get_table_data(table, date, uid)
+                else:
+                    data = get_table_data(table, date, end_date, user)
 
                 for col, value in zip(col_names, data):
                     if col == 'user_id' or col == 'date':  #exclude these two columns, as they do not contain health data
@@ -190,6 +193,41 @@ def query_data_by_date_and_user(date, user):
         print(e)
         return 0
 
+def query_data_between_dates_by_user(user:str, start_date, end_date, table:str=None, columns:list=None):
+
+    try:
+
+        uid = get_uid_by_username(user)
+
+        if table == None and columns==None:
+            pass   #query_data_by_date_and_user(date, user, end_date)
+
+        elif table != None and columns!=None:
+
+            col_str = ', '.join(columns)
+
+            query = f'''SELECT {col_str}
+                        FROM {table}
+                        WHERE
+                        (date(date) between date(%s) and date(%s)) 
+                        AND (user_id=%s);
+                        '''
+
+            con = connect_db(password=database_pw)
+            
+            with con.cursor() as cur:  #closes transaction, but does NOT close the connection itself
+                cur.execute(query, (start_date, end_date, uid)) 
+
+                data = cur.fetchall()  #returns a list of tuples with table_information
+
+            return data
+            
+
+        #### TO DO: add elif + error message if table is given but not columns or vice versa
+
+    except Exception as e:
+        print(e)
+        return 0
 
 def get_table_list():
     '''
@@ -258,7 +296,7 @@ def get_columns_from_table(table_name):
         con.close()
 
 
-def get_table_data(table_name, date, user):
+def get_table_data(table_name, date, user, end_date=None):
     '''
     Retrieve data from specified database table for specified user and date;
     Return information as a tuple with one value per column;
@@ -267,14 +305,25 @@ def get_table_data(table_name, date, user):
     try:
         con = connect_db(password=database_pw)
         
-        query_data = f"""SELECT * 
-                         FROM {table_name}
-                         WHERE date(date) = %s and user_id = %s
-                         ;"""  #date() is a type cast and can also be written as created_date::date or cast(created_data as date)
+        if end_date==None:
+            query_data = f"""SELECT * 
+                            FROM {table_name}
+                            WHERE date(date) = %s and user_id = %s
+                            ;"""  #date() is a type cast and can also be written as created_date::date or cast(created_data as date)
+
+            execution_params = (date, user)
+
+        else:
+            query_data = f"""SELECT * 
+                FROM {table_name}
+                WHERE (date(date) between %s and %s) AND (user_id = %s)
+                ;"""  #date() is a type cast and can also be written as created_date::date or cast(created_data as date)
+
+            execution_params = (date, end_date, user)
         
         with con.cursor() as cur:  
 
-            cur.execute(query_data, (date, user)) 
+            cur.execute(query_data, execution_params) 
 
             data = cur.fetchall()
 
