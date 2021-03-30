@@ -242,7 +242,6 @@ class InputWindow(tk.Tk):
             for child in tab.winfo_children():
                 if child.winfo_class() == "Frame":
                     self.entry_frames.append(child)
-                    self.date_button.grid(row=1,column=1,rowspan=1, sticky='N')
 
             # get current notebook tab's text
             tab_name = self.tabControl.tab(tab)['text']
@@ -260,6 +259,7 @@ class InputWindow(tk.Tk):
         # create UI if frame to switch to is 'TC'
         if frame == self.frames['TC']:
             self.add_plots()
+            self.date_button.grid(row=1,column=1,rowspan=1, sticky='N')
 
         #brings indicated frame to the front
         frame.tkraise() 
