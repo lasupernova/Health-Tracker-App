@@ -1,6 +1,7 @@
 
 
 # TO DO: add daving all info to db to _on_exit()-method
+# TO DO: Figure out why app does not close after closing window !!!! --> checl past_entry_frames
 # NOTE: tk.Frame does NOT have access to ttk.Notebook!
 # --> convert tracker.py into a main.py instead!!!
 # ----- import libraries and  modules ---
@@ -256,7 +257,7 @@ class InputWindow(tk.Tk):
         # indicate which frame to bring to front
         frame = self.frames[container]
 
-        # create UI if frame to switch to is 'TC'
+        # create UI if frame to switch to is 'TC' - important to load TC after login only and to directly load correct user data based on self.user
         if frame == self.frames['TC']:
             self.add_plots()
             self.date_button.grid(row=1,column=1,rowspan=1, sticky='N')

@@ -221,7 +221,6 @@ def query_data_between_dates_by_user(user:str, start_date, end_date, table:str=N
                 data = cur.fetchall()  #returns a list of tuples with table_information
 
             return data
-            
 
         #### TO DO: add elif + error message if table is given but not columns or vice versa
 

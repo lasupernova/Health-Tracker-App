@@ -1,4 +1,5 @@
-# TO DO: Figure out why app does not close after closing window; sleep plot does not show xticklabels correctly
+# TO DO: Figure out why app does not close after closing window !!!!
+# To DO ; sleep plot does not show xticklabels correctly
 
 # ----- import libraries and  modules ---
 import tkinter as tk
@@ -9,6 +10,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 # from .analysis.cycle import plot_cycle
 # from.analysis.sleep import plot_sleep
 # from .analysis.plots.test import make_plot
+from media.plots.cycle import plot_cycle
 
 class PastEntryFrame(tk.Frame):
     def __init__(self, container, tab_name, *args, **kwargs):
@@ -20,6 +22,10 @@ class PastEntryFrame(tk.Frame):
 
         # create and place containing frame
         self["borderwidth"] = 1
+        self.container = container
+        self.user = self.container.master.master.user   # get value for 'user'-parameter of main frame (=container's grandparent)
+        self.date = self.container.master.master.current_date   # get value for 'current_date'-parameter of main frame (=container's grandparent)
+
         # print(self.tab_name)
         # self.grid(row=1, column=1, sticky="NSEW", padx=10, pady=10)
 
@@ -29,21 +35,15 @@ class PastEntryFrame(tk.Frame):
     def display_plots(self, tab_name):
 
         if tab_name == "Period":
-            # create canvas to place plots in
-            self.C1 = tk.Canvas(self, borderwidth=1)
-            self.C1.pack()
-            # self.C2 = tk.Canvas(self, borderwidth=1)
-            # self.C2.pack()
 
-            # import image
-            self.img = ImageTk.PhotoImage(Image.open(f"media{os.sep}images{os.sep}test.jpg").resize((200,200)))
-            # add image to C1
-            self.C1.create_image(60,60, anchor="nw", image=self.img)
+            # get plot 
+            self.plot = plot_cycle(self.user, self.date)
 
-            # # display custom plot
-            # canvas = FigureCanvasTkAgg(plot_cycle(), master=self)
-            # canvas.draw()
-            # canvas.get_tk_widget().pack(anchor="center")
+            # create canvas, add plot, pack + draw
+            canvas = FigureCanvasTkAgg(self.plot, master=self)
+            canvas.get_tk_widget().pack()
+            canvas.draw()
+
 
         elif tab_name == "Sleep":
             # create canvas to place plots in
