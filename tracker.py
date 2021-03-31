@@ -162,8 +162,8 @@ class InputWindow(tk.Tk):
         EntryFrame(longterm_tab, longterm_info, self.tabControl.tab(longterm_tab)['text']).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
 
         # current tab
-        tabName = self.tabControl.select() #get name of current tab
-        self.active_tab = self.tabControl.nametowidget(tabName) #the current tab is a frame that contains 3 children: a label, an EntryFrame = a Past_Entry_Frame
+        tabName = self.tabControl.select()  #get name of current tab
+        self.active_tab = self.tabControl.nametowidget(tabName)  #get widget-object from widget name (string)
 
         # create dictionary to keep track of frames
         self.frames = dict()
@@ -216,19 +216,29 @@ class InputWindow(tk.Tk):
 
 
     def on_tab_change(self, event):
-        import tkinter.messagebox as tkmb
-        info_message = f"Event: {event}\nWidget:{event.widget}"
-        print(self.tabControl.tab(self.tabControl.select(), "text"))
 
-        #get EntryFrame of interest from current tab and insert tab data in database
-        active_entryframe = self.active_tab.winfo_children()[1] 
-        active_entryframe.insert_database(self.user, self.current_date)
+        #get EntryFrame of interest from current tab (2nd child object in current tab)
+        '''
+        The current tab (saved in self.active_tab) is a custom object parameter is used to save info on current active tab outside of native tkinter functionality ).
+        The active tab is a ttk.Frame-object, that contains 3 children: a label, an EntryFrame and a Past_Entry_Frame.
+        --> below: get the 2nd child-object from active tab - this is an EntryFrame-type object
+        '''
+        active_entryframe = self.active_tab.winfo_children()[1]  
+
+        # check if any information was entered in current EntryFrame (-> changes for each information field saved as TRUE-values in value_entry_record-property) 
+        if any(v==True for v in active_entryframe.value_entry_record.values()):  #check for any True-values in active_entryframe.value_entry_record-dict
+            # insert EntryFrame data in database
+            active_entryframe.insert_database(self.user, self.current_date) 
+            columns_with_info = [v for k, v in active_entryframe.value_entry_record.items() if k==True]
+            message = f"""Database table {active_entryframe.tab} filled with values for the following columns:\n
+                          {", ".join(columns_with_info)}"""
+            self.toplevel_message('Success!', message, 1500)
 
         # change value of self.active_tab, as the tab was changed - done AFTER calling active_entryframe.insert_database(), otherwise the un-filled newly opened tab info is inserted to database
         tabName = self.tabControl.select() 
         self.active_tab = self.tabControl.nametowidget(tabName) 
+        print(self.tabControl.tab(self.tabControl.select(), "text"))
 
-        tkmb.showinfo("Tab Change!!!", info_message)
 
     # ----- funtion to run upon closing the window -----
     def on_exit(self):
@@ -266,6 +276,12 @@ class InputWindow(tk.Tk):
         frame.tkraise() 
         print("WORKS!")
         print(f'User: {self.user}')
+
+    def toplevel_message(self, title, message, duration):
+        top = tk.Toplevel()
+        top.title(title)
+        tk.Message(top, text=message, padx=20, pady=20).pack()
+        top.after(duration, top.destroy)
 
 # ----- run app -----
 if __name__ == '__main__':

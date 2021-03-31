@@ -70,7 +70,7 @@ class EntryFrame(tk.Frame):
             self.building_blocks[option_name]["frame"] = tk.Frame(self)
             self.building_blocks[option_name]["type"] = option[option_name]["type"]
             self.building_blocks[option_name]["selection"] = tk.StringVar(value=0)   #entered value (or default values) is saved here
-            self.value_entry_record[option_name] = False   
+            self.value_entry_record[option_name] = False
 
             # create object based on the given type information
             if option[option_name]["type"] == "Checkbox":
@@ -86,9 +86,10 @@ class EntryFrame(tk.Frame):
                 self.building_blocks[option_name]["frame"].pack(anchor="w")
                 ttk.Label(self.building_blocks[option_name]["frame"] ,text=label_name, width=17).grid(row=0, column=0, sticky="W", padx =(5,0)) #label created separately fron checkbutton (instead of using 'text'-parameter) in order to have label on the left-hand side
                 tk.OptionMenu(self.building_blocks[option_name]["frame"],
-                                # command=lambda x=(option_name, self.building_blocks): self.check_options(*x), #lambda command refering to method in order to be able to pass current option name as variable
                                 self.building_blocks[option_name]["selection"],
-                                *option[option_name]["selection_menu"]).grid(row=0, column=1, sticky="W")
+                                *option[option_name]["selection_menu"],
+                                command=lambda option=option_name, topic=self.building_blocks: self.check_options(option, topic), #lambda command refering to method in order to be able to pass current option name as variable
+                                ).grid(row=0, column=1, sticky="W")
 
             elif option[option_name]["type"] == "Spinbox":
                 self.building_blocks[option_name]["increment"] = option[option_name]["increment"]
@@ -146,7 +147,7 @@ class EntryFrame(tk.Frame):
             # print checkbutton variable value (=value of tk.Stringvar-object saved in topic-dict for current option)
             value = topic[option]["selection"].get()
 
-        self.value_entry_record[option_name] = True  
+        self.value_entry_record[option] = True  
             
         # self.tracker.update_frame(self.tab, option, value, self.current_date) #update for when using .csv-file as storage
         print(value) #uncomment for troubleshooting
