@@ -103,8 +103,8 @@ class EntryFrame(tk.Frame):
                                 increment=option[option_name]["increment"],
                                 justify="center",
                                 width=5)
-                self.building_blocks[option_name]["entry_object"].grid(row=0, column=1, sticky="W")
-                self.building_blocks[option_name]["entry_object"].bind("<FocusOut>", lambda event, option=option_name, topic=self.building_blocks: self.check_options(option, topic))
+                # self.building_blocks[option_name]["entry_object"].grid(row=0, column=1, sticky="W")
+                # self.building_blocks[option_name]["entry_object"].bind("<FocusOut>", lambda event, option=option_name, topic=self.building_blocks: self.check_options(option, topic))
 
             elif option[option_name]["type"] == "Entryfield":  
                 self.building_blocks[option_name]["selection"].set(f"Type info + ENTER")      
@@ -117,7 +117,8 @@ class EntryFrame(tk.Frame):
                 self.building_blocks[option_name]["entry_object"].grid(row=0, column=1, sticky="W")
                 self.building_blocks[option_name]["entries"] = []
                 self.building_blocks[option_name]["entry_object"].bind("<Return>", lambda event, x=(self.building_blocks, option_name): self.add_entry_to_entrylist(entry_info_dict, option_name)(*x))
-            
+                # self.building_blocks[option_name]["entry_object"].bind("<FocusIn>", lambda event, field=self.building_blocks[option_name]["entry_object"]: self.focus_in(field))
+
             else:
                 pass
 
@@ -348,7 +349,6 @@ class EntryFrame(tk.Frame):
                 option_name_translated = option_name.replace(" ", "_")
                 option_name_translated = option_name_translated.replace("?", "")
                 return option_name_translated
-
         
-    def tester(self, *args, option=None, topic=None):
-        print(args)
+    def focus_in(event, field):
+        field.delete(0,"end")
