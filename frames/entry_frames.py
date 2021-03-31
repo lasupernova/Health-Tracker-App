@@ -206,7 +206,7 @@ class EntryFrame(tk.Frame):
         container = entry_info_dict[option_name]["frame"]
         entry_field = entry_info_dict[option_name]["entry_object"]
 
-        if entry != "Type info + ENTER":
+        if entry != "Type info + ENTER" and len(entry) > 1:
             # append new entry to entry list
             field_list.append(entry)
 
@@ -320,6 +320,7 @@ class EntryFrame(tk.Frame):
             if self.value_entry_record == False:
                 del data[key]
 
+        print(f"Inserted into database: {data}")
         # append user and date to data
         data['date'] = date  #do not use today's date, in case Date Picker was used to change current health tracker date
 
