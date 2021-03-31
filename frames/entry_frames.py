@@ -77,7 +77,7 @@ class EntryFrame(tk.Frame):
                 self.building_blocks[option_name]["frame"].pack(anchor="w")
                 ttk.Label(self.building_blocks[option_name]["frame"] ,text=label_name, width=17).grid(row=0, column=0, sticky="W", padx =(5,0)) #label created separately fron checkbutton (instead of using 'text'-parameter) in order to have label on the left-hand side
                 ttk.Checkbutton(self.building_blocks[option_name]["frame"],
-                                command=lambda option=option_name, topic=self.building_blocks: self.check_options(option, topic), #lambda command refering to method in order to be able to pass current option name as variable
+                                # command=lambda option=option_name, topic=self.building_blocks: self.check_options(option, topic), #lambda command refering to method in order to be able to pass current option name as variable
                                 variable=self.building_blocks[option_name]["selection"]).grid(row=0, column=1, sticky="W")
 
             elif option[option_name]["type"] == "MultipleChoice":
@@ -88,7 +88,7 @@ class EntryFrame(tk.Frame):
                 tk.OptionMenu(self.building_blocks[option_name]["frame"],
                                 self.building_blocks[option_name]["selection"],
                                 *option[option_name]["selection_menu"],
-                                command=lambda option=option_name, topic=self.building_blocks: self.check_options(option, topic), #lambda command refering to method in order to be able to pass current option name as variable
+                                # command=lambda option=option_name, topic=self.building_blocks: self.check_options(option, topic), #lambda command refering to method in order to be able to pass current option name as variable
                                 ).grid(row=0, column=1, sticky="W")
 
             elif option[option_name]["type"] == "Spinbox":
@@ -96,7 +96,7 @@ class EntryFrame(tk.Frame):
                 self.building_blocks[option_name]["frame"].pack(anchor="w")
                 ttk.Label(self.building_blocks[option_name]["frame"] ,text=label_name, width=17).grid(row=0, column=0, sticky="W", padx =(5,0)) #label created separately fron checkbutton (instead of using 'text'-parameter) in order to have label on the left-hand side
                 self.building_blocks[option_name]["entry_object"] = tk.Spinbox(self.building_blocks[option_name]["frame"],
-                                command=lambda option=option_name, topic=self.building_blocks: self.check_options(option, topic), #lambda command refering to method in order to be able to pass current option name as variable
+                                # command=lambda option=option_name, topic=self.building_blocks: self.check_options(option, topic), #lambda command refering to method in order to be able to pass current option name as variable
                                 textvariable=self.building_blocks[option_name]["selection"],
                                 from_=option[option_name]["from"],
                                 to=option[option_name]["to"],
@@ -117,9 +117,13 @@ class EntryFrame(tk.Frame):
                 self.building_blocks[option_name]["entry_object"].grid(row=0, column=1, sticky="W")
                 self.building_blocks[option_name]["entries"] = []
                 self.building_blocks[option_name]["entry_object"].bind("<Return>", lambda event, x=(self.building_blocks, option_name): self.add_entry_to_entrylist(entry_info_dict, option_name)(*x))
-
+            
             else:
                 pass
+
+            # start tracing option StringVar-objects AFTER setting up entry-menu, as these objects are changed to a default value for many entry-options -- > this would falsely run check_option()
+            self.building_blocks[option_name]["selection"].trace("w", lambda clback1, clback2, clback3, option=option_name, topic=self.building_blocks: self.check_options(clback1, clback2, clback3, option=option, topic=topic))  #lambda option=option_name, topic=self.building_blocks: self.check_options(option, topic) #trace StringVar-object and change according self.value_entry_record when a write change is recorded
+
 
     # ----- Buttons -----
         test = ttk.Button(
@@ -138,7 +142,7 @@ class EntryFrame(tk.Frame):
 
 
     # ----- method printing current checkbutton state when clicked and passing them on to dataframe to be saved -----
-    def check_options(self, option, topic=None, value=None):
+    def check_options(self, *args, option=None, topic=None, value=None):
 
         if value:
             value = value
@@ -148,6 +152,7 @@ class EntryFrame(tk.Frame):
             value = topic[option]["selection"].get()
 
         self.value_entry_record[option] = True  
+        print(self.value_entry_record)
             
         # self.tracker.update_frame(self.tab, option, value, self.current_date) #update for when using .csv-file as storage
         print(value) #uncomment for troubleshooting
@@ -175,10 +180,10 @@ class EntryFrame(tk.Frame):
             # check option entry type
             if option[option_name]["type"] == "Entryfield":
                 value = self.building_blocks[option_name]["entries"]
-                print(option_name,": ", value) #Entryfields take multiple entries saved in a list
+                # print(option_name,": ", value) #Entryfields take multiple entries saved in a list
             else:
                 value = self.building_blocks[option_name]["selection"].get()
-                print(option_name,": ", value) #any otherfields take one entry saved in a tk.StringVar-object
+                # print(option_name,": ", value) #any otherfields take one entry saved in a tk.StringVar-object
 
             # account for empty lists
             if len(value) == 0:
@@ -307,6 +312,11 @@ class EntryFrame(tk.Frame):
         # get selection
         data = self.get_all_selected()
 
+        # keep only values that have been entered in data-dict (--> exclude default values)
+        for key, value in data.items():
+            if self.value_entry_record == False:
+                del data[key]
+
         # append user and date to data
         data['date'] = date  #do not use today's date, in case Date Picker was used to change current health tracker date
 
@@ -340,3 +350,5 @@ class EntryFrame(tk.Frame):
                 return option_name_translated
 
         
+    def tester(self, *args, option=None, topic=None):
+        print(args)
