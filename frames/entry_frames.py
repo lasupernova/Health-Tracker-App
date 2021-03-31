@@ -15,6 +15,7 @@ class EntryFrame(tk.Frame):
         # ----- Parameters -----
         self.info_list = info_list
         self.building_blocks = {}
+        self.value_entry_record = {} #records info about if a new value was entered --> if False - any value is the default value, that does not need to be saved in database
         self.all_options = [[*option][0] for option in info_list]
         # self.tracker = tracker
         self.current_date = datetime.datetime.now().date()
@@ -68,7 +69,8 @@ class EntryFrame(tk.Frame):
             self.building_blocks[option_name] = {}
             self.building_blocks[option_name]["frame"] = tk.Frame(self)
             self.building_blocks[option_name]["type"] = option[option_name]["type"]
-            self.building_blocks[option_name]["selection"] = tk.StringVar(value=0)
+            self.building_blocks[option_name]["selection"] = tk.StringVar(value=0)   #entered value (or default values) is saved here
+            self.value_entry_record[option_name] = False   
 
             # create object based on the given type information
             if option[option_name]["type"] == "Checkbox":
@@ -143,6 +145,8 @@ class EntryFrame(tk.Frame):
         else:
             # print checkbutton variable value (=value of tk.Stringvar-object saved in topic-dict for current option)
             value = topic[option]["selection"].get()
+
+        self.value_entry_record[option_name] = True  
             
         # self.tracker.update_frame(self.tab, option, value, self.current_date) #update for when using .csv-file as storage
         print(value) #uncomment for troubleshooting
