@@ -85,14 +85,15 @@ class EntryFrame(tk.Frame):
 
             elif option[option_name]["type"] == "MultipleChoice":
                 # print("optionmenu", option_name) #uncomment for troubleshooting
-                self.building_blocks[option_name]["selection"].set(option[option_name]["selection_menu"][0])
-                self.building_blocks[option_name]["frame"].pack(anchor="w")
-                ttk.Label(self.building_blocks[option_name]["frame"] ,text=label_name, width=17).grid(row=0, column=0, sticky="W", padx =(5,0)) #label created separately fron checkbutton (instead of using 'text'-parameter) in order to have label on the left-hand side
-                tk.OptionMenu(self.building_blocks[option_name]["frame"],
-                                self.building_blocks[option_name]["selection"],
-                                *option[option_name]["selection_menu"],
-                                # command=lambda option=option_name, topic=self.building_blocks: self.check_options(option, topic), #lambda command refering to method in order to be able to pass current option name as variable
-                                ).grid(row=0, column=1, sticky="W")
+                self.create_multiChoice(self.building_blocks[option_name], option[option_name],label_name)
+                # self.building_blocks[option_name]["selection"].set(option[option_name]["selection_menu"][0])
+                # self.building_blocks[option_name]["frame"].pack(anchor="w")
+                # ttk.Label(self.building_blocks[option_name]["frame"] ,text=label_name, width=17).grid(row=0, column=0, sticky="W", padx =(5,0)) #label created separately fron checkbutton (instead of using 'text'-parameter) in order to have label on the left-hand side
+                # tk.OptionMenu(self.building_blocks[option_name]["frame"],
+                #                 self.building_blocks[option_name]["selection"],
+                #                 *option[option_name]["selection_menu"],
+                #                 # command=lambda option=option_name, topic=self.building_blocks: self.check_options(option, topic), #lambda command refering to method in order to be able to pass current option name as variable
+                #                 ).grid(row=0, column=1, sticky="W")
 
             elif option[option_name]["type"] == "Spinbox":
                 self.building_blocks[option_name]["increment"] = option[option_name]["increment"]
@@ -158,6 +159,26 @@ class EntryFrame(tk.Frame):
         print(self.value_entry_record)
             
         print(value) #uncomment for troubleshooting
+
+    # ---- function toggling specification field, if available ------
+    def toggle_checkbox(self, option_info):
+        if "opens" in option_info.keys():
+            # get label_name for option to toggle
+            to_toggle_label = option_info["opens"]
+            # get widget based on name
+            to_toggle = self.building_blocks[to_toggle_label]["frame"]  #contains 2 children: the label and the entry-field-object (e.g. an OptionMenu-onject)
+            # get children of widget to toggle
+            label_to_toggle = to_toggle.winfo_children()[0]
+            field_to_toggle = to_toggle.winfo_children()[1]
+
+            # toggle
+            if label_to_toggle.grid_info():
+                label_to_toggle.grid_remove()
+                field_to_toggle.grid_remove()
+            else:
+                label_to_toggle.grid(row=0, column=0, sticky="W", padx =(5,0))
+                field_to_toggle.grid(row=0, column=1, sticky="W", padx =(5,0))
+
 
     # ----- method printing all current checkbutton states -----
     def get_all_selected(self):
@@ -361,5 +382,23 @@ class EntryFrame(tk.Frame):
         frame_info["frame"].pack(anchor="w")
         ttk.Label(frame_info["frame"] ,text=label, width=17).grid(row=0, column=0, sticky="W", padx =(5,0)) #label created separately fron checkbutton (instead of using 'text'-parameter) in order to have label on the left-hand side
         ttk.Checkbutton(frame_info["frame"],
-                        # command=lambda option=option_name, topic=self.building_blocks: self.check_options(option, topic), #lambda command refering to method in order to be able to pass current option name as variable
+                        command=lambda option_info=option_info: self.toggle_checkbox(option_info), #lambda command refering to method in order to be able to pass current option name as variable
                         variable=frame_info["selection"]).grid(row=0, column=1, sticky="W")
+
+    def create_multiChoice(self, frame_info, option_info, label):
+        frame_info["selection"].set(option_info["selection_menu"][0])
+        frame_info["frame"].pack(anchor="w")
+        if "on_demand" in option_info.keys():
+            ttk.Label(frame_info["frame"] ,text=label, width=17) #label created separately fron checkbutton (instead of using 'text'-parameter) in order to have label on the left-hand side
+            tk.OptionMenu(frame_info["frame"],
+                            frame_info["selection"],
+                            *option_info["selection_menu"],
+                            # command=lambda option=option_name, topic=self.building_blocks: self.check_options(option, topic), #lambda command refering to method in order to be able to pass current option name as variable
+                            )
+        else:
+            ttk.Label(frame_info["frame"] ,text=label, width=17).grid(row=0, column=0, sticky="W", padx =(5,0))
+            tk.OptionMenu(frame_info["frame"],
+                            frame_info["selection"],
+                            *option_info["selection_menu"],
+                            # command=lambda option=option_name, topic=self.building_blocks: self.check_options(option, topic), #lambda command refering to method in order to be able to pass current option name as variable
+                            ).grid(row=0, column=1, sticky="W")
