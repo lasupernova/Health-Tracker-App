@@ -1,3 +1,5 @@
+# TO DO: use <FocusIn> for tk.EntryFrame objects without changing self.value_entry_record status (or with function that changes it back)
+
 # ----- import libraries and  modules ---
 import tkinter as tk
 from tkinter import ttk
@@ -103,9 +105,7 @@ class EntryFrame(tk.Frame):
                                 increment=option[option_name]["increment"],
                                 justify="center",
                                 width=5)
-                # self.building_blocks[option_name]["entry_object"].grid(row=0, column=1, sticky="W")
-                # self.building_blocks[option_name]["entry_object"].bind("<FocusOut>", lambda event, option=option_name, topic=self.building_blocks: self.check_options(option, topic))
-
+ 
             elif option[option_name]["type"] == "Entryfield":  
                 self.building_blocks[option_name]["selection"].set(f"Type info + ENTER")      
                 self.building_blocks[option_name]["frame"].pack(anchor="w")
@@ -116,7 +116,8 @@ class EntryFrame(tk.Frame):
                                 )
                 self.building_blocks[option_name]["entry_object"].grid(row=0, column=1, sticky="W")
                 self.building_blocks[option_name]["entries"] = []
-                self.building_blocks[option_name]["entry_object"].bind("<Return>", lambda event, x=(self.building_blocks, option_name): self.add_entry_to_entrylist(entry_info_dict, option_name)(*x))
+                self.building_blocks[option_name]["entry_object"].bind("<Return>", lambda event, x=(self.building_blocks, option_name): self.add_entry_to_entrylist(*x))
+                self.building_blocks[option_name]["entry_object"].bind("<FocusOut>", lambda event, x=(self.building_blocks, option_name): self.add_entry_to_entrylist(*x))
                 # self.building_blocks[option_name]["entry_object"].bind("<FocusIn>", lambda event, field=self.building_blocks[option_name]["entry_object"]: self.focus_in(field))
 
             else:
@@ -205,21 +206,22 @@ class EntryFrame(tk.Frame):
         container = entry_info_dict[option_name]["frame"]
         entry_field = entry_info_dict[option_name]["entry_object"]
 
-        # append new entry to entry list
-        field_list.append(entry)
+        if entry != "Type info + ENTER":
+            # append new entry to entry list
+            field_list.append(entry)
 
-        # print entries (including new entry) to screen (next to entry field)
-        self.print_entries(field_list, container)
+            # print entries (including new entry) to screen (next to entry field)
+            self.print_entries(field_list, container)
 
-        # # for troubleshooting
-        # print(field_list)
+            # # for troubleshooting
+            # print(field_list)
 
-        # save changes to dataframe
-        # print(option_name) #uncomment for troubleshooting
-        self.check_options(option=option_name, value=field_list)
+            # save changes to dataframe
+            # print(option_name) #uncomment for troubleshooting
+            self.check_options(option=option_name, value=field_list)
 
-        # clear text typed in entry-fieldc
-        entry_info_dict[option_name]["entry_object"].delete(0, "end")
+            # clear text typed in entry-fieldc
+            entry_info_dict[option_name]["entry_object"].delete(0, "end")
 
     # ----- method displaying tk.Entry()-field entries to new tk.Label()-field next to entry field -----
     def print_entries(self, entry_list, container):
