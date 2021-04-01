@@ -112,17 +112,18 @@ class EntryFrame(tk.Frame):
                 #                 width=5)
  
             elif option[option_name]["type"] == "Entryfield":  
-                self.building_blocks[option_name]["selection"].set(f"Type info + ENTER")      
-                self.building_blocks[option_name]["frame"].pack(anchor="w")
-                ttk.Label(self.building_blocks[option_name]["frame"] ,text=label_name, width=17).grid(row=0, column=0, sticky="W", padx =(5,0)) #label created separately fron checkbutton (instead of using 'text'-parameter) in order to have label on the left-hand side
-                self.building_blocks[option_name]["entry_object"] = tk.Entry(self.building_blocks[option_name]["frame"],
-                                # command=lambda x=(option_name, self.building_blocks): self.check_options(*x), #lambda command refering to method in order to be able to pass current option name as variable
-                                textvariable=self.building_blocks[option_name]["selection"],
-                                )
-                self.building_blocks[option_name]["entry_object"].grid(row=0, column=1, sticky="W")
-                self.building_blocks[option_name]["entries"] = []
-                self.building_blocks[option_name]["entry_object"].bind("<Return>", lambda event, x=(self.building_blocks, option_name): self.add_entry_to_entrylist(*x))
-                self.building_blocks[option_name]["entry_object"].bind("<FocusOut>", lambda event, x=(self.building_blocks, option_name): self.add_entry_to_entrylist(*x))
+                self.create_entryField(self.building_blocks[option_name], option_name, label_name)
+                # self.building_blocks[option_name]["selection"].set(f"Type info + ENTER")      
+                # self.building_blocks[option_name]["frame"].pack(anchor="w")
+                # ttk.Label(self.building_blocks[option_name]["frame"] ,text=label_name, width=17).grid(row=0, column=0, sticky="W", padx =(5,0)) #label created separately fron checkbutton (instead of using 'text'-parameter) in order to have label on the left-hand side
+                # self.building_blocks[option_name]["entry_object"] = tk.Entry(self.building_blocks[option_name]["frame"],
+                #                 # command=lambda x=(option_name, self.building_blocks): self.check_options(*x), #lambda command refering to method in order to be able to pass current option name as variable
+                #                 textvariable=self.building_blocks[option_name]["selection"],
+                #                 )
+                # self.building_blocks[option_name]["entry_object"].grid(row=0, column=1, sticky="W")
+                # self.building_blocks[option_name]["entries"] = []
+                # self.building_blocks[option_name]["entry_object"].bind("<Return>", lambda event, x=(self.building_blocks, option_name): self.add_entry_to_entrylist(*x))
+                # self.building_blocks[option_name]["entry_object"].bind("<FocusOut>", lambda event, x=(self.building_blocks, option_name): self.add_entry_to_entrylist(*x))
                 # self.building_blocks[option_name]["entry_object"].bind("<FocusIn>", lambda event, field=self.building_blocks[option_name]["entry_object"]: self.focus_in(field))
 
             else:
@@ -429,3 +430,16 @@ class EntryFrame(tk.Frame):
                             increment=option_info["increment"],
                             justify="center",
                             width=5).grid(row=0, column=1, sticky="W", padx =(5,0))
+
+    def create_entryField(self, frame_info, option_name, label):
+        frame_info["selection"].set(f"Type info + ENTER")      
+        frame_info["frame"].pack(anchor="w")
+        ttk.Label(frame_info["frame"] ,text=label, width=17).grid(row=0, column=0, sticky="W", padx =(5,0)) #label created separately fron checkbutton (instead of using 'text'-parameter) in order to have label on the left-hand side
+        frame_info["entry_object"] = tk.Entry(frame_info["frame"],
+                        # command=lambda x=(option_name, self.building_blocks): self.check_options(*x), #lambda command refering to method in order to be able to pass current option name as variable
+                        textvariable=frame_info["selection"],
+                        )
+        frame_info["entry_object"].grid(row=0, column=1, sticky="W")
+        frame_info["entries"] = []
+        frame_info["entry_object"].bind("<Return>", lambda event, x=(self.building_blocks, option_name): self.add_entry_to_entrylist(*x))
+        frame_info["entry_object"].bind("<FocusOut>", lambda event, x=(self.building_blocks, option_name): self.add_entry_to_entrylist(*x))
