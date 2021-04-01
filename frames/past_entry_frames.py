@@ -35,14 +35,18 @@ class PastEntryFrame(tk.Frame):
     def display_plots(self, tab_name):
 
         if tab_name == "Period":
-
-            # get plot 
+            pass
+        # https://stackoverflow.com/questions/50846947/interference-between-the-matplotlib-graphs-in-tkinter-gui
+        # https://stackoverflow.com/questions/55542813/tkinter-plt-figure-does-not-plot-but-figure-does
+        # https://stackoverflow.com/questions/17535766/tkinter-matplotlib-backend-conflict-causes-infinite-mainloop
+        # http://staff.ltam.lu/feljc/software/python/matplotlib_tkinter.pdf
+            # # get plot 
             self.plot = plot_cycle(self.user, self.date)
 
             # create canvas, add plot, pack + draw
-            canvas = FigureCanvasTkAgg(self.plot, master=self)
-            canvas.get_tk_widget().pack()
-            canvas.draw()
+            self.canvas = FigureCanvasTkAgg(self.plot, master=self)
+            self.canvas.get_tk_widget().pack()
+            self.canvas.draw()
 
 
         elif tab_name == "Sleep":
