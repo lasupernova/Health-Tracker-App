@@ -78,6 +78,7 @@ class LoginWindow(tk.Frame):
         #Buttons
         self.submit_button = tk.Button(login, command=self.check_credentials, text="Login",borderwidth=1, fg='darkslateblue')
         self.submit_button.grid(row=4, column=0, sticky="NSEW", columnspan=2, padx =(5,5), pady =(5,5))
+        self.master.bind("<Return>", self.check_credentials)
         self.changeOnHover(self.submit_button, 'blue', 'darkslateblue') #change button color on hover
 
         self.signup_button = tk.Button(login, command=lambda: self.switch_frame_advanced('SignupWindow'), text="Sign Up", borderwidth=0, fg='blue', bg="#DCDAD5")
@@ -96,6 +97,9 @@ class LoginWindow(tk.Frame):
     def focus_in(event, field):
         field.delete(0,"end")
         # usercheck=True
+
+    def test(self, event):
+        print("TEST!!!")
     
     def focus_out(self, event, field, field_name):
         '''
@@ -135,7 +139,7 @@ class LoginWindow(tk.Frame):
                     func=lambda e: button.config(fg=colorOnLeave)
                     )  
 
-    def check_credentials(self):
+    def check_credentials(self, event=None):
         user = self.username.get()
         pw= self.password.get()
         status = db_transact.login_user(user, pw)
