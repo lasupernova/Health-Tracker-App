@@ -215,7 +215,7 @@ class InputWindow(tk.Tk):
             self.cal.grid(row=3,column=1,rowspan=1, sticky='N')
 
 
-    def on_tab_change(self, event):
+    def on_tab_change(self, *event):
 
         #get EntryFrame of interest from current tab (2nd child object in current tab)
         '''
@@ -227,11 +227,11 @@ class InputWindow(tk.Tk):
 
         # check if any information was entered in current EntryFrame (-> changes for each information field saved as TRUE-values in value_entry_record-property) 
         if any(v==True for v in active_entryframe.value_entry_record.values()):  #check for any True-values in active_entryframe.value_entry_record-dict
-            # insert EntryFrame data in database
+            # insert EntryFrame data in database and display success message
             active_entryframe.insert_database(self.user, self.current_date) 
-            columns_with_info = [v for k, v in active_entryframe.value_entry_record.items() if k==True]
-            message = f"""Database table {active_entryframe.tab} filled with values for the following columns:\n
-                          {", ".join(columns_with_info)}"""
+            message = f"""Database table {active_entryframe.tab} filled with values"""
+            # change all values in entry-dict back to False, in order to avoid unneccesary database connections when re-opening this tab
+            active_entryframe.value_entry_record = {k: False for k in active_entryframe.value_entry_record}
             self.toplevel_message('Success!', message, 1500)
 
         # change value of self.active_tab, as the tab was changed - done AFTER calling active_entryframe.insert_database(), otherwise the un-filled newly opened tab info is inserted to database
