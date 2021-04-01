@@ -1,4 +1,6 @@
 # TO DO: use <FocusIn> for tk.EntryFrame objects without changing self.value_entry_record status (or with function that changes it back)
+# TO DO: deal with redundant psce after toggle (.gir_remove()) OR add specification to column behind checkbox instead
+# TO DO: got o entry_information and modify all fields to toggle (using "opens" and "on_demand" - keys) if applicable
 
 # ----- import libraries and  modules ---
 import tkinter as tk
@@ -76,7 +78,7 @@ class EntryFrame(tk.Frame):
 
             # create object based on the given type information
             if option[option_name]["type"] == "Checkbox":
-                self.create_checkbox(self.building_blocks[option_name], option[option_name],label_name)
+                self.create_checkBox(self.building_blocks[option_name], option[option_name],label_name)
                 # self.building_blocks[option_name]["frame"].pack(anchor="w")
                 # ttk.Label(self.building_blocks[option_name]["frame"] ,text=label_name, width=17).grid(row=0, column=0, sticky="W", padx =(5,0)) #label created separately fron checkbutton (instead of using 'text'-parameter) in order to have label on the left-hand side
                 # ttk.Checkbutton(self.building_blocks[option_name]["frame"],
@@ -96,17 +98,18 @@ class EntryFrame(tk.Frame):
                 #                 ).grid(row=0, column=1, sticky="W")
 
             elif option[option_name]["type"] == "Spinbox":
-                self.building_blocks[option_name]["increment"] = option[option_name]["increment"]
-                self.building_blocks[option_name]["frame"].pack(anchor="w")
-                ttk.Label(self.building_blocks[option_name]["frame"] ,text=label_name, width=17).grid(row=0, column=0, sticky="W", padx =(5,0)) #label created separately fron checkbutton (instead of using 'text'-parameter) in order to have label on the left-hand side
-                self.building_blocks[option_name]["entry_object"] = tk.Spinbox(self.building_blocks[option_name]["frame"],
-                                # command=lambda option=option_name, topic=self.building_blocks: self.check_options(option, topic), #lambda command refering to method in order to be able to pass current option name as variable
-                                textvariable=self.building_blocks[option_name]["selection"],
-                                from_=option[option_name]["from"],
-                                to=option[option_name]["to"],
-                                increment=option[option_name]["increment"],
-                                justify="center",
-                                width=5)
+                self.create_spinBox(self.building_blocks[option_name], option[option_name],label_name)
+                # self.building_blocks[option_name]["increment"] = option[option_name]["increment"]
+                # self.building_blocks[option_name]["frame"].pack(anchor="w")
+                # ttk.Label(self.building_blocks[option_name]["frame"] ,text=label_name, width=17).grid(row=0, column=0, sticky="W", padx =(5,0)) #label created separately fron checkbutton (instead of using 'text'-parameter) in order to have label on the left-hand side
+                # self.building_blocks[option_name]["entry_object"] = tk.Spinbox(self.building_blocks[option_name]["frame"],
+                #                 # command=lambda option=option_name, topic=self.building_blocks: self.check_options(option, topic), #lambda command refering to method in order to be able to pass current option name as variable
+                #                 textvariable=self.building_blocks[option_name]["selection"],
+                #                 from_=option[option_name]["from"],
+                #                 to=option[option_name]["to"],
+                #                 increment=option[option_name]["increment"],
+                #                 justify="center",
+                #                 width=5)
  
             elif option[option_name]["type"] == "Entryfield":  
                 self.building_blocks[option_name]["selection"].set(f"Type info + ENTER")      
@@ -378,7 +381,7 @@ class EntryFrame(tk.Frame):
         field.delete(0,"end")
 
     # ----- function creation checkbox-frame with functionality -----
-    def create_checkbox(self, frame_info, option_info, label):
+    def create_checkBox(self, frame_info, option_info, label):
         frame_info["frame"].pack(anchor="w")
         ttk.Label(frame_info["frame"] ,text=label, width=17).grid(row=0, column=0, sticky="W", padx =(5,0)) #label created separately fron checkbutton (instead of using 'text'-parameter) in order to have label on the left-hand side
         ttk.Checkbutton(frame_info["frame"],
@@ -402,3 +405,27 @@ class EntryFrame(tk.Frame):
                             *option_info["selection_menu"],
                             # command=lambda option=option_name, topic=self.building_blocks: self.check_options(option, topic), #lambda command refering to method in order to be able to pass current option name as variable
                             ).grid(row=0, column=1, sticky="W")
+
+    def create_spinBox(self, frame_info, option_info, label):
+        frame_info["increment"] = option_info["increment"]
+        frame_info["frame"].pack(anchor="w")
+        if "on_demand" in option_info.keys():
+            ttk.Label(frame_info["frame"] ,text=label, width=17) #label created separately fron checkbutton (instead of using 'text'-parameter) in order to have label on the left-hand side
+            frame_info["entry_object"] = tk.Spinbox(frame_info["frame"],
+                            # command=lambda option=option_name, topic=self.building_blocks: self.check_options(option, topic), #lambda command refering to method in order to be able to pass current option name as variable
+                            textvariable=frame_info["selection"],
+                            from_=option_info["from"],
+                            to=option_info["to"],
+                            increment=option_info["increment"],
+                            justify="center",
+                            width=5)
+        else:
+            ttk.Label(frame_info["frame"] ,text=label, width=17).grid(row=0, column=0, sticky="W", padx =(5,0))
+            frame_info["entry_object"] = tk.Spinbox(frame_info["frame"],
+                            # command=lambda option=option_name, topic=self.building_blocks: self.check_options(option, topic), #lambda command refering to method in order to be able to pass current option name as variable
+                            textvariable=frame_info["selection"],
+                            from_=option_info["from"],
+                            to=option_info["to"],
+                            increment=option_info["increment"],
+                            justify="center",
+                            width=5)
