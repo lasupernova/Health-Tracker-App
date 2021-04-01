@@ -428,4 +428,4 @@ class EntryFrame(tk.Frame):
                             to=option_info["to"],
                             increment=option_info["increment"],
                             justify="center",
-                            width=5)
+                            width=5).grid(row=0, column=1, sticky="W", padx =(5,0))
