@@ -68,16 +68,23 @@ food_info = [
             ]
 
 fitness_info = [
-            {'cycling':{"type":"Spinbox", "from":0, "to":500, "increment":5, "label":"cycling"}}, 
-            {'gym':{"type":"Spinbox", "from":0, "to":500, "increment":5, "label":"gym"}}, 
-            {'cardio':{"type":"Spinbox", "from":0, "to":500, "increment":5, "label":"cardio"}}, 
-            {'stretching':{"type":"Spinbox", "from":0, "to":500, "increment":5, "label":"stretching"}}, 
-            {'yoga':{"type":"Spinbox", "from":0, "to":500, "increment":5, "label":"yoga"}}, 
-            {'other':{"type":"Spinbox", "from":0, "to":500, "increment":5, "label":"other"}}
+            {'cycling':{"type":"Checkbox", "label":"cycling", "opens":"cycling_time"}}, 
+            {'cycling_time':{"type":"Spinbox", "from":0, "to":500, "increment":5, "label":"cycling time", "on_demand":True}}, 
+            {'gym':{"type":"Checkbox", "label":"gym", "opens":"gym_time"}},
+            {'gym_time':{"type":"Spinbox", "from":0, "to":500, "increment":5, "label":"gym time", "on_demand":True}}, 
+            {'cardio':{"type":"Checkbox", "label":"cardio", "opens":"cardio_time"}},
+            {'cardio_time':{"type":"Spinbox", "from":0, "to":500, "increment":5, "label":"cardio time", "on_demand":True}}, 
+            {'stretching':{"type":"Checkbox", "label":"stretching", "opens":"stretching_time"}},
+            {'stretching_time':{"type":"Spinbox", "from":0, "to":500, "increment":5, "label":"stretching time", "on_demand":True}}, 
+            {'yoga':{"type":"Checkbox", "label":"yoga", "opens":"yoga_time"}}, 
+            {'yoga_time':{"type":"Spinbox", "from":0, "to":500, "increment":5, "label":"yoga_time", "on_demand":True}}, 
+            {'other':{"type":"Checkbox", "label":"Other", "opens":"other_time"}}, 
+            {'other_time':{"type":"Spinbox", "from":0, "to":500, "increment":5, "label":"other_time", "on_demand":True}}
             ]
 
 period_info = [
-            {'cramps':{"type":"MultipleChoice", "selection_menu":["mild", "medium", "strong", "extreme"], "label":"cramps"}}, 
+            {'cramps':{"type":"Checkbox", "label":"cramps", "opens":"cramps_level"}}, 
+            {'cramps_level':{"type":"MultipleChoice", "selection_menu":["mild", "medium", "strong", "extreme"], "label":"cramps level","on_demand":True}}, 
             {'cycle_day':{"type":"Spinbox", "from":1, "to":40, "increment":1, "label":"cycle day"}}, 
             {'infection':{"type":"Entryfield", "label":"infection"}}, 
             {'ovulation':{"type":"Checkbox", "label":"ovulation"}}, 
