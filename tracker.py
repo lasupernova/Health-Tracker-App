@@ -242,8 +242,8 @@ class InputWindow(tk.Tk):
 
     # ----- funtion to run upon closing the window -----
     def on_exit(self):
-        # self.df.save_frame() #save GUI-entries to .csv file
-        self.destroy() #destroy window
+        self.on_tab_change()  #save entries of last tab withour tab change
+        self.destroy()  #destroy window
 
     def add_plots(self):
         # ----- iterate over all notebook tabs -----
