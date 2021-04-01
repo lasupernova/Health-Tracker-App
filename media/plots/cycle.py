@@ -11,6 +11,7 @@ import math
 import os
 import database.connections.db_transact as db_transact
 
+
 def plot_cycle(user, date): 
     '''
     Plots last 3 cycles
@@ -53,7 +54,9 @@ def plot_cycle(user, date):
     fertile_trail = ovulation + 1
 
     # PLOT
-    fig, ax = plt.subplots(figsize=(7,4))
+    # fig, ax = plt.subplots(figsize=(7,4))
+    fig = Figure(figsize=(7,4))
+    ax = fig.add_subplot(111)
 
     ax.bar(df.index, df['cycle_day'], width = 0.5, color ='#fc2647')
     # ax.scatter(df.index, parameter, color ='blue', s=1)   ## to add additional parameters later on
@@ -63,28 +66,28 @@ def plot_cycle(user, date):
     small_fonts = 6
 
     #add cycle info, including mean lenght, ovulation and fertile window
-    plt.axhline(y=cycleLengthMean,xmin=0,xmax=0.98,color='pink',ls='-.',lw=0.7)
+    ax.axhline(y=cycleLengthMean,xmin=0,xmax=0.98,color='pink',ls='-.',lw=0.7)
     total_days = len(df.index)
     lastDate = df.index.max()+datetime.timedelta(days=total_days/20) #add days for readability
-    plt.text(x=lastDate, y=cycleLengthMean-0.3, s= f'mean cycle length',color='pink',size=big_fonts)
-    plt.axhline(y=ovulation,xmin=0.04,xmax=0.98,color='purple',lw=0.5)
-    plt.text(x=lastDate, y=ovulation-0.5, s= f'Ovulation (Cycle Day {ovulation})',color='purple',size=big_fonts)
-    plt.axhspan(ymin=fertile_start, ymax=fertile_trail, xmin=0.04, xmax=0.98,color='purple',alpha=0.1, zorder=-1)
-    plt.text(x=lastDate, y=fertile_start-0.5, s= f'cycle day {fertile_start}',color='purple',size=small_fonts,alpha=0.25)
-    plt.axhspan(ymin=fertile_high, ymax=ovulation, xmin=0.04, xmax=0.98,color='purple',alpha=0.2, zorder=-1)
-    plt.text(x=lastDate, y=fertile_high-0.3, s= f'cycle day {fertile_high}',color='purple',size=small_fonts,alpha=0.5)
+    ax.text(x=lastDate, y=cycleLengthMean-0.3, s= f'mean cycle length',color='pink',size=big_fonts)
+    ax.axhline(y=ovulation,xmin=0.04,xmax=0.98,color='purple',lw=0.5)
+    ax.text(x=lastDate, y=ovulation-0.5, s= f'Ovulation (Cycle Day {ovulation})',color='purple',size=big_fonts)
+    ax.axhspan(ymin=fertile_start, ymax=fertile_trail, xmin=0.04, xmax=0.98,color='purple',alpha=0.1, zorder=-1)
+    ax.text(x=lastDate, y=fertile_start-0.5, s= f'cycle day {fertile_start}',color='purple',size=small_fonts,alpha=0.25)
+    ax.axhspan(ymin=fertile_high, ymax=ovulation, xmin=0.04, xmax=0.98,color='purple',alpha=0.2, zorder=-1)
+    ax.text(x=lastDate, y=fertile_high-0.3, s= f'cycle day {fertile_high}',color='purple',size=small_fonts,alpha=0.5)
 
-    ax.xaxis.set_major_locator(matplotlib.dates.YearLocator())
-    ax.xaxis.set_minor_locator(matplotlib.dates.MonthLocator((1,3,5,7,9,11)))
+    # ax.xaxis.set_major_locator(matplotlib.dates.YearLocator())
+    # ax.xaxis.set_minor_locator(matplotlib.dates.MonthLocator((1,3,5,7,9,11)))
 
-    ax.xaxis.set_major_formatter(matplotlib.dates.DateFormatter("\n%Y"))
-    ax.xaxis.set_minor_formatter(matplotlib.dates.DateFormatter("%b"))
-    plt.setp(ax.get_xticklabels(), rotation=0, ha="center")
-    # plt.legend()
+    # ax.xaxis.set_major_formatter(matplotlib.dates.DateFormatter("\n%Y"))
+    # ax.xaxis.set_minor_formatter(matplotlib.dates.DateFormatter("%b"))
+    # plt.setp(ax.get_xticklabels(), rotation=0, ha="center")
+    # # plt.legend()
 
-    sns.despine(left=True, bottom = True)
-    plt.tight_layout()
+    # sns.despine(left=True, bottom = True)
+    # plt.tight_layout()
 
+    # plt.show()
     return fig
-    plt.close()
     quit()
