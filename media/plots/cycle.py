@@ -13,7 +13,7 @@ import os
 import database.connections.db_transact as db_transact
 
 
-def custom_locator(index, ax, small_fonts):
+def _custom_locator(index, ax, font_size):
     '''
     Function taking index and matplotlib axis and creating formatted xaxis ticks and labels for specified axis (based on index length)
 
@@ -22,7 +22,6 @@ def custom_locator(index, ax, small_fonts):
         ax: axis-object to format xaxis for
         small_fonts: int
     '''
-    print(f"AX {type(ax)}:")
     idx_length = len(index)
 
     if idx_length < 30:
@@ -46,7 +45,7 @@ def custom_locator(index, ax, small_fonts):
         ax.xaxis.set_major_formatter(matplotlib.dates.DateFormatter("\n%Y"))
         ax.xaxis.set_minor_formatter(matplotlib.dates.DateFormatter("%b"))
 
-    ax.tick_params(axis="x", which="minor", rotation=90,labelsize=small_fonts)  #changed from: plt.setp(ax.get_xticklabels(), rotation=0, ha="center")
+    ax.tick_params(axis="x", which="minor", rotation=90,labelsize=font_size)  #changed from: plt.setp(ax.get_xticklabels(), rotation=0, ha="center")
     ax.tick_params(axis="x", which="major", length=8)
 
 
@@ -66,9 +65,7 @@ def plot_cycle(user, date):
     date = [tup[-1] for tup in data] 
 
     # create dataframe from data
-    print(columns[:-1])
     df = pd.DataFrame(data=data_values, index=date, columns=columns[:-1])
-    print(df.index)
 
     #find local maxima
     locMax = df['cycle_day'][(df['cycle_day'].shift(1) < df['cycle_day']) & (df['cycle_day'].shift(-1) < df['cycle_day'])]
@@ -116,7 +113,7 @@ def plot_cycle(user, date):
     ax.text(x=lastDate, y=fertile_high-0.3, s= f'cycle day {fertile_high}',color='purple',size=small_fonts,alpha=0.5)
 
 
-    custom_locator(df.index, ax, small_fonts)
+    _custom_locator(df.index, ax, small_fonts)
 
     for axis in ax.spines:
         ax.spines[axis].set_visible(False)  #changed from: sns.despine(left=True, bottom = True)
