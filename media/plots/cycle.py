@@ -17,9 +17,10 @@ def custom_locator(index, ax, small_fonts):
     '''
     Function taking index and matplotlib axis and creating formatted xaxis ticks and labels for specified axis (based on index length)
 
-    Parameter: 
+    Parameters: 
         index: (DateTime)-Index
-        ax: 
+        ax: axis-object to format xaxis for
+        small_fonts: int
     '''
     print(f"AX {type(ax)}:")
     idx_length = len(index)
