@@ -117,6 +117,9 @@ class EntryFrame(tk.Frame):
 
     # ----- method printing current checkbutton state when clicked and passing them on to dataframe to be saved -----
     def check_options(self, option=None, value=None):
+        '''
+        Checks entry value upon textvariable or entrylisy change and 
+        '''
 
         if value:
             value = value
@@ -124,10 +127,24 @@ class EntryFrame(tk.Frame):
             # print checkbutton variable value (=value of tk.Stringvar-object saved in topic-dict for current option)
             value = self.building_blocks[option]["selection"].get()
 
-        self.value_entry_record[option] = True
-        print(self.value_entry_record)
-            
-        print(value) #uncomment for troubleshooting
+        try:  #works for numeric fields saving selection as number (CheckBox and Spinbox)
+            if int(value)==0 or value==0 or value == None or len(value) < 1:
+                self.value_entry_record[option] = False
+            else:
+                self.value_entry_record[option] = True 
+        except ValueError:  #works for fields saving selection as string (multiChoice)
+            if value==0 or value == None or len(value) < 2:
+                self.value_entry_record[option] = False
+            else:
+                self.value_entry_record[option] = True 
+        except TypeError:  #works for fields saving selection as list (EntryField)
+            if value == None or len(value) < 1:
+                self.value_entry_record[option] = False
+            else:
+                self.value_entry_record[option] = True 
+
+
+        print(f"Value: {value} \t Entry Record: {self.value_entry_record}")
 
     # ---- function toggling specification field, if available ------
     def toggle_checkbox(self, option_info):
@@ -227,12 +244,56 @@ class EntryFrame(tk.Frame):
 
     # ----- method displaying tk.Entry()-field entries to new tk.Label()-field next to entry field -----
     def print_entries(self, entry_list, container):
+        '''
+        Create tk.Frame-object that contains entries made to currently used EntryField-object'.
+        New entries are .pack()-ed to end as buttons with label aestetics.
+        These buttons delete entries from entry_list and themselves, when clicked.
+        NOTE: the tk.Frame object is destroyed + recreated every time that a new entry is added to the list
+               --> the number of children within the container is used to decide if the tk.Frame object already exists 
+                   (and needs to be destroyed and recreated) OR if it does not exist yet and can simply be created
 
-        # convert list to string with list items separated by commas
-        entry_string = ', '.join([str(i) for i in entry_list])
+        Parameters:
+            entry_list: list-type object, that is stored in a class-globally accessible parameter (self.building_blocks[option_name]["entries"])
+            container: tk.Frame-object, that is stored in a class-globally accessible parameter (self.building_blocks[option_name]["frame"])
+        '''
 
-        # create a Label to display string
-        tk.Label(container, text=entry_string).grid(row=0, column=2, sticky="W")
+        def _create_entry_container(entry_list, container):
+            '''
+            Created tk.Frame-object oacking and containing  "label-buttons" for entries.
+
+            Parameters:
+                entry_list: list-type object, that is stored in a class-globally accessible parameter (self.building_blocks[option_name]["entries"])
+                container: tk.Frame-object, that is stored in a class-globally accessible parameter (self.building_blocks[option_name]["frame"])
+            '''
+
+            entry_container = tk.Frame(container)
+            entry_container.grid(row=0, column=2, sticky="W")
+
+            label_buttons = {}  #create dict to be able to access label_buttons by entry for deletion --> otherwise they woudl all have the name "label_button"
+
+            for entry in entry_list:
+                label_buttons[entry] = tk.Button(entry_container, 
+                                                text=entry, 
+                                                borderwidth=0, 
+                                                command=lambda str_entry=entry, container_=entry_container: self._delete_entry(str_entry, container_, entry_list),
+                                                fg="#b8b6b0", 
+                                                bg="SystemButtonFace"
+                                                )
+
+                label_buttons[entry].pack(side="left")
+                self.changeOnHover(label_buttons[entry], 'red', "#b8b6b0") #change button color on hover 
+
+        # check if entry_container already exists (--> if main container contains more than 2 children [field-label and field-entryfield], then entry_field was previosuly created)
+        if len(container.winfo_children()) == 2:
+            _create_entry_container(entry_list, container)
+        else:   #if entry_container already exist, destroy it and create new from new entry_list
+            print(f"Destroy: ", container.winfo_children()[-1])
+            container.winfo_children()[-1].destroy()
+            _create_entry_container(entry_list, container)
+
+    def _delete_entry(self, entry, container, entry_list):
+        pass
+
 
     def show_plotly(self):
         import plotly.express as px
