@@ -73,12 +73,8 @@ def plot_sleep(user, date):
     ax.xaxis.set_ticklabels(df.month.unique())
     ax.set_facecolor(BG_COLOR)
 
-    for axis in ax.spines:
-        ax.spines[axis].set_visible(False)  #changed from: sns.despine(left=True, bottom = True)
-    fig.tight_layout()
-
     # ------ ax2 ----- 
-    ax2 = fig.add_subplot(122)
+    ax2 = fig.add_subplot(122, sharey=ax)
 
     for counter, weekday in enumerate(df_by_weekday.weekday.unique()):
         ax2.boxplot(df_by_weekday.sleep[df_by_weekday.weekday == weekday], 
@@ -92,8 +88,14 @@ def plot_sleep(user, date):
     ax2.xaxis.set_ticklabels(df_by_weekday.weekday.unique())
     ax2.set_facecolor(BG_COLOR)
 
-    for axis in ax2.spines:
-        ax2.spines[axis].set_visible(False)  #changed from: sns.despine(left=True, bottom = True)
+    for ax_ in [ax, ax2]:
+        for axis in ax_.spines:
+            ax_.spines[axis].set_visible(False)
+        ax_.tick_params(axis='both', color='grey', labelcolor='grey', labelsize=6)
+        ax_.tick_params(axis='x', labelsize=8)
+        if ax_ == ax2:
+            ax_.tick_params(axis='y', labelcolor='whitesmoke')
+
     fig.tight_layout()
 
     return fig
