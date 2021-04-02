@@ -57,7 +57,7 @@ def plot_sleep(user, date):
     '''
 
     end_date = date - datetime.timedelta(weeks=13)
-    start_date = end_date - datetime.timedelta(weeks=3)
+    start_date = end_date - datetime.timedelta(weeks=7)
     
     columns=['sleep', 'date']
     table = 'sleep'
@@ -68,13 +68,40 @@ def plot_sleep(user, date):
 
     # create dataframe from data
     df = pd.DataFrame(data=data_values, index=date, columns=columns[:-1])
+    df['month'] = df.index.month
+    df['weekday'] = df.index.strftime("%a")
 
-    print(df)
+    # create new df ordered by weekday
+    cats = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+    df_by_weekday = df.copy()
+    df_by_weekday['weekday'] = pd.Categorical(df['weekday'], categories=cats, ordered=True)
+    df_by_weekday = df_by_weekday.sort_values('weekday')
+
+    print(df_by_weekday)
 
     fig = Figure(figsize=(7,4))
-    ax = fig.add_subplot(111)
 
-    ax.bar(df.index, df.sleep)
+    # ----- ax1 -----
+    ax = fig.add_subplot(121)
+
+    for counter, month in enumerate(df.month.unique()):
+        ax.boxplot(df.sleep[df.month == month], positions=[counter])
+    ax.xaxis.set_ticklabels(df.month.unique())
+
+    for axis in ax.spines:
+        ax.spines[axis].set_visible(False)  #changed from: sns.despine(left=True, bottom = True)
+    fig.tight_layout()
+
+    # ------ ax2 ----- 
+    ax2 = fig.add_subplot(122)
+
+    for counter, weekday in enumerate(df_by_weekday.weekday.unique()):
+        ax2.boxplot(df_by_weekday.sleep[df_by_weekday.weekday == weekday], positions=[counter])
+    ax2.xaxis.set_ticklabels(df_by_weekday.weekday.unique())
+
+    for axis in ax2.spines:
+        ax2.spines[axis].set_visible(False)  #changed from: sns.despine(left=True, bottom = True)
+    fig.tight_layout()
 
     return fig
 
