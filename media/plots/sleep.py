@@ -1,5 +1,3 @@
-
-
 import pandas as pd
 import numpy as np
 # import matplotlib.pyplot as plt
@@ -14,42 +12,14 @@ import math
 import os
 import database.connections.db_transact as db_transact
 
+# def set_BoxColors(bp):
+#     setp(bp['boxes'][0], color='blue')
+#     setp(bp['caps'][0], color='blue')
+#     setp(bp['whiskers'][0], color='blue')
+#     setp(bp['fliers'][0], color='blue')
+#     setp(bp['medians'][0], color='blue')
 
-# def _custom_locator(index, ax, font_size):
-#     '''
-#     Function taking index and matplotlib axis and creating formatted xaxis ticks and labels for specified axis (based on index length)
-
-#     Parameters: 
-#         index: (DateTime)-Index
-#         ax: axis-object to format xaxis for
-#         small_fonts: int
-#     '''
-#     idx_length = len(index)
-
-#     if idx_length < 30:
-#         ax.xaxis.set_major_locator(matplotlib.dates.MonthLocator())
-#         ax.xaxis.set_minor_locator(matplotlib.dates.WeekdayLocator(matplotlib.dates.MO))
-
-#         ax.xaxis.set_major_formatter(matplotlib.dates.DateFormatter("\n%b-%Y"))
-#         ax.xaxis.set_minor_formatter(matplotlib.dates.DateFormatter("%a %d-%b"))
-
-#     elif idx_length < 365:
-#         ax.xaxis.set_major_locator(matplotlib.dates.MonthLocator())
-#         ax.xaxis.set_minor_locator(matplotlib.dates.DayLocator((1,7,14,21,28)))
-
-#         ax.xaxis.set_major_formatter(matplotlib.dates.DateFormatter("\n%b"))
-#         ax.xaxis.set_minor_formatter(matplotlib.dates.DateFormatter("%d"))
-
-#     else:
-#         ax.xaxis.set_major_locator(matplotlib.dates.YearLocator())
-#         ax.xaxis.set_minor_locator(matplotlib.dates.MonthLocator((1,3,5,7,9,11)))
-
-#         ax.xaxis.set_major_formatter(matplotlib.dates.DateFormatter("\n%Y"))
-#         ax.xaxis.set_minor_formatter(matplotlib.dates.DateFormatter("%b"))
-
-#     ax.tick_params(axis="x", which="minor", rotation=90,labelsize=font_size)  #changed from: plt.setp(ax.get_xticklabels(), rotation=0, ha="center")
-#     ax.tick_params(axis="x", which="major", length=8)
-
+BG_COLOR = "whitesmoke"
 
 def plot_sleep(user, date): 
     '''
@@ -80,6 +50,7 @@ def plot_sleep(user, date):
     print(df_by_weekday)
 
     fig = Figure(figsize=(7,4))
+    fig.patch.set_facecolor(BG_COLOR)
 
     # ----- ax1 -----
     ax = fig.add_subplot(121)
@@ -87,6 +58,7 @@ def plot_sleep(user, date):
     for counter, month in enumerate(df.month.unique()):
         ax.boxplot(df.sleep[df.month == month], positions=[counter])
     ax.xaxis.set_ticklabels(df.month.unique())
+    ax.set_facecolor(BG_COLOR)
 
     for axis in ax.spines:
         ax.spines[axis].set_visible(False)  #changed from: sns.despine(left=True, bottom = True)
@@ -98,12 +70,14 @@ def plot_sleep(user, date):
     for counter, weekday in enumerate(df_by_weekday.weekday.unique()):
         ax2.boxplot(df_by_weekday.sleep[df_by_weekday.weekday == weekday], positions=[counter])
     ax2.xaxis.set_ticklabels(df_by_weekday.weekday.unique())
+    ax2.set_facecolor(BG_COLOR)
 
     for axis in ax2.spines:
         ax2.spines[axis].set_visible(False)  #changed from: sns.despine(left=True, bottom = True)
     fig.tight_layout()
 
     return fig
+
 
 
 
