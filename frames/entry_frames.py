@@ -292,7 +292,20 @@ class EntryFrame(tk.Frame):
             _create_entry_container(entry_list, container)
 
     def _delete_entry(self, entry, container, entry_list):
-        pass
+        '''
+        Deletes entry from entry_list as well as corresponding button.
+        This function is called upon clicking one of the "label-buttons" created by the print_entries()-method.
+
+        Parameters:
+            entry: string-object - name of the entry/item to delete
+            container: tk.frame-object - "entry_container" created by print_entries()-method containing the "label-buttons"
+            entry_list: list-type object, that is stored in a class-globally accessible parameter (self.building_blocks[option_name]["entries"])
+        '''
+        for button in container.winfo_children():
+            if button["text"] == entry:
+                print("Deleting Entry...")
+                button.destroy()
+                entry_list.remove(entry)
 
 
     def show_plotly(self):
