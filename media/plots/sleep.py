@@ -24,6 +24,8 @@ BG_COLOR = "whitesmoke"
 def plot_sleep(user, date): 
     '''
     Plots sleep information
+
+    Boxplot artist customization: https://matplotlib.org/stable/gallery/statistics/boxplot.html#sphx-glr-gallery-statistics-boxplot-py
     '''
 
     end_date = date - datetime.timedelta(weeks=13)
@@ -47,16 +49,27 @@ def plot_sleep(user, date):
     df_by_weekday['weekday'] = pd.Categorical(df['weekday'], categories=cats, ordered=True)
     df_by_weekday = df_by_weekday.sort_values('weekday')
 
-    print(df_by_weekday)
+# ----- Figure ------
 
     fig = Figure(figsize=(7,4))
     fig.patch.set_facecolor(BG_COLOR)
+
+    boxprops = capprops = whiskerprops = dict(linestyle='-', linewidth=0.5, color='#0836C1')  #boxprops for custom boxplot
+    flierprops = dict(marker='.', markerfacecolor='#0836C1', markersize=7, markeredgecolor='none')
+    medianprops = dict(linestyle='-', linewidth=0.75, color='red')
 
     # ----- ax1 -----
     ax = fig.add_subplot(121)
 
     for counter, month in enumerate(df.month.unique()):
-        ax.boxplot(df.sleep[df.month == month], positions=[counter])
+        ax.boxplot(df.sleep[df.month == month], 
+                   positions=[counter],
+                   boxprops=boxprops,
+                   flierprops=flierprops,
+                   medianprops=medianprops,
+                   whiskerprops=whiskerprops,
+                   capprops=capprops
+                   )
     ax.xaxis.set_ticklabels(df.month.unique())
     ax.set_facecolor(BG_COLOR)
 
@@ -68,7 +81,14 @@ def plot_sleep(user, date):
     ax2 = fig.add_subplot(122)
 
     for counter, weekday in enumerate(df_by_weekday.weekday.unique()):
-        ax2.boxplot(df_by_weekday.sleep[df_by_weekday.weekday == weekday], positions=[counter])
+        ax2.boxplot(df_by_weekday.sleep[df_by_weekday.weekday == weekday], 
+                    positions=[counter],                 
+                    boxprops=boxprops,
+                    flierprops=flierprops,
+                    medianprops=medianprops,
+                    whiskerprops=whiskerprops,
+                    capprops=capprops
+                    )
     ax2.xaxis.set_ticklabels(df_by_weekday.weekday.unique())
     ax2.set_facecolor(BG_COLOR)
 
