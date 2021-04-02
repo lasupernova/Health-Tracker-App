@@ -143,6 +143,8 @@ class EntryFrame(tk.Frame):
             # toggle
             if label_to_toggle.grid_info():
                 label_to_toggle.grid_remove()
+                self.building_blocks[to_toggle_label]["selection"].set(0)
+                self.value_entry_record[to_toggle_label] = False
                 field_to_toggle.grid_remove()
             else:
                 label_to_toggle.grid(row=0, column=0, sticky="W", padx =(5,0))
