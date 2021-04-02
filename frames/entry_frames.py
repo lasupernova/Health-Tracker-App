@@ -121,7 +121,7 @@ class EntryFrame(tk.Frame):
         Checks entry value upon textvariable or entrylisy change and 
         '''
 
-        if value:
+        if value!=None:
             value = value
         else:
             # print checkbutton variable value (=value of tk.Stringvar-object saved in topic-dict for current option)
@@ -227,7 +227,8 @@ class EntryFrame(tk.Frame):
             field_list.append(entry)
 
             # print entries (including new entry) to screen (next to entry field)
-            self.print_entries(field_list, container)
+            # self.print_entries(field_list, container)
+            self.print_entries(option_name)
 
             # # for troubleshooting
             # print(field_list)
@@ -243,7 +244,8 @@ class EntryFrame(tk.Frame):
 
 
     # ----- method displaying tk.Entry()-field entries to new tk.Label()-field next to entry field -----
-    def print_entries(self, entry_list, container):
+    # def print_entries(self, entry_list, container):
+    def print_entries(self, option_name):
         '''
         Create tk.Frame-object that contains entries made to currently used EntryField-object'.
         New entries are .pack()-ed to end as buttons with label aestetics.
@@ -257,7 +259,7 @@ class EntryFrame(tk.Frame):
             container: tk.Frame-object, that is stored in a class-globally accessible parameter (self.building_blocks[option_name]["frame"])
         '''
 
-        def _create_entry_container(entry_list, container):
+        def _create_entry_container(container, option_name):
             '''
             Created tk.Frame-object oacking and containing  "label-buttons" for entries.
 
@@ -266,32 +268,36 @@ class EntryFrame(tk.Frame):
                 container: tk.Frame-object, that is stored in a class-globally accessible parameter (self.building_blocks[option_name]["frame"])
             '''
 
+            entry_list = self.building_blocks[option_name]["entries"]
+
             entry_container = tk.Frame(container)
             entry_container.grid(row=0, column=2, sticky="W")
 
-            label_buttons = {}  #create dict to be able to access label_buttons by entry for deletion --> otherwise they woudl all have the name "label_button"
+            # label_buttons = {}  #create dict to be able to access label_buttons by entry for deletion --> otherwise they woudl all have the name "label_button"
 
             for entry in entry_list:
-                label_buttons[entry] = tk.Button(entry_container, 
+                label_button = tk.Button(entry_container, 
                                                 text=entry, 
                                                 borderwidth=0, 
-                                                command=lambda str_entry=entry, container_=entry_container: self._delete_entry(str_entry, container_, entry_list),
+                                                command=lambda str_entry=entry, container_=entry_container, option_name=option_name: self._delete_entry(str_entry, container_, entry_list, option_name),
                                                 fg="#b8b6b0", 
                                                 bg="SystemButtonFace"
                                                 )
 
-                label_buttons[entry].pack(side="left")
-                self.changeOnHover(label_buttons[entry], 'red', "#b8b6b0") #change button color on hover 
+                label_button.pack(side="left")
+                self.changeOnHover(label_button, 'red', "#b8b6b0") #change button color on hover 
+        
+        container = self.building_blocks[option_name]["frame"]
 
         # check if entry_container already exists (--> if main container contains more than 2 children [field-label and field-entryfield], then entry_field was previosuly created)
         if len(container.winfo_children()) == 2:
-            _create_entry_container(entry_list, container)
+            _create_entry_container(container, option_name)
         else:   #if entry_container already exist, destroy it and create new from new entry_list
             print(f"Destroy: ", container.winfo_children()[-1])
             container.winfo_children()[-1].destroy()
-            _create_entry_container(entry_list, container)
+            _create_entry_container(container, option_name)
 
-    def _delete_entry(self, entry, container, entry_list):
+    def _delete_entry(self, entry, container, entry_list, option_name):
         '''
         Deletes entry from entry_list as well as corresponding button.
         This function is called upon clicking one of the "label-buttons" created by the print_entries()-method.
