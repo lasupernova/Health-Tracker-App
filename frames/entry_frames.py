@@ -312,6 +312,7 @@ class EntryFrame(tk.Frame):
                 print("Deleting Entry...")
                 button.destroy()
                 entry_list.remove(entry)
+                self.check_options(option=option_name, value=entry_list)
 
 
     def show_plotly(self):
