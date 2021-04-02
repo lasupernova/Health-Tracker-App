@@ -25,7 +25,11 @@ def custom_locator(index, ax, small_fonts):
     idx_length = len(index)
 
     if idx_length < 30:
-        pass
+        ax.xaxis.set_major_locator(matplotlib.dates.MonthLocator())
+        ax.xaxis.set_minor_locator(matplotlib.dates.WeekdayLocator(matplotlib.dates.MO))
+
+        ax.xaxis.set_major_formatter(matplotlib.dates.DateFormatter("\n%b-%Y"))
+        ax.xaxis.set_minor_formatter(matplotlib.dates.DateFormatter("%a %d-%b"))
 
     elif idx_length < 365:
         ax.xaxis.set_major_locator(matplotlib.dates.MonthLocator())
@@ -51,7 +55,7 @@ def plot_cycle(user, date):
     '''
 
     end_date = date - datetime.timedelta(weeks=13)
-    start_date = end_date - datetime.timedelta(weeks=10)
+    start_date = end_date - datetime.timedelta(weeks=3)
     
     columns=['cycle_day', 'date']
     table = 'period'
