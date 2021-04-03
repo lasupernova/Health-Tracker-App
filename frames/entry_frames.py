@@ -144,8 +144,6 @@ class EntryFrame(tk.Frame):
                 self.value_entry_record[option] = True 
 
 
-        print(f"Value: {value} \t Entry Record: {self.value_entry_record}")
-
     # ---- function toggling specification field, if available ------
     def toggle_checkbox(self, option_info):
         if "opens" in option_info.keys():
@@ -161,6 +159,10 @@ class EntryFrame(tk.Frame):
             if label_to_toggle.grid_info():
                 label_to_toggle.grid_remove()
                 self.building_blocks[to_toggle_label]["selection"].set(0)
+                try:
+                    self.building_blocks[to_toggle_label]["translated_selection"].set(0)
+                except:
+                    pass
                 self.value_entry_record[to_toggle_label] = False
                 field_to_toggle.grid_remove()
             else:
@@ -182,8 +184,6 @@ class EntryFrame(tk.Frame):
 
             # grab outer key for current dict --> each outer dict has only one outer key
             option_name = [*option][0]
-            if option_name == 'cramps' or option_name == 'spotting':  # workaround loop that is going to be removed once .csv usage is completely removed
-                continue
 
             # convert GUI options text to database-conform text
             option_name_db = self.cols_to_db_name(option_name)
@@ -191,14 +191,15 @@ class EntryFrame(tk.Frame):
             # check option entry type
             if option[option_name]["type"] == "Entryfield":
                 value = self.building_blocks[option_name]["entries"]
-                # print(option_name,": ", value) #Entryfields take multiple entries saved in a list
+                # account for empty lists
+                if len(value) == 0:
+                    value = None
+            elif option[option_name]["type"] == "MultipleChoice":
+                value = self.building_blocks[option_name]["translated_selection"].get()
+                print(self.building_blocks[option_name])
             else:
                 value = self.building_blocks[option_name]["selection"].get()
                 # print(option_name,": ", value) #any otherfields take one entry saved in a tk.StringVar-object
-
-            # account for empty lists
-            if len(value) == 0:
-                value = None
 
             # add info of current entry-field to dict
             data_dict[option_name_db] = value
@@ -450,20 +451,30 @@ class EntryFrame(tk.Frame):
     def create_multiChoice(self, frame_info, option_info, label):
         frame_info["selection"].set(option_info["selection_menu"][0])
         frame_info["frame"].pack(anchor="w")
+        frame_info["translated_selection"] = tk.StringVar(value=0)
+        frame_info["translation_dict"] = translate_dict = {}
+
+        for counter, opt in enumerate(option_info["selection_menu"]):
+            frame_info["translation_dict"][opt] = counter+1
+
         if "on_demand" in option_info.keys():
             ttk.Label(frame_info["frame"] ,text=label, width=17) #label created separately fron checkbutton (instead of using 'text'-parameter) in order to have label on the left-hand side
             tk.OptionMenu(frame_info["frame"],
                             frame_info["selection"],
                             *option_info["selection_menu"],
-                            # command=lambda option=option_name, topic=self.building_blocks: self.check_options(option, topic), #lambda command refering to method in order to be able to pass current option name as variable
+                            command=lambda selection=frame_info["selection"], trans_dict=frame_info["translation_dict"],translated=frame_info["translated_selection"]: self.translate_multiChoice(selection, trans_dict, translated)
                             )
         else:
             ttk.Label(frame_info["frame"] ,text=label, width=17).grid(row=0, column=0, sticky="W", padx =(5,0))
             tk.OptionMenu(frame_info["frame"],
                             frame_info["selection"],
                             *option_info["selection_menu"],
-                            # command=lambda option=option_name, topic=self.building_blocks: self.check_options(option, topic), #lambda command refering to method in order to be able to pass current option name as variable
+                            command=lambda selection=frame_info["selection"], trans_dict=frame_info["translation_dict"],translated=frame_info["translated_selection"]: self.translate_multiChoice(selection, trans_dict, translated)
                             ).grid(row=0, column=1, sticky="W")
+
+    def translate_multiChoice(self, selection, trans_dict, translated):
+        translated.set(trans_dict[selection])
+        # return translated
 
     def create_spinBox(self, frame_info, option_info, label):
         frame_info["increment"] = option_info["increment"]
