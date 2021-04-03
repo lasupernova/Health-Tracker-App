@@ -100,19 +100,31 @@ class EntryFrame(tk.Frame):
 
 
     # ----- Buttons -----
+        button_container = tk.Frame(self)
+        button_container.pack(anchor="w")
         test = ttk.Button(
-                self,
+                button_container,
                 command=self.get_all_selected,
                 text="Print Selection"
                 )
-        test.pack(anchor="w", pady =15, padx = (5,5))
+        # test.pack(anchor="w", pady =15, padx = (5,5))
+        test.grid(row=0, column=0, sticky="W")
 
         test_plotly = ttk.Button(
-                self,
+                button_container,
                 command=self.show_plotly,
                 text="Open Plotly!"
                 )
-        test_plotly.pack(anchor="w", pady =15, padx = (5,5))    
+        # test_plotly.pack(anchor="w", pady =15, padx = (5,5)) 
+        test_plotly.grid(row=1, column=0, sticky="W")   
+
+        logout_button =  ttk.Button(
+                button_container,
+                command=self.logout,
+                text="Log Out"
+                )
+        # logout_button.pack(anchor="w", pady =15, padx = (5,5))
+        logout_button.grid(row=0, column=1, sticky="W")
 
 
     # ----- method printing current checkbutton state when clicked and passing them on to dataframe to be saved -----
@@ -509,6 +521,7 @@ class EntryFrame(tk.Frame):
                             width=5).grid(row=0, column=1, sticky="W", padx =(5,0))
 
     def create_entryField(self, option_name, label):
+
         self.building_blocks[option_name]["selection"].set(f"Type info + ENTER")      
         self.building_blocks[option_name]["frame"].pack(anchor="w")
         ttk.Label(self.building_blocks[option_name]["frame"] ,text=label, width=17).grid(row=0, column=0, sticky="W", padx =(5,0)) #label created separately fron checkbutton (instead of using 'text'-parameter) in order to have label on the left-hand side
@@ -522,3 +535,6 @@ class EntryFrame(tk.Frame):
         self.building_blocks[option_name]["entry_object"].bind("<FocusOut>", lambda event: self.add_entry_to_entrylist(option_name=option_name))
 
         # return self.building_blocks[option_name]
+
+    def logout(self):
+        print("Log Out Now!")
