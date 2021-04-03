@@ -90,7 +90,8 @@ period_info = [
             {'ovulation':{"type":"Checkbox", "label":"ovulation"}}, 
             {'period':{"type":"Checkbox", "label":"period"}}, 
             {'intercourse':{"type":"Checkbox", "label":"intercourse"}}, 
-            {'spotting':{"type":"MultipleChoice", "selection_menu":["light", "medium", "strong"], "label":"spotting"}}
+            {'spotting':{"type":"Checkbox", "label":"spotting", "opens":"spotting_level"}},
+            {'spotting_level':{"type":"MultipleChoice", "selection_menu":["light", "medium", "strong"], "label":"spotting","on_demand":True}}
             ]
 
 longterm_info =[
