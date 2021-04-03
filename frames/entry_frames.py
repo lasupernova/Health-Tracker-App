@@ -473,8 +473,16 @@ class EntryFrame(tk.Frame):
                             ).grid(row=0, column=1, sticky="W")
 
     def translate_multiChoice(self, selection, trans_dict, translated):
+        '''
+        Takes selected string from multiChoice-fields and converts value to numeric for insertion to database.
+
+        Parameters:
+            selection: str - selection/entry to tk.OptionMenu-object entry field
+            trans_dict: dict - maps string value to numeric (dict created in create_multiChoice()-method)
+            translated: tk.StringVar-object - numeric value saved here until insertion to database
+        '''
         translated.set(trans_dict[selection])
-        # return translated
+
 
     def create_spinBox(self, frame_info, option_info, label):
         frame_info["increment"] = option_info["increment"]
