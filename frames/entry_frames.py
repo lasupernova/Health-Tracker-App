@@ -101,30 +101,27 @@ class EntryFrame(tk.Frame):
 
     # ----- Buttons -----
         button_container = tk.Frame(self)
-        button_container.pack(anchor="w")
+        button_container.pack(anchor="w", pady=20, padx =(10,10))
         test = ttk.Button(
                 button_container,
                 command=self.get_all_selected,
                 text="Print Selection"
                 )
-        # test.pack(anchor="w", pady =15, padx = (5,5))
-        test.grid(row=0, column=0, sticky="W")
+        test.grid(row=0, column=0, sticky="W", padx=10, pady=5)
 
         test_plotly = ttk.Button(
                 button_container,
                 command=self.show_plotly,
                 text="Open Plotly!"
                 )
-        # test_plotly.pack(anchor="w", pady =15, padx = (5,5)) 
-        test_plotly.grid(row=1, column=0, sticky="W")   
+        test_plotly.grid(row=1, column=0, sticky="W", padx=10, pady=5)   
 
         logout_button =  ttk.Button(
                 button_container,
                 command=self.logout,
                 text="Log Out"
                 )
-        # logout_button.pack(anchor="w", pady =15, padx = (5,5))
-        logout_button.grid(row=0, column=1, sticky="W")
+        logout_button.grid(row=0, column=1, sticky="W", padx=10, pady=5)
 
 
     # ----- method printing current checkbutton state when clicked and passing them on to dataframe to be saved -----
@@ -538,3 +535,6 @@ class EntryFrame(tk.Frame):
 
     def logout(self):
         print("Log Out Now!")
+        root = self.master.master.master  #get root window, harboring switch_frame()-method
+        root.user = None  #remove user
+        root.switch_frame('LoginWindow')
