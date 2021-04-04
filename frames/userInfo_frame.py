@@ -43,18 +43,22 @@ class UserinfoWindow(tk.Frame):
         self.user = self.root.signup_frame.username.get()
         self.pw = self.root.signup_frame.password.get()
 
-        print(self.user, self.pw)
-
-
     #----- User Info Screen -----
 
         # initiate login screen
         uinfo = ttk.Frame(self, width=50)
-        uinfo.grid(row=0,column=0, rowspan=7, columnspan=2, sticky='EWNS')
+        uinfo.grid(row=0, column=0, sticky='EWNS')
         uinfo.grid_columnconfigure(0, weight=1)
         uinfo.grid_columnconfigure(1, weight=1)
         for n in range(7):
             uinfo.grid_rowconfigure(n, weight=1)
+
+        # initiate textvariables to fill in 
+        self.gender = tk.StringVar(value=0)
+        self.dob_day = tk.StringVar(value="Day")
+        self.dob_month = tk.StringVar(value="Month")
+        self.dob_year = tk.StringVar(value="Year")
+        self.warning = tk.StringVar(value=None)
 
         #Labels
         label_cont1 = tk.Frame(uinfo, bg=self.root.BG_COL_1)
@@ -66,11 +70,6 @@ class UserinfoWindow(tk.Frame):
         # print(tk.font.families())  #uncomment to get overview of available font families
 
         # ------ Gender ------
-        # initiate textvariables to fill in 
-        self.gender = tk.StringVar(value=0)
-        self.dob_day = tk.StringVar(value="Day")
-        self.dob_month = tk.StringVar(value="Month")
-        self.dob_year = tk.StringVar(value="Year")
 
         # Images
         work_folder = os.path.abspath(os.path.join(os.path.dirname(__file__),".."))
@@ -102,7 +101,7 @@ class UserinfoWindow(tk.Frame):
 
         # Label
         self.dob_container = tk.Frame(uinfo, bg=self.root.BG_COL_1)  #container in order to be able to center correctly
-        for n in range(3):
+        for n in range(5):
             self.dob_container.grid_rowconfigure(n, weight=1)
         for n in range(7):
             self.dob_container.grid_columnconfigure(n, weight=1)
@@ -148,11 +147,15 @@ class UserinfoWindow(tk.Frame):
         self.selected_year.bind("<FocusOut>", lambda event: self.focus_out(event))
 
         # Button
-        self.submit_button = tk.Button(uinfo, command=self.dob, text="NEXT", borderwidth=0, fg='blue', bg="#DCDAD5")
+        self.submit_button = tk.Button(self.dob_container, command=self.sign_up, text="NEXT »", borderwidth=0, fg='blue', bg="#DCDAD5", font=('MANIFESTO', 15))
         self.changeOnHover(self.submit_button, 'red', 'blue') #change button color on hover
 
+        # warning 
+        warning_container = ttk.Frame(self.dob_container)
+        warning_container.grid(row=1, column=2, columnspan=3, padx =(5,5)) 
+        warning_container.columnconfigure(0, weight=1)
+        ttk.Label(warning_container, textvariable=self.warning, foreground='red').grid(row=0, column=0, padx =(5,5)) 
 
-        
 
     # ----- funtion to run upon closing the window -----
     def on_exit(self):
@@ -191,15 +194,16 @@ class UserinfoWindow(tk.Frame):
         self.gender.set('male')
         self.female_button.grid_forget()
         self.male_button.grid_forget()
-        self.dob_container.grid(row=2,column=0, columnspan=2, sticky="EWNS", padx =(5,5))
+        self.dob_container.grid(row=2, rowspan=3, column=0, columnspan=2, sticky="EWNS", padx =(5,5))
 
     def female(self):
         self.gender.set('male')
         self.female_button.grid_forget()
         self.male_button.grid_forget()
-        self.dob_container.grid(row=2,column=0, columnspan=2, sticky="EWNS", padx =(5,5)) 
+        self.dob_container.grid(row=2, rowspan=3,column=0, columnspan=2, sticky="EWNS", padx =(5,5)) 
 
         # ----- method changing button text/foreground color on hover
+    
     def changeOnHover(self, button, fgColorOnHover, fgColorOnLeave, bgColorOnHover="#DCDAD5", bgColorOnLeave="#DCDAD5"): 
         def _modify(e, fgcol, bgcol):
             button.config(fg=fgcol)
@@ -214,12 +218,22 @@ class UserinfoWindow(tk.Frame):
                     func=lambda e, fgcol=fgColorOnLeave, bgcol=bgColorOnLeave: _modify(e, fgcol, bgcol)
                     )  
 
-    def sign_up(self, container):
-        print("Switch to sign up page!")
-        # indicate which frame to bring to front
-        frame = self.frames[container]
-        #brings indicated frame to the front
-        frame.tkraise() 
+    def sign_up(self):
+        user = self.user
+        pw= self.pw
+        sex = self.gender
+        day = self.dob_day.get()
+        month = self.dob_month.get()
+        year = self.dob_year.get()
+        dob = datetime.datetime.strptime(f'{day}-{month}-{year}', '%d-%m-%Y')
+        status = db_transact.sign_up(user, pw, sex, dob)
+        print('Signed Up!' if status==1 else 'Something went wrong! Please try again' if status==0 else 'A user with that name already exist. Please choose another username!' if status==-1 else 'Unknown error!')
+        if status == 1:
+            self.switch_frame('UinfoWindow') #To DO: once df data is loaded into database -> load user data into TC-frame
+        elif status == 0:
+            self.warning.set("Something went wrong. Please try again")
+        elif status == -1:
+            self.warning.set("User already exists!")
 
     def check_dob(self, event):
         '''
@@ -227,11 +241,7 @@ class UserinfoWindow(tk.Frame):
         Checks if values were selected for all 3 Comboboxes and adds sumbit_button to grid if True.
         '''
         if self.dob_day.get() !="Day" and self.dob_month.get() !="Month" and self.dob_year.get() !="Year":
-            self.submit_button.grid(row=4, column=0, columnspan=2, padx =(5,5), pady =(5,0))
-            
-            # self.after(1000, lambda: self.submit_button.config(fg="red"))
-            # self.after(1000, lambda: self.submit_button.config(fg="black"))
-            # self.after(1000, lambda: self.submit_button.config(fg="green"))
+            self.submit_button.grid(row=5, column=4, columnspan=2, padx =(5,5), pady =(5,0))
             self.change_color(self.submit_button)
 
 
