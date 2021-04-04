@@ -31,6 +31,8 @@ class SignupWindow(tk.Frame):
 
         self.switch_frame = switch_frame
 
+        self.parent = parent
+
         # # title
         # self.title("Log In")
 
@@ -71,18 +73,18 @@ class SignupWindow(tk.Frame):
 
 
         # Entry-fields 
-        self.user_entry = tk.Entry(signup,textvariable=self.username)
+        self.user_entry = tk.Entry(signup, textvariable=self.username)
         self.user_entry.grid(row=1, column=0, sticky="NSEW", columnspan=2, padx =(5,5), pady =(5,0)) 
-        self.user_entry.bind("<FocusIn>", lambda event, field=self.user_entry: self.focus_in(field))
+        self.user_entry.bind("<FocusIn>", lambda event, field=self.user_entry: self.focus_in(event, field))
         self.user_entry.bind("<FocusOut>", lambda event, field=self.user_entry, field_name='username': self.focus_out(event, field, field_name))
 
-        self.pw_entry = tk.Entry(signup,textvariable=self.password)
+        self.pw_entry = tk.Entry(signup, textvariable=self.password)
         self.pw_entry.grid(row=2, column=0, sticky="NSEW", columnspan=2, padx =(5,5), pady =(5,0)) 
-        self.pw_entry.bind("<FocusIn>", lambda event, field=self.pw_entry: self.focus_in(field))
+        self.pw_entry.bind("<FocusIn>", lambda event, field=self.pw_entry: self.focus_in(event, field))
         self.pw_entry.bind("<FocusOut>", lambda event, field=self.pw_entry, field_name='password': self.focus_out(event, field, field_name))
 
         #Buttons
-        self.submit_button = tk.Button(signup, command=self.sign_up, text="Sign Up!",borderwidth=1, fg='darkslateblue')
+        self.submit_button = tk.Button(signup, command=self.check_user_exists, text="Sign Up!",borderwidth=1, fg='darkslateblue')
         self.submit_button.grid(row=4, column=0, sticky="NSEW", columnspan=2, padx =(5,5), pady =(5,5))
         self.changeOnHover(self.submit_button, 'blue', 'darkslateblue') #change button color on hover
 
@@ -94,12 +96,16 @@ class SignupWindow(tk.Frame):
         self.forgotPW_button.grid(row=5, column=1, sticky="NEW", padx =(5,5), pady =(5,0))
         self.changeOnHover(self.forgotPW_button, 'red', 'blue') #change button color on hover
 
+        self.uinfo_button = tk.Button(signup, command=self.uinfo, text="> USER INFO <", borderwidth=0, fg='blue', bg="#DCDAD5")
+        self.uinfo_button.grid(row=6, column=0, columnspan=2, sticky="NEW", padx =(5,5), pady =(5,0))
+        self.changeOnHover(self.uinfo_button, 'red', 'blue') #change button color on hover
+
 
     # ----- funtion to run upon closing the window -----
     def on_exit(self):
         self.destroy() #destroy window
 
-    def focus_in(event, field):
+    def focus_in(self, event, field):
         field.delete(0,"end")
         # usercheck=True
     
@@ -131,6 +137,7 @@ class SignupWindow(tk.Frame):
 
 
         # ----- method changing button text/foreground color on hover
+   
     def changeOnHover(self, button, colorOnHover, colorOnLeave): 
         # background on cursor entering widget 
         button.bind("<Enter>", 
@@ -142,13 +149,15 @@ class SignupWindow(tk.Frame):
                     func=lambda e: button.config(fg=colorOnLeave)
                     )  
 
-    def sign_up(self):
+    def check_user_exists(self):
         user = self.username.get()
-        pw= self.password.get()
-        status = db_transact.sign_up(user, pw)
-        print('Signed Up!' if status==1 else 'Something went wrong! Please try again' if status==0 else 'A user with that name already exist. Please choose another username!' if status==-1 else 'Unknown error!')
+        print("User in signup frame: ", user)
+        status = db_transact.check_user_existance(user)
+        print('Check - user does not yet exist!' if status==1 else 'Something went wrong! Please try again' if status==0 else 'A user with that name already exist. Please choose another username!' if status==-1 else 'Unknown error!')
         if status == 1:
-            self.switch_frame('LoginWindow') #To DO: once df data is loaded into database -> load user data into TC-frame
+            self.uinfowindow = [child for child in self.parent.winfo_children() if child.winfo_name() == "!userinfowindow"][0]
+            self.uinfowindow.info_from_signup()
+            self.switch_frame('UinfoWindow') #To DO: once df data is loaded into database -> load user data into TC-frame
         elif status == 0:
             self.warning.set("Something went wrong. Please try again")
             self.reset_entry_fields()
@@ -169,8 +178,7 @@ class SignupWindow(tk.Frame):
         self.username.set("Username")
         self.password.set("Password")
 
-# # ----- run app -----
-# if __name__ == '__main__':
-#     app = SignupWindow() 
-
-#     app.mainloop()
+    
+    # ---- development functionality -----
+    def uinfo(self):
+        self.switch_frame('UinfoWindow')

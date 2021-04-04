@@ -50,6 +50,7 @@ class InputWindow(tk.Tk):
         style = Style(self)
 
         # colors
+        self.BG_COL_1 = "#DCDAD5"
 
         # custom styles
         style = ttk.Style()
@@ -102,7 +103,7 @@ class InputWindow(tk.Tk):
         self.login_frame.grid(row=0,column=0, rowspan=20, columnspan=2, sticky='EWNS') #configure timer frame placed in the first row and first column and to fill the entire frame ("container")
 
         # add signup frame 
-        self.signup_frame = SignupWindow(self, self.switch_frame)
+        self.signup_frame = SignupWindow(self, self.switch_frame, name="signup")
         self.signup_frame.grid(row=0,column=0, rowspan=20, columnspan=2, sticky='EWNS')
 
         # add signup frame 
@@ -248,6 +249,7 @@ class InputWindow(tk.Tk):
 
     # ----- funtion to run upon closing the window -----
     def on_exit(self):
+        print("Exiting app...")
         self.on_tab_change()  #save entries of last tab without tab change
         self.destroy()  #destroy window
 
@@ -291,6 +293,7 @@ class InputWindow(tk.Tk):
 
 # ----- run app -----
 if __name__ == '__main__':
+    print("Opening app...")
     app = InputWindow() 
 
     app.mainloop()

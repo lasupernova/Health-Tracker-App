@@ -38,10 +38,7 @@ class UserinfoWindow(tk.Frame):
 
         # parent/root frames;  HERE: the parent widget IS also the root widget (tk.TK) 
         self.root = self._root()
-
-        # sign up user info
-        self.user = self.root.signup_frame.username.get()
-        self.pw = self.root.signup_frame.password.get()
+        self.signup = [child for child in self.root.winfo_children() if child.winfo_name() == "!signupwindow"][0]
 
     #----- User Info Screen -----
 
@@ -61,11 +58,10 @@ class UserinfoWindow(tk.Frame):
         self.warning = tk.StringVar(value=None)
 
         #Labels
-        label_cont1 = tk.Frame(uinfo, bg=self.root.BG_COL_1)
-        label_cont1.grid(row=0, rowspan=2, column=0, columnspan=2, padx =(5,5)) 
-        label_cont1.grid_rowconfigure(0, weight=1)
-        label_cont1.grid_columnconfigure(0, weight=1)
-        ttk.Label(label_cont1, text=f'             Hi {self.user}', width=20, font=('MANIFESTO', 18)).grid(row=0, column=0, padx =(5,5)) 
+        self.label_cont1 = tk.Frame(uinfo, bg=self.root.BG_COL_1)
+        self.label_cont1.grid(row=0, rowspan=2, column=0, columnspan=2, padx =(5,5)) 
+        self.label_cont1.grid_rowconfigure(0, weight=1)
+        self.label_cont1.grid_columnconfigure(0, weight=1)
 
         # print(tk.font.families())  #uncomment to get overview of available font families
 
@@ -161,6 +157,11 @@ class UserinfoWindow(tk.Frame):
     def on_exit(self):
         self.destroy() #destroy window
 
+    def info_from_signup(self):
+        self.user = self.signup.username.get()
+        self.pw = self.signup.password.get()
+        ttk.Label(self.label_cont1, text=f'             Hi {self.user}', width=20, font=('MANIFESTO', 18)).grid(row=0, column=0, padx =(5,5)) 
+   
     def focus_in(self, event):
         """
         Deletes text shown in Combobox upon right mouse click, to facilitate direct typing as alternative to drop down menu.
@@ -191,13 +192,13 @@ class UserinfoWindow(tk.Frame):
                 event.widget.set("Year")
     
     def male(self):
-        self.gender.set('male')
+        self.gender.set(0)
         self.female_button.grid_forget()
         self.male_button.grid_forget()
         self.dob_container.grid(row=2, rowspan=3, column=0, columnspan=2, sticky="EWNS", padx =(5,5))
 
     def female(self):
-        self.gender.set('male')
+        self.gender.set(1)
         self.female_button.grid_forget()
         self.male_button.grid_forget()
         self.dob_container.grid(row=2, rowspan=3,column=0, columnspan=2, sticky="EWNS", padx =(5,5)) 
@@ -220,8 +221,8 @@ class UserinfoWindow(tk.Frame):
 
     def sign_up(self):
         user = self.user
-        pw= self.pw
-        sex = self.gender
+        pw = self.pw
+        sex = self.gender.get()
         day = self.dob_day.get()
         month = self.dob_month.get()
         year = self.dob_year.get()
@@ -229,7 +230,7 @@ class UserinfoWindow(tk.Frame):
         status = db_transact.sign_up(user, pw, sex, dob)
         print('Signed Up!' if status==1 else 'Something went wrong! Please try again' if status==0 else 'A user with that name already exist. Please choose another username!' if status==-1 else 'Unknown error!')
         if status == 1:
-            self.switch_frame('UinfoWindow') #To DO: once df data is loaded into database -> load user data into TC-frame
+            self.root.switch_frame('LoginWindow') #To DO: once df data is loaded into database -> load user data into TC-frame
         elif status == 0:
             self.warning.set("Something went wrong. Please try again")
         elif status == -1:
