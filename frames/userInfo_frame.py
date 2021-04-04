@@ -115,24 +115,30 @@ class UserinfoWindow(tk.Frame):
                     font=('MANIFESTO', 12), 
                     textvariable=self.dob_day, 
                     width=8
-                    ).grid(row=2, rowspan=3, column=2, padx =(5,5))
+                    )
+        self.selected_day.grid(row=2, rowspan=3, column=2, padx =(5,5))
+        self.selected_day.bind("<<ComboboxSelected>>", self.check_dob)
 
-        ttk.Combobox(self.dob_container, 
+
+        self.selected_month = ttk.Combobox(self.dob_container, 
                     values=[i for i in range(13)], 
                     font=('MANIFESTO', 12), 
                     textvariable=self.dob_month, 
                     width=8,
-                    ).grid(row=2, rowspan=3, column=3, padx =(5,5))
+                    )
+        self.selected_month.grid(row=2, rowspan=3, column=3, padx =(5,5))
+        self.selected_month.bind("<<ComboboxSelected>>", self.check_dob)
 
-        ttk.Combobox(self.dob_container, 
+        self.selected_year = ttk.Combobox(self.dob_container, 
                     values=[i for i in range(1950,curr_year+1)], 
                     font=('MANIFESTO', 12), 
                     textvariable=self.dob_year, 
                     width=8
-                    ).grid(row=2, rowspan=3, column=4, padx =(5,5))
+                    )
+        self.selected_year.grid(row=2, rowspan=3, column=4, padx =(5,5))
+        self.selected_year.bind("<<ComboboxSelected>>", self.check_dob)
 
         # Button
-
         self.submit_button = tk.Button(uinfo, command=self.dob, text="NEXT", borderwidth=0, fg='blue', bg="#DCDAD5")
         self.changeOnHover(self.submit_button, 'red', 'blue') #change button color on hover
 
@@ -143,22 +149,19 @@ class UserinfoWindow(tk.Frame):
     def on_exit(self):
         self.destroy() #destroy window
 
-    def focus_in(event, field):
-        field.delete(0,"end")
+
     
     def male(self):
         self.gender.set('male')
         self.female_button.grid_forget()
         self.male_button.grid_forget()
         self.dob_container.grid(row=2,column=0, columnspan=2, sticky="EWNS", padx =(5,5))
-        self.submit_button.grid(row=4, column=0, columnspan=2, padx =(5,5), pady =(5,0))
 
     def female(self):
         self.gender.set('male')
         self.female_button.grid_forget()
         self.male_button.grid_forget()
         self.dob_container.grid(row=2,column=0, columnspan=2, sticky="EWNS", padx =(5,5)) 
-        self.submit_button.grid(row=4, column=0, columnspan=2, padx =(5,5), pady =(5,0))
 
         # ----- method changing button text/foreground color on hover
     def changeOnHover(self, button, fgColorOnHover, fgColorOnLeave, bgColorOnHover="#DCDAD5", bgColorOnLeave="#DCDAD5"): 
@@ -182,8 +185,21 @@ class UserinfoWindow(tk.Frame):
         #brings indicated frame to the front
         frame.tkraise() 
 
+    def check_dob(self, event):
+        '''
+        Callback function for dob-comboboxes.
+        Checks if values were selected for all 3 Comboboxes and adds sumbit_button to grid if True.
+        '''
+        if self.dob_day.get() !="Day" and self.dob_month.get() !="Month" and self.dob_year.get() !="Year":
+            self.submit_button.grid(row=4, column=0, columnspan=2, padx =(5,5), pady =(5,0))
+
 
     def dob(self):
+        '''
+        Function called on submit_button - click.
+
+        '''
         print(self.dob_day.get(), self.dob_month.get(), self.dob_year.get())
+        
 
 
