@@ -88,16 +88,16 @@ class UserinfoWindow(tk.Frame):
 
         #Buttons
 
-        self.female_button = tk.Button(uinfo, command=self.female, image=self.female_img, borderwidth=0.5, fg='darkslateblue') #, relief='sunken'
+        self.female_button = tk.Button(uinfo, command=self.female, image=self.female_img, borderwidth=0.5, fg='darkslateblue') 
         self.female_button.grid(row=3, rowspan=3, column=0, sticky="NSEW", pady =(5,5))
-        self.changeOnHover(self.female_button, '#4936ba', 'darkslateblue', '#f8f7ff', 'whitesmoke') #change button color on hover
+        self.changeOnHover(self.female_button, '#4936ba', 'darkslateblue', '#f8f7ff', 'whitesmoke') 
 
         self.male_button = tk.Button(uinfo, command=self.male, image=self.male_img, borderwidth=0.5, fg='darkslateblue') #
         self.male_button.grid(row=3, rowspan=3, column=1, sticky="NSEW", pady =(5,5))
-        self.changeOnHover(self.male_button, '#4936ba', 'darkslateblue', '#f8f7ff', 'whitesmoke') #change button color on hover
+        self.changeOnHover(self.male_button, '#4936ba', 'darkslateblue', '#f8f7ff', 'whitesmoke') 
+
 
         # --- DOB ---
-
 
         # Label
         self.dob_container = tk.Frame(uinfo, bg=self.root.BG_COL_1)  #container in order to be able to center correctly
@@ -107,37 +107,44 @@ class UserinfoWindow(tk.Frame):
             self.dob_container.grid_columnconfigure(n, weight=1)
         ttk.Label(self.dob_container, image=self.dob_img, width=20).grid(row=0, column=3, padx =(5,5)) 
 
-        # Spinboxes
+        # Comboboxes
         curr_year = self.root.current_date.year
 
         self.selected_day = ttk.Combobox(self.dob_container, 
                     values=[i for i in range(32)], 
                     font=('MANIFESTO', 12), 
                     textvariable=self.dob_day, 
-                    width=8
+                    width=8,
+                    name="day"
                     )
         self.selected_day.grid(row=2, rowspan=3, column=2, padx =(5,5))
         self.selected_day.bind("<<ComboboxSelected>>", self.check_dob)
-        self.selected_day.bind("<Button-1>", lambda event, field=self.selected_day: self.focus_in(event, field))
-        self.selected_day.bind("<FocusOut>", lambda event, field=self.selected_day: self.focus_out(event, field))
+        self.selected_day.bind("<Button-1>", lambda event: self.focus_in(event))
+        self.selected_day.bind("<FocusOut>", lambda event: self.focus_out(event))
 
         self.selected_month = ttk.Combobox(self.dob_container, 
                     values=[i for i in range(13)], 
                     font=('MANIFESTO', 12), 
                     textvariable=self.dob_month, 
                     width=8,
+                    name="month"
                     )
         self.selected_month.grid(row=2, rowspan=3, column=3, padx =(5,5))
         self.selected_month.bind("<<ComboboxSelected>>", self.check_dob)
+        self.selected_month.bind("<Button-1>", lambda event: self.focus_in(event))
+        self.selected_month.bind("<FocusOut>", lambda event: self.focus_out(event))
 
         self.selected_year = ttk.Combobox(self.dob_container, 
                     values=[i for i in range(1950,curr_year+1)], 
                     font=('MANIFESTO', 12), 
                     textvariable=self.dob_year, 
-                    width=8
+                    width=8,
+                    name="year"
                     )
         self.selected_year.grid(row=2, rowspan=3, column=4, padx =(5,5))
         self.selected_year.bind("<<ComboboxSelected>>", self.check_dob)
+        self.selected_year.bind("<Button-1>", lambda event: self.focus_in(event))
+        self.selected_year.bind("<FocusOut>", lambda event: self.focus_out(event))
 
         # Button
         self.submit_button = tk.Button(uinfo, command=self.dob, text="NEXT", borderwidth=0, fg='blue', bg="#DCDAD5")
@@ -150,28 +157,33 @@ class UserinfoWindow(tk.Frame):
     def on_exit(self):
         self.destroy() #destroy window
 
-    def focus_in(self, event, field):
+    def focus_in(self, event):
         """
-        Deletes shown text in Combobox upon right mouse click, to facilitate direct typing as alternative to drop down menu.
+        Deletes text shown in Combobox upon right mouse click, to facilitate direct typing as alternative to drop down menu.
+        Note: <Button-1> used instead of <FocusIn>, as <FocusIn> will prevent value to be set while focus is on the widget
 
         Parameters:
             event: event handler - automatically passed to callback function
-            field: ttk.Combobox object - text content of this field will be modified
         """
-        field.delete(0,"end")
+        event.widget.set("")
 
-    def focus_out(self, event, field):
+    def focus_out(self, event):
         """
         Adds original text back to Combobox on <FocusOut>-event, if no selection from dropdown menu was made.
-        Upon dropdown menu selection, the textvariable of the selected Combobox will not be an empty strign anymore.
-        The Combobox-object value cna directly be accessed by calling the .get()-method on the Combobox-object OR by calling .get() on the associated StringVar-object
+        Upon dropdown menu selection, the textvariable of the selected Combobox will not be an empty string anymore.
+        The Combobox-object value can directly be accessed by calling the .get()-method on the Combobox-object OR by calling .get() on the associated StringVar-object
 
         Parameters:
-            event: event handler - automatically passed to callback function
-            field: ttk.Combobox object - text content of this field will be modified
+            event: event handler - automatically passed to callback function; 
+                                   this handler contains information about the widget, including the value (event.widget.get()) and the widget name (event.widget.winfo_name())
         """
-        if field.get() == "":
-            field.insert(0, "Day")
+        if event.widget.get() == "":
+            if event.widget.winfo_name() == "day":
+                event.widget.set("Day")
+            elif event.widget.winfo_name() == "month":
+                event.widget.set("Month")
+            elif event.widget.winfo_name() == "year":
+                event.widget.set("Year")
     
     def male(self):
         self.gender.set('male')
