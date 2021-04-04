@@ -118,7 +118,8 @@ class UserinfoWindow(tk.Frame):
                     )
         self.selected_day.grid(row=2, rowspan=3, column=2, padx =(5,5))
         self.selected_day.bind("<<ComboboxSelected>>", self.check_dob)
-
+        self.selected_day.bind("<Button-1>", lambda event, field=self.selected_day: self.focus_in(event, field))
+        self.selected_day.bind("<FocusOut>", lambda event, field=self.selected_day: self.focus_out(event, field))
 
         self.selected_month = ttk.Combobox(self.dob_container, 
                     values=[i for i in range(13)], 
@@ -149,7 +150,29 @@ class UserinfoWindow(tk.Frame):
     def on_exit(self):
         self.destroy() #destroy window
 
+    def focus_in(self, event, field):
+        """
+        Deletes shown text in Combobox upon right mouse click, to facilitate direct typing as alternative to drop down menu.
 
+        Parameters:
+            event: event handler - automatically passed to callback function
+            field: ttk.Combobox object - text content of this field will be modified
+        """
+        field.delete(0,"end")
+
+    def focus_out(self, event, field):
+        """
+        Adds original text back to Combobox on <FocusOut>-event, if no selection from dropdown menu was made.
+        Upon dropdown menu selection, the textvariable of the selected Combobox will not be an empty strign anymore.
+        The Combobox-object value cna directly be accessed by calling the .get()-method on the Combobox-object OR by calling .get() on the associated StringVar-object
+
+        Parameters:
+            event: event handler - automatically passed to callback function
+            field: ttk.Combobox object - text content of this field will be modified
+        """
+        if field.get() == "":
+            print(field)
+            field.insert(0, "Day")
     
     def male(self):
         self.gender.set('male')
