@@ -20,6 +20,7 @@ from tkcalendar import Calendar, DateEntry
 import sys
 from frames.signup_frame import SignupWindow
 from frames.login_frame import LoginWindow
+from frames.userInfo_frame import UserinfoWindow
 import database.connections.db_transact as db_transact
 
 #  ----- class inheriting from tk.Tk -----
@@ -98,11 +99,15 @@ class InputWindow(tk.Tk):
 
         # add login frame that is placed within "container"
         self.login_frame = LoginWindow(self, self.switch_frame) #initiate Timer-class and pass self as the controller
-        self.login_frame.grid(row=0,column=0, rowspan=20, sticky='EWNS') #configure timer frame placed in the first row and first column and to fill the entire frame ("container")
+        self.login_frame.grid(row=0,column=0, rowspan=20, columnspan=2, sticky='EWNS') #configure timer frame placed in the first row and first column and to fill the entire frame ("container")
 
         # add signup frame 
         self.signup_frame = SignupWindow(self, self.switch_frame)
-        self.signup_frame.grid(row=0,column=0, rowspan=20, sticky='EWNS')
+        self.signup_frame.grid(row=0,column=0, rowspan=20, columnspan=2, sticky='EWNS')
+
+        # add signup frame 
+        self.userinfo_frame = UserinfoWindow(self)
+        self.userinfo_frame.grid(row=0,column=0, rowspan=20, columnspan=2, sticky='EWNS')
 
     # ----- Tabs -----
 
@@ -172,6 +177,7 @@ class InputWindow(tk.Tk):
         # add both frames to dict
         self.frames['LoginWindow'] = self.login_frame
         self.frames['SignupWindow'] = self.signup_frame
+        self.frames['UinfoWindow'] = self.userinfo_frame
         self.frames['TC'] = self.tabControl
 
         # start with timer_frame in front
@@ -242,7 +248,7 @@ class InputWindow(tk.Tk):
 
     # ----- funtion to run upon closing the window -----
     def on_exit(self):
-        self.on_tab_change()  #save entries of last tab withour tab change
+        self.on_tab_change()  #save entries of last tab without tab change
         self.destroy()  #destroy window
 
     def add_plots(self):
