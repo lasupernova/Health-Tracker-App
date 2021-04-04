@@ -2,13 +2,12 @@
 import tkinter as tk
 from tkinter import ttk
 import tkinter.font as tkFont
-import os
+import os.path
 from PIL import ImageTk, Image
 import datetime
 from tkcalendar import Calendar, DateEntry
 import sys
 from database.connections import db_transact #NOTE: use python -m frames.login_frame in order to circumvent relative import issue
-# from signup_frame import SignupWindow
 
 
 #  ----- class inheriting from tk.Tk -----
@@ -46,7 +45,7 @@ class UserinfoWindow(tk.Frame):
         print(self.user, self.pw)
 
 
-    #----- Login Screen -----
+    #----- User Info Screen -----
 
         # initiate login screen
         uinfo = ttk.Frame(self, width=50)
@@ -56,20 +55,34 @@ class UserinfoWindow(tk.Frame):
         for n in range(7):
             uinfo.grid_rowconfigure(n, weight=1)
 
-        # initiate textvariables to fill in using Entryfields or labels
-        self.gender = tk.StringVar(value=0)
-
         #Labels
         ttk.Label(uinfo, text=f'Hi {self.user}', width=20).grid(row=0, rowspan=2, column=0, columnspan=2, sticky="EWNS", padx =(5,5)) 
 
-        #Buttons
-        self.female_button = tk.Button(uinfo, command=self.female, text="Female",borderwidth=1, fg='darkslateblue')
-        self.female_button.grid(row=3, rowspan=3, column=0, sticky="NSEW", pady =(5,5))
-        self.changeOnHover(self.female_button, 'blue', 'darkslateblue', 'lavender', 'whitesmoke') #change button color on hover
 
-        self.male_button = tk.Button(uinfo, command=self.male, text="Male",borderwidth=1, fg='darkslateblue')
+        # ------ Gender ------
+        # initiate textvariables to fill in 
+        self.gender = tk.StringVar(value=0)
+
+        # Images
+        work_folder = os.path.abspath(os.path.join(os.path.dirname(__file__),".."))
+
+        male_img = Image.open(os.path.join(work_folder,"media", "images", "male.png"))
+        male_img = male_img.resize((100, 100), Image.ANTIALIAS)
+        self.male_img = ImageTk.PhotoImage(male_img)
+
+        female_img = Image.open(os.path.join(work_folder,"media", "images", "female.png"))
+        female_img = female_img.resize((100, 150), Image.ANTIALIAS)
+        self.female_img = ImageTk.PhotoImage(female_img)
+
+        #Buttons
+        self.female_button = tk.Button(uinfo, command=self.female, borderwidth=0.25, fg='darkslateblue')
+        self.female_button.config(image=self.female_img,width="10",height="10")
+        self.female_button.grid(row=3, rowspan=3, column=0, sticky="NSEW", pady =(5,5))
+        self.changeOnHover(self.female_button, '#4936ba', 'darkslateblue', '#f8f7ff', 'whitesmoke') #change button color on hover
+
+        self.male_button = tk.Button(uinfo, command=self.male, image=self.male_img, borderwidth=0.25, fg='darkslateblue')
         self.male_button.grid(row=3, rowspan=3, column=1, sticky="NSEW", pady =(5,5))
-        self.changeOnHover(self.male_button, 'blue', 'darkslateblue', 'lavender', 'whitesmoke') #change button color on hover
+        self.changeOnHover(self.male_button, '#4936ba', 'darkslateblue', '#f8f7ff', 'whitesmoke') #change button color on hover
 
 
 
