@@ -124,7 +124,7 @@ def login_user(user, password):
             return -1
 
 
-def sign_up(user, password):
+def sign_up(user, password, sex, dob):
     '''
     Inserts new user into users table in order to sign up new user to health tracker app
     '''
@@ -134,7 +134,7 @@ def sign_up(user, password):
 
         query_check = f"""SELECT * FROM users WHERE username=%s;"""
 
-        query_ins = f"""INSERT INTO users (username, password) VALUES (%s, %s);"""
+        query_ins = f"""INSERT INTO users (username, password, sex, DOB) VALUES (%s, %s, %s, %s);"""
 
         with con.cursor() as cur: #closes transaction, but does NOT close the connection itself
             cur.execute(query_check, (user, ))
@@ -142,7 +142,33 @@ def sign_up(user, password):
             if rows: #if user already exists, return -1 to display error message
                 return -1
             else:
-                cur.execute(query_ins, (user, password)) 
+                cur.execute(query_ins, (user, password, sex, dob)) 
+                return 1
+    
+    except Exception as e:
+        print(e)
+        return 0
+    
+    finally:
+        con.commit()
+        con.close()
+
+def check_user_existance(user):
+    '''
+    Inserts new user into users table in order to sign up new user to health tracker app
+    '''
+
+    try:
+        con = connect_db(password=database_pw)
+
+        query_check = f"""SELECT * FROM users WHERE username=%s;"""
+
+        with con.cursor() as cur: #closes transaction, but does NOT close the connection itself
+            cur.execute(query_check, (user, ))
+            rows = cur.fetchone()
+            if rows: #if user already exists, return -1 to display error message
+                return -1
+            else:
                 return 1
     
     except Exception as e:
