@@ -166,7 +166,8 @@ class UserinfoWindow(tk.Frame):
         Parameters:
             event: event handler - automatically passed to callback function
         """
-        event.widget.set("")
+        if event.widget.get() =="Day" or event.widget.get() =="Month" or event.widget.get() =="Year":
+            event.widget.set("")
 
     def focus_out(self, event):
         """
