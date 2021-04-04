@@ -30,7 +30,7 @@ class UserinfoWindow(tk.Frame):
 
         # configure rows and columns
         self.grid_columnconfigure(0, weight=1)
-        self.grid_rowconfigure(1, weight=1)
+        self.grid_rowconfigure(0, weight=1)
 
         # save todays date on attribute
         self.current_date = datetime.datetime.now().date()
@@ -56,12 +56,20 @@ class UserinfoWindow(tk.Frame):
             uinfo.grid_rowconfigure(n, weight=1)
 
         #Labels
-        ttk.Label(uinfo, text=f'Hi {self.user}', width=20).grid(row=0, rowspan=2, column=0, columnspan=2, sticky="EWNS", padx =(5,5)) 
+        label_cont1 = tk.Frame(uinfo, bg=self.root.BG_COL_1)
+        label_cont1.grid(row=0, rowspan=2, column=0, columnspan=2, padx =(5,5)) 
+        label_cont1.grid_rowconfigure(0, weight=1)
+        label_cont1.grid_columnconfigure(0, weight=1)
+        ttk.Label(label_cont1, text=f'             Hi {self.user}', width=20, font=('MANIFESTO', 18)).grid(row=0, column=0, padx =(5,5)) 
 
+        print(tk.font.families())
 
         # ------ Gender ------
         # initiate textvariables to fill in 
         self.gender = tk.StringVar(value=0)
+        self.dob_day = tk.StringVar(value="Day")
+        self.dob_month = tk.StringVar(value="Month")
+        self.dob_year = tk.StringVar(value="Year")
 
         # Images
         work_folder = os.path.abspath(os.path.join(os.path.dirname(__file__),".."))
@@ -74,17 +82,62 @@ class UserinfoWindow(tk.Frame):
         female_img = female_img.resize((100, 150), Image.ANTIALIAS)
         self.female_img = ImageTk.PhotoImage(female_img)
 
+        dob_img = Image.open(os.path.join(work_folder,"media", "images", "dob.png"))
+        dob_img = dob_img.resize((75, 75), Image.ANTIALIAS)
+        self.dob_img = ImageTk.PhotoImage(dob_img)
+
         #Buttons
-        self.female_button = tk.Button(uinfo, command=self.female, borderwidth=0.25, fg='darkslateblue')
-        self.female_button.config(image=self.female_img,width="10",height="10")
+
+        self.female_button = tk.Button(uinfo, command=self.female, image=self.female_img, borderwidth=0.5, fg='darkslateblue') #, relief='sunken'
         self.female_button.grid(row=3, rowspan=3, column=0, sticky="NSEW", pady =(5,5))
         self.changeOnHover(self.female_button, '#4936ba', 'darkslateblue', '#f8f7ff', 'whitesmoke') #change button color on hover
 
-        self.male_button = tk.Button(uinfo, command=self.male, image=self.male_img, borderwidth=0.25, fg='darkslateblue')
+        self.male_button = tk.Button(uinfo, command=self.male, image=self.male_img, borderwidth=0.5, fg='darkslateblue') #
         self.male_button.grid(row=3, rowspan=3, column=1, sticky="NSEW", pady =(5,5))
         self.changeOnHover(self.male_button, '#4936ba', 'darkslateblue', '#f8f7ff', 'whitesmoke') #change button color on hover
 
+        # --- DOB ---
 
+
+        # Label
+        self.dob_container = tk.Frame(uinfo, bg=self.root.BG_COL_1)  #container in order to be able to center correctly
+        for n in range(3):
+            self.dob_container.grid_rowconfigure(n, weight=1)
+        for n in range(7):
+            self.dob_container.grid_columnconfigure(n, weight=1)
+        ttk.Label(self.dob_container, image=self.dob_img, width=20).grid(row=0, column=3, padx =(5,5)) 
+
+        # Spinboxes
+        curr_year = self.root.current_date.year
+
+        self.selected_day = ttk.Combobox(self.dob_container, 
+                    values=[i for i in range(32)], 
+                    font=('MANIFESTO', 12), 
+                    textvariable=self.dob_day, 
+                    width=8
+                    ).grid(row=2, rowspan=3, column=2, padx =(5,5))
+
+        ttk.Combobox(self.dob_container, 
+                    values=[i for i in range(13)], 
+                    font=('MANIFESTO', 12), 
+                    textvariable=self.dob_month, 
+                    width=8,
+                    ).grid(row=2, rowspan=3, column=3, padx =(5,5))
+
+        ttk.Combobox(self.dob_container, 
+                    values=[i for i in range(1950,curr_year+1)], 
+                    font=('MANIFESTO', 12), 
+                    textvariable=self.dob_year, 
+                    width=8
+                    ).grid(row=2, rowspan=3, column=4, padx =(5,5))
+
+        # Button
+
+        self.submit_button = tk.Button(uinfo, command=self.dob, text="NEXT", borderwidth=0, fg='blue', bg="#DCDAD5")
+        self.changeOnHover(self.submit_button, 'red', 'blue') #change button color on hover
+
+
+        
 
     # ----- funtion to run upon closing the window -----
     def on_exit(self):
@@ -92,18 +145,23 @@ class UserinfoWindow(tk.Frame):
 
     def focus_in(event, field):
         field.delete(0,"end")
-
-    def test(self, event):
-        print("TEST!!!")
     
     def male(self):
-        print("Male")
+        self.gender.set('male')
+        self.female_button.grid_forget()
+        self.male_button.grid_forget()
+        self.dob_container.grid(row=2,column=0, columnspan=2, sticky="EWNS", padx =(5,5))
+        self.submit_button.grid(row=4, column=0, columnspan=2, padx =(5,5), pady =(5,0))
 
     def female(self):
-        print("Female")
+        self.gender.set('male')
+        self.female_button.grid_forget()
+        self.male_button.grid_forget()
+        self.dob_container.grid(row=2,column=0, columnspan=2, sticky="EWNS", padx =(5,5)) 
+        self.submit_button.grid(row=4, column=0, columnspan=2, padx =(5,5), pady =(5,0))
 
         # ----- method changing button text/foreground color on hover
-    def changeOnHover(self, button, fgColorOnHover, fgColorOnLeave, bgColorOnHover, bgColorOnLeave): 
+    def changeOnHover(self, button, fgColorOnHover, fgColorOnLeave, bgColorOnHover="#DCDAD5", bgColorOnLeave="#DCDAD5"): 
         def _modify(e, fgcol, bgcol):
             button.config(fg=fgcol)
             button.config(bg=bgcol)
@@ -125,9 +183,7 @@ class UserinfoWindow(tk.Frame):
         frame.tkraise() 
 
 
-    def switch_frame_advanced(self, next_frame):
-        self.warning.set("")  #reset warning message on tab switch
-        self.reset_entry_fields()
-        self.switch_frame(next_frame)
+    def dob(self):
+        print(self.dob_day.get(), self.dob_month.get(), self.dob_year.get())
 
 
