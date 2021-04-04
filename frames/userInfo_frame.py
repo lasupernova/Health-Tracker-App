@@ -171,7 +171,6 @@ class UserinfoWindow(tk.Frame):
             field: ttk.Combobox object - text content of this field will be modified
         """
         if field.get() == "":
-            print(field)
             field.insert(0, "Day")
     
     def male(self):
