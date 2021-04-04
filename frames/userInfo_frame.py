@@ -7,6 +7,7 @@ from PIL import ImageTk, Image
 import datetime
 from tkcalendar import Calendar, DateEntry
 import sys
+import time
 from database.connections import db_transact #NOTE: use python -m frames.login_frame in order to circumvent relative import issue
 
 
@@ -62,7 +63,7 @@ class UserinfoWindow(tk.Frame):
         label_cont1.grid_columnconfigure(0, weight=1)
         ttk.Label(label_cont1, text=f'             Hi {self.user}', width=20, font=('MANIFESTO', 18)).grid(row=0, column=0, padx =(5,5)) 
 
-        print(tk.font.families())
+        # print(tk.font.families())  #uncomment to get overview of available font families
 
         # ------ Gender ------
         # initiate textvariables to fill in 
@@ -226,6 +227,11 @@ class UserinfoWindow(tk.Frame):
         '''
         if self.dob_day.get() !="Day" and self.dob_month.get() !="Month" and self.dob_year.get() !="Year":
             self.submit_button.grid(row=4, column=0, columnspan=2, padx =(5,5), pady =(5,0))
+            
+            # self.after(1000, lambda: self.submit_button.config(fg="red"))
+            # self.after(1000, lambda: self.submit_button.config(fg="black"))
+            # self.after(1000, lambda: self.submit_button.config(fg="green"))
+            self.change_color(self.submit_button)
 
 
     def dob(self):
@@ -234,6 +240,29 @@ class UserinfoWindow(tk.Frame):
 
         '''
         print(self.dob_day.get(), self.dob_month.get(), self.dob_year.get())
+
+    def change_color(self, widget):
+        '''
+        NOTE1: running .after() in a loop (e.g. for) does not work, as the loop runs while after-round is still waiting
+        NOTE2: subsequent .after()-calls, need to have increasinf delays, as the first after-call delay time nis substracted from the 2nd one, the 2nd from the 3rd etc.
+        --> solutions:
+            1) extend tint-list by how often should be ran through
+            2) call .enumerate() and multiply the enumerator by the desired time for each color
+        '''
+        def _color_text(widget, color):
+            ''' Change font color of widget to "color" '''
+            widget.config(fg=color)
+
+        tints_of_blue = ["#0000FF", "#1919ff", "#3232ff", "#4c4cff", "#6666ff", "#7f7fff", "#9999ff", "#b2b2ff", "#ccccff", "#e5e5ff"]  #list of blue with decreasing saturation
+        tints_of_blue += tints_of_blue[::-1]  #append reversed list to list
+        tints_of_blue *= 3
+        time_per_col = int(4000/len(tints_of_blue))   #each "blink" should take 60 seconds
+
+
+        for n, tint in enumerate(tints_of_blue):
+            self.after(time_per_col*n, _color_text, widget, tint)
+
+
         
 
 
