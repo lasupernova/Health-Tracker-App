@@ -1,5 +1,4 @@
 # TO DO: add daving all info to db to _on_exit()-method
-# TO DO: Figure out why app does not close after closing window !!!! --> checl past_entry_frames
 # NOTE: tk.Frame does NOT have access to ttk.Notebook!
 # --> convert tracker.py into a main.py instead!!!
 
@@ -99,15 +98,15 @@ class InputWindow(tk.Tk):
 
         # add login frame that is placed within "container"
         self.login_frame = LoginWindow(self) #initiate Timer-class and pass self as the controller #, self.switch_frame
-        self.login_frame.grid(row=0,column=0, rowspan=20, columnspan=2, sticky='EWNS') #configure timer frame placed in the first row and first column and to fill the entire frame ("container")
+        self.login_frame#.grid(row=0,column=0, rowspan=20, columnspan=2, sticky='EWNS') #configure timer frame placed in the first row and first column and to fill the entire frame ("container")
 
         # add signup frame 
         self.signup_frame = SignupWindow(self, name="signup")
-        self.signup_frame.grid(row=0,column=0, rowspan=20, columnspan=2, sticky='EWNS')
+        self.signup_frame#.grid(row=0,column=0, rowspan=20, columnspan=2, sticky='EWNS')
 
         # add signup frame 
         self.userinfo_frame = UserinfoWindow(self)
-        self.userinfo_frame.grid(row=0,column=0, rowspan=20, columnspan=2, sticky='EWNS')
+        self.userinfo_frame
 
     # ----- Tabs -----
 
@@ -252,6 +251,7 @@ class InputWindow(tk.Tk):
         self.on_tab_change()  #save entries of last tab without tab change
         self.destroy()  #destroy window
 
+
     def add_plots(self):
         # ----- iterate over all notebook tabs -----
         for tab in self.all_tabs:
@@ -269,21 +269,29 @@ class InputWindow(tk.Tk):
             cur_tab.grid(row=1, column=1, sticky="NSEW", padx=10, pady=10)
             cur_tab.display_plots(tab_name)
 
+
     # ----- function that brings frame on the back to the front -----
     def switch_frame(self, container):
-        # indicate which frame to bring to front
+
+        # ungrid current frame --> to avoid seeing "background"-frame, as frames are of different size, to avoid seeing "background"-frame
+        for fname, frame in self.frames.items():
+            if frame.winfo_viewable():
+                frame.grid_forget()
+    
+        # indicate which frame to bring to show
         frame = self.frames[container]
 
         # create UI if frame to switch to is 'TC' - important to load TC after login only and to directly load correct user data based on self.user
         if frame == self.frames['TC']:
             self.add_plots()
             self.date_button.grid(row=1,column=1,rowspan=1, sticky='N')
-            # self.frames['LoginWindow'].grid_forget()
+            frame.grid(row=0,column=0, rowspan=20, sticky='EWNS') 
+        else:
+            frame.grid(row=0,column=0, rowspan=20, columnspan=2,sticky='EWNS') 
 
         #brings indicated frame to the front
-        frame.tkraise() 
-        print("WORKS!")
-        print(f'User: {self.user}')
+        frame.tkraise()  #keep tk.raise() in addition to .grid_forget() as 'TC' is always loaded to grid
+
 
     def toplevel_message(self, title, message, duration):
         top = tk.Toplevel()
