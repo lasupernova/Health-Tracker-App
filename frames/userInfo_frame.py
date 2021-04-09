@@ -160,7 +160,7 @@ class UserinfoWindow(tk.Frame):
     def info_from_signup(self):
         self.user = self.signup.username.get()
         self.pw = self.signup.password.get()
-        ttk.Label(self.label_cont1, text=f'             Hi {self.user}', width=20, font=('MANIFESTO', 18)).grid(row=0, column=0, padx =(5,5)) 
+        ttk.Label(self.label_cont1, text=f'             Hi {self.signup.username.get()}', width=20, font=('MANIFESTO', 18)).grid(row=0, column=0, padx =(5,5)) 
    
     def focus_in(self, event):
         """
@@ -244,6 +244,8 @@ class UserinfoWindow(tk.Frame):
         if self.dob_day.get() !="Day" and self.dob_month.get() !="Month" and self.dob_year.get() !="Year":
             self.submit_button.grid(row=5, column=4, columnspan=2, padx =(5,5), pady =(5,0))
             self.change_color(self.submit_button)
+        else:
+            print(f"Day: {self.dob_day.get()}\nMonth: {self.dob_month.get()}\nYear: {self.dob_year.get()}")
 
 
     def dob(self):
@@ -256,7 +258,7 @@ class UserinfoWindow(tk.Frame):
     def change_color(self, widget):
         '''
         NOTE1: running .after() in a loop (e.g. for) does not work, as the loop runs while after-round is still waiting
-        NOTE2: subsequent .after()-calls, need to have increasinf delays, as the first after-call delay time nis substracted from the 2nd one, the 2nd from the 3rd etc.
+        NOTE2: subsequent .after()-calls, need to have increasing delays, as the first after-call delay time nis substracted from the 2nd one, the 2nd from the 3rd etc.
         --> solutions:
             1) extend tint-list by how often should be ran through
             2) call .enumerate() and multiply the enumerator by the desired time for each color
