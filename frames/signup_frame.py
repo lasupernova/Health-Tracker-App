@@ -77,11 +77,13 @@ class SignupWindow(tk.Frame):
         self.user_entry.grid(row=1, column=0, sticky="NSEW", columnspan=2, padx =(5,5), pady =(5,0)) 
         self.user_entry.bind("<FocusIn>", lambda event, field=self.user_entry: self.focus_in(event, field))
         self.user_entry.bind("<FocusOut>", lambda event, field=self.user_entry, field_name='username': self.focus_out(event, field, field_name))
+        self.user_entry.bind("<Return>", self.check_user_exists)
 
         self.pw_entry = tk.Entry(signup, textvariable=self.password)
         self.pw_entry.grid(row=2, column=0, sticky="NSEW", columnspan=2, padx =(5,5), pady =(5,0)) 
         self.pw_entry.bind("<FocusIn>", lambda event, field=self.pw_entry: self.focus_in(event, field))
         self.pw_entry.bind("<FocusOut>", lambda event, field=self.pw_entry, field_name='password': self.focus_out(event, field, field_name))
+        self.pw_entry.bind("<Return>", self.check_user_exists)
 
         #Buttons
         self.submit_button = tk.Button(signup, command=self.check_user_exists, text="Sign Up!",borderwidth=1, fg='darkslateblue')
@@ -107,7 +109,7 @@ class SignupWindow(tk.Frame):
 
     def focus_in(self, event, field):
         field.delete(0,"end")
-        # usercheck=True
+        # usercheck=Trueself.change_bind_config(frame, "unbind")
     
     def focus_out(self, event, field, field_name):
         '''
@@ -149,21 +151,49 @@ class SignupWindow(tk.Frame):
                     func=lambda e: button.config(fg=colorOnLeave)
                     )  
 
-    def check_user_exists(self):
+    def check_user_exists(self, event=None):
+        
         user = self.username.get()
-        print("User in signup frame: ", user)
-        status = db_transact.check_user_existance(user)
-        print('Check - user does not yet exist!' if status==1 else 'Something went wrong! Please try again' if status==0 else 'A user with that name already exist. Please choose another username!' if status==-1 else 'Unknown error!')
-        if status == 1:
+        
+        status = self.__check_user_valid__(user)
+        
+        if status == 0:
             self.uinfowindow = [child for child in self.parent.winfo_children() if child.winfo_name() == "!userinfowindow"][0]
             self.uinfowindow.info_from_signup()
             self.parent.switch_frame('UinfoWindow') #To DO: once df data is loaded into database -> load user data into TC-frame
-        elif status == 0:
+        elif status == 1:
             self.warning.set("Something went wrong. Please try again")
             self.reset_entry_fields()
         elif status == -1:
             self.warning.set("User already exists!")
             self.reset_entry_fields()
+
+    
+    def __check_user_valid__(self, user):
+        """
+        Checks validity of entered username and if username already exists in database.
+
+        Parameters: 
+            user - string
+
+        Returns 0 if username is valid and available, returns 1 or -1 otherwise
+        """
+
+        print("User in signup frame: ", user)
+
+        if not user or user=="0":
+            self.warning.set("Please enter a username!")
+            return
+        elif len(user) < 3:
+            self.warning.set("Username too short! Must be at least 3 characters long!")
+            return   
+        else:
+            status = db_transact.check_user_existance(user)
+
+        print('Check - user does not yet exist!' if status==0 else 'Something went wrong! Please try again' if status==1 else 'A user with that name already exist. Please choose another username!' if status==-1 else 'Unknown error!')
+        
+        return status
+
 
 
     def funfact(self):

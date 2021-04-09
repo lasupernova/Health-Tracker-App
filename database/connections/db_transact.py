@@ -123,6 +123,24 @@ def login_user(user, password):
         else: #if query does not return result -> no entry for this specific user
             return -1
 
+def get_gender(user):
+    '''
+    Checks if inserted credentials match to login user in GUI
+    '''
+
+    con = connect_db(password=database_pw)
+
+    query = f"""SELECT sex FROM users WHERE username=%s;"""
+
+    with con.cursor() as cur:
+        cur.execute(query, (user, ))
+
+        rows = cur.fetchone()
+
+        if rows: 
+            return 'female' if rows[0]==1 else 'male' if rows[0]==0 else 'undetermined'
+        else: #if query does not return result -> no entry for this specific user
+            return -1
 
 def sign_up(user, password, sex, dob):
     '''
@@ -155,7 +173,7 @@ def sign_up(user, password, sex, dob):
 
 def check_user_existance(user):
     '''
-    Inserts new user into users table in order to sign up new user to health tracker app
+    Check if user already exists in 'users' table
     '''
 
     try:
@@ -169,11 +187,11 @@ def check_user_existance(user):
             if rows: #if user already exists, return -1 to display error message
                 return -1
             else:
-                return 1
+                return 0
     
     except Exception as e:
         print(e)
-        return 0
+        return 1
     
     finally:
         con.commit()
