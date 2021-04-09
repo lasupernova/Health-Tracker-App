@@ -3,6 +3,7 @@
 
 # ----- import libraries and  modules ---
 import tkinter as tk
+from tkinter import ttk
 # from tkinter import ttk
 import os
 from PIL import ImageTk, Image
@@ -11,6 +12,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 # from.analysis.sleep import plot_sleep
 # from .analysis.plots.test import make_plot
 from media.plots.cycle import plot_cycle
+from media.plots.sleep import plot_sleep
 
 class PastEntryFrame(tk.Frame):
     def __init__(self, container, tab_name, *args, **kwargs):
@@ -34,62 +36,66 @@ class PastEntryFrame(tk.Frame):
 
     def display_plots(self, tab_name):
 
-        if tab_name == "Period":
-            pass
-        # https://stackoverflow.com/questions/50846947/interference-between-the-matplotlib-graphs-in-tkinter-gui
-        # https://stackoverflow.com/questions/55542813/tkinter-plt-figure-does-not-plot-but-figure-does
-        # https://stackoverflow.com/questions/17535766/tkinter-matplotlib-backend-conflict-causes-infinite-mainloop
-        # http://staff.ltam.lu/feljc/software/python/matplotlib_tkinter.pdf
-            # # get plot 
-            self.plot = plot_cycle(self.user, self.date)
+        try:
 
-            # create canvas, add plot, pack + draw
-            self.canvas = FigureCanvasTkAgg(self.plot, master=self)
-            self.canvas.get_tk_widget().pack()
-            self.canvas.draw()
+            if tab_name == "Period":
+                pass
+            # https://stackoverflow.com/questions/50846947/interference-between-the-matplotlib-graphs-in-tkinter-gui
+            # https://stackoverflow.com/questions/55542813/tkinter-plt-figure-does-not-plot-but-figure-does
+            # https://stackoverflow.com/questions/17535766/tkinter-matplotlib-backend-conflict-causes-infinite-mainloop
+            # http://staff.ltam.lu/feljc/software/python/matplotlib_tkinter.pdf
+                # # get plot 
+                if plot_cycle(self.user, self.date) == -1:
+                    ttk.Label(self, name='nothing_to_see',text='Nothing to see... yet', foreground='grey', background='whitesmoke').pack()
 
+                self.plot = plot_cycle(self.user, self.date)
 
-        elif tab_name == "Sleep":
-            # create canvas to place plots in
-            self.C1 = tk.Canvas(self, borderwidth=1)
-            self.C1.pack()
-            # self.C2 = tk.Canvas(self, borderwidth=1)
-            # self.C2.pack()
-
-            # import image
-            self.img = ImageTk.PhotoImage(Image.open(f"media{os.sep}images{os.sep}test.jpg").resize((200,200)))
-            # add image to C1
-            self.C1.create_image(60,60, anchor="nw", image=self.img)
-
-            # # display custom plot
-            # canvas = FigureCanvasTkAgg(plot_sleep(period=14), master=self)
-            # canvas.draw()
-            # canvas.get_tk_widget().pack(anchor="center")
-
-        else:
-            # create canvas to place plots in
-            self.C1 = tk.Canvas(self, borderwidth=1)
-            self.C1.pack()
-            # self.C2 = tk.Canvas(self, borderwidth=1)
-            # self.C2.pack()
-
-            # import image
-            self.img = ImageTk.PhotoImage(Image.open(f"media{os.sep}images{os.sep}test.jpg").resize((200,200)))
-            # # self.img = self.img
-            # # img = Image.open(f"media{os.sep}images{os.sep}test.jpg")
-            # # img.show()
-            self.C1.create_image(60,60, anchor="nw", image=self.img)
+                # create canvas, add plot, pack + draw
+                self.canvas = FigureCanvasTkAgg(self.plot, master=self)
+                self.canvas.get_tk_widget().pack()
+                self.canvas.draw()
 
 
-            # canvas = FigureCanvasTkAgg(make_plot(), master=self)
-            # canvas.draw()
-            # canvas.get_tk_widget().pack(anchor="center")
+            elif tab_name == "Sleep":
 
-    # print(container.children.keys())
-    # print(tab_name) 
-  
-  
-        # if tab_name == "Period":
-        #     canvas = FigureCanvasTkAgg(self.plot_cycle, master=self)
-        #     canvas.draw()
-        #     canvas.get_tk_widget().pack(anchor="center")
+                if plot_sleep(self.user, self.date) == -1:
+                    ttk.Label(self, name='nothing_to_see',text='Nothing to see... yet', foreground='grey', background='whitesmoke').pack()
+
+                self.plot = plot_sleep(self.user, self.date)
+
+                # create canvas, add plot, pack + draw
+                self.canvas = FigureCanvasTkAgg(self.plot, master=self)
+                self.canvas.get_tk_widget().pack()
+                self.canvas.draw()
+
+
+            else:
+                # create canvas to place plots in
+                self.C1 = tk.Canvas(self, borderwidth=1)
+                self.C1.pack()
+                # self.C2 = tk.Canvas(self, borderwidth=1)
+                # self.C2.pack()
+
+                # import image
+                self.img = ImageTk.PhotoImage(Image.open(f"media{os.sep}images{os.sep}test.jpg").resize((200,200)))
+                # # self.img = self.img
+                # # img = Image.open(f"media{os.sep}images{os.sep}test.jpg")
+                # # img.show()
+                self.C1.create_image(60,60, anchor="nw", image=self.img)
+
+
+                # canvas = FigureCanvasTkAgg(make_plot(), master=self)
+                # canvas.draw()
+                # canvas.get_tk_widget().pack(anchor="center")
+
+        # print(container.children.keys())
+        # print(tab_name) 
+    
+    
+            # if tab_name == "Period":
+            #     canvas = FigureCanvasTkAgg(self.plot_cycle, master=self)
+            #     canvas.draw()
+            #     canvas.get_tk_widget().pack(anchor="center")
+
+        except:
+            ttk.Label(self, name='nothing_to_see',text='Nothing to see... yet', foreground='grey', background='whitesmoke').pack()

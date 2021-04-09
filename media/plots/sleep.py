@@ -35,6 +35,10 @@ def plot_sleep(user, date):
     table = 'sleep'
     # get data
     data = db_transact.query_data_between_dates_by_user(user, start_date, end_date, table=table, columns=columns)   #returns list of tuples
+
+    if not data:
+        return -1
+
     data_values = [tup[0:-1] for tup in data]   #extract values from each tuple
     date = [tup[-1] for tup in data] 
 
