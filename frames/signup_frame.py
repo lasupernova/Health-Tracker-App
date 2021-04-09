@@ -109,33 +109,23 @@ class SignupWindow(tk.Frame):
 
     def focus_in(self, event, field):
         field.delete(0,"end")
+        # if field == self.pw_entry:
+        #     field.config(show="*")
         # usercheck=Trueself.change_bind_config(frame, "unbind")
     
     def focus_out(self, event, field, field_name):
         '''
-        Get's inserted value on focus out or adds placeholder prompting for input if no input was given;
+        Get's sets username and password Stringvar-value on focus out or adds placeholder prompting for input if no input was given;
         Works for both the username and the password - fields
         '''
-        def process_input(text_var, field_name):
-            if text_var != '':
-                return text_var
-            else:
-                if field_name=='username':
-                    field.insert(0, "I said ENTER USERNAME!")
-                elif field_name=='password':
-                    field.insert(0, "I said ENTER PASSWORD!")
-                return False
 
-        if field_name=='username':
-            text_var = self.username.get() #field.cget("textvariable")
-            user = process_input(text_var, field_name)
-            self.username.set(user)
-            print(user)
+        text_var = field.get()
 
-        elif field_name=='password':
-            text_var = self.password.get() #field.cget("textvariable")
-            pw = process_input(text_var, field_name)
-            self.password.set(pw)
+        if text_var != '' and text_var!='0' and text_var!=0:
+            return text_var
+        else:
+            field.insert(0, f"I said ENTER {field_name.upper()}!")
+            return 
 
 
         # ----- method changing button text/foreground color on hover

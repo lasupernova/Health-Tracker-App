@@ -69,7 +69,7 @@ class LoginWindow(tk.Frame):
         self.user_entry.bind("<FocusOut>", lambda event, field=self.user_entry, field_name='username': self.focus_out(event, field, field_name))
         self.user_entry.bind("<Return>", self.check_credentials)
 
-        self.pw_entry = tk.Entry(login,textvariable=self.password)
+        self.pw_entry = tk.Entry(login,textvariable=self.password, show="*")
         self.pw_entry.grid(row=2, column=0, sticky="NSEW", columnspan=2, padx =(5,5), pady =(5,0)) 
         self.pw_entry.bind("<FocusIn>", lambda event, field=self.pw_entry: self.focus_in(field))
         self.pw_entry.bind("<FocusOut>", lambda event, field=self.pw_entry, field_name='password': self.focus_out(event, field, field_name))
@@ -109,26 +109,16 @@ class LoginWindow(tk.Frame):
         Get's inserted value on focus out or adds placeholder prompting for input if no input was given;
         Works for both the username and the password - fields
         '''
-        def process_input(text_var, field_name):
-            if text_var != '':
+        def process_input(text_var, field, field_name):
+            if text_var != '' and text_var!='0' and text_var!=0:
                 return text_var
             else:
-                if field_name=='username':
-                    field.insert(0, "I said ENTER USERNAME!")
-                elif field_name=='password':
-                    field.insert(0, "I said ENTER PASSWORD!")
-                return False
-
-        if field_name=='username':
-            text_var = self.username.get() #field.cget("textvariable")
-            user = process_input(text_var, field_name)
-            self.username.set(user)
-            print(user)
-
-        elif field_name=='password':
-            text_var = self.password.get() #field.cget("textvariable")
-            pw = process_input(text_var, field_name)
-            self.password.set(pw)
+                field.insert(0, f"I said ENTER {field_name.upper()}!")
+                return 
+                
+        text_var = field.get()
+        process_input(text_var, field, field_name)
+        
 
         # ----- method changing button text/foreground color on hover
     def changeOnHover(self, button, colorOnHover, colorOnLeave): 
