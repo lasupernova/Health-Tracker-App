@@ -109,16 +109,16 @@ class LoginWindow(tk.Frame):
         Get's inserted value on focus out or adds placeholder prompting for input if no input was given;
         Works for both the username and the password - fields
         '''
-        def process_input(text_var, field, field_name):
-            if text_var != '' and text_var!='0' and text_var!=0:
-                return text_var
-            else:
-                field.insert(0, f"I said ENTER {field_name.upper()}!")
-                return 
-                
+
         text_var = field.get()
-        process_input(text_var, field, field_name)
-        
+
+        if text_var != '' and text_var!='0' and text_var!=0:
+            return text_var
+        else:
+            field.insert(0, f"I said ENTER {field_name.upper()}!")
+            return 
+                
+
 
         # ----- method changing button text/foreground color on hover
     def changeOnHover(self, button, colorOnHover, colorOnLeave): 
