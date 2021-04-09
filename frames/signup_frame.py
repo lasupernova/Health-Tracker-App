@@ -111,7 +111,7 @@ class SignupWindow(tk.Frame):
         if field.get() == "Username" or field.get() == "Password" or "I said ENTER" in field.get():
             field.delete(0,"end")
         if field == self.pw_entry:
-            field.config(show="*")
+            field.config(show="⸸")
     
     def focus_out(self, field, field_name):
         '''

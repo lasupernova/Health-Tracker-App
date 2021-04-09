@@ -69,7 +69,7 @@ class LoginWindow(tk.Frame):
         self.user_entry.bind("<FocusOut>", lambda event, field=self.user_entry, field_name='username': self.focus_out(field, field_name))
         self.user_entry.bind("<Return>", self.check_credentials)
 
-        self.pw_entry = tk.Entry(login,textvariable=self.password, show="*")
+        self.pw_entry = tk.Entry(login,textvariable=self.password)
         self.pw_entry.grid(row=2, column=0, sticky="NSEW", columnspan=2, padx =(5,5), pady =(5,0)) 
         self.pw_entry.bind("<FocusIn>", lambda event, field=self.pw_entry: self.focus_in(field))
         self.pw_entry.bind("<FocusOut>", lambda event, field=self.pw_entry, field_name='password': self.focus_out(field, field_name))
@@ -106,7 +106,7 @@ class LoginWindow(tk.Frame):
         if field.get() == "Username" or field.get() == "Password" or "I said ENTER" in field.get():
             field.delete(0,"end")
         if field == self.pw_entry:
-            field.config(show="*")
+            field.config(show="⸸")
     
 
     def focus_out(self, field, field_name):
