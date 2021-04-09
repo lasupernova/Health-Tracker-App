@@ -206,7 +206,7 @@ class SignupWindow(tk.Frame):
             self.warning.set("How you gonna sign up without a password, dummy?!")
             return -1
         elif len(pw) < 6:
-            self.warning.set("Password not valid! Must be at least 6 characters long!")
+            self.warning.set("Password not valid! Must be at least 6 characters long!")  #pw requirements will be changed outside of DEV
             return -1
         else:
             return 0 
