@@ -153,9 +153,7 @@ class SignupWindow(tk.Frame):
 
     def check_user_exists(self, event=None):
         
-        user = self.username.get()
-        
-        status = self.__check_user_valid__(user)
+        status = self.__check_user_valid__()
         
         if status == 0:
             self.uinfowindow = [child for child in self.parent.winfo_children() if child.winfo_name() == "!userinfowindow"][0]
@@ -169,16 +167,14 @@ class SignupWindow(tk.Frame):
             self.reset_entry_fields()
 
     
-    def __check_user_valid__(self, user):
+    def __check_user_valid__(self):
         """
         Checks validity of entered username and if username already exists in database.
-
-        Parameters: 
-            user - string
 
         Returns 0 if username is valid and available, returns 1 or -1 otherwise
         """
 
+        user = self.username.get()
         print("User in signup frame: ", user)
 
         if not user or user=="0":
@@ -189,11 +185,31 @@ class SignupWindow(tk.Frame):
             return   
         else:
             status = db_transact.check_user_existance(user)
+            if self.__check_pw_valid__() != 0:
+                return
 
         print('Check - user does not yet exist!' if status==0 else 'Something went wrong! Please try again' if status==1 else 'A user with that name already exist. Please choose another username!' if status==-1 else 'Unknown error!')
         
         return status
 
+
+    def __check_pw_valid__(self):
+        """
+        Checks validity of entered password.
+
+        Returns 0 if password is valid and available, returns -1 otherwise
+        """
+
+        pw = self.password.get()
+
+        if not pw or pw=="0":
+            self.warning.set("How you gonna sign up without a password, dummy?!")
+            return -1
+        elif len(pw) < 6:
+            self.warning.set("Password not valid! Must be at least 6 characters long!")
+            return -1
+        else:
+            return 0 
 
 
     def funfact(self):
