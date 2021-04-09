@@ -67,25 +67,30 @@ class LoginWindow(tk.Frame):
         self.user_entry.grid(row=1, column=0, sticky="NSEW", columnspan=2, padx =(5,5), pady =(5,0)) 
         self.user_entry.bind("<FocusIn>", lambda event, field=self.user_entry: self.focus_in(field))
         self.user_entry.bind("<FocusOut>", lambda event, field=self.user_entry, field_name='username': self.focus_out(event, field, field_name))
+        self.user_entry.bind("<Return>", self.check_credentials)
 
         self.pw_entry = tk.Entry(login,textvariable=self.password)
         self.pw_entry.grid(row=2, column=0, sticky="NSEW", columnspan=2, padx =(5,5), pady =(5,0)) 
         self.pw_entry.bind("<FocusIn>", lambda event, field=self.pw_entry: self.focus_in(field))
         self.pw_entry.bind("<FocusOut>", lambda event, field=self.pw_entry, field_name='password': self.focus_out(event, field, field_name))
+        self.pw_entry.bind("<Return>", self.check_credentials)
 
         #Buttons
         self.submit_button = tk.Button(login, command=self.check_credentials, text="Login",borderwidth=1, fg='darkslateblue')
         self.submit_button.grid(row=4, column=0, sticky="NSEW", columnspan=2, padx =(5,5), pady =(5,5))
-        self.master.bind("<Return>", self.check_credentials)
-        self.changeOnHover(self.submit_button, 'blue', 'darkslateblue') #change button color on hover
+        self.changeOnHover(self.submit_button, 'blue', 'darkslateblue') #change button color on hover - use function to bind events for re-use (below)
 
         self.signup_button = tk.Button(login, command=lambda: self.switch_frame_advanced('SignupWindow'), text="Sign Up", borderwidth=0, fg='blue', bg="#DCDAD5")
         self.signup_button.grid(row=5, column=0, sticky="NEW", padx =(5,5), pady =(5,0))
-        self.changeOnHover(self.signup_button, 'red', 'blue') #change button color on hover 
+        self.changeOnHover(self.signup_button, 'red', 'blue')
 
         self.forgotPW_button = tk.Button(login, command=self.forgot_pw, text="Forgot Password", borderwidth=0, fg='blue', bg="#DCDAD5")
         self.forgotPW_button.grid(row=5, column=1, sticky="NEW", padx =(5,5), pady =(5,0))
-        self.changeOnHover(self.forgotPW_button, 'red', 'blue') #change button color on hover
+        self.changeOnHover(self.forgotPW_button, 'red', 'blue')
+
+        # while True:
+        #     if self.winfo_viewable():
+
 
 
     # ----- funtion to run upon closing the window -----
@@ -138,12 +143,15 @@ class LoginWindow(tk.Frame):
                     )  
 
     def check_credentials(self, event=None):
+        print(event)
         user = self.username.get()
         pw= self.password.get()
         status = db_transact.login_user(user, pw)
         print('Logged in!' if status==1 else 'Wrong password!' if status==0 else 'User does not exist!' if status==-1 else 'Unknown error!')
         if status == 1:
             self.parent.user = user  #save logged in user to main tracker frame
+            self.parent.sex = db_transact.get_gender(user)
+            print(">>> Sex determined: ",self.parent.sex)
             self.parent.switch_frame('TC')  #To DO: once df data is loaded into database -> load user data into TC-frame
             self.parent.tabControl.bind("<<NotebookTabChanged>>", self.parent.on_tab_change)
         elif status == 0:
