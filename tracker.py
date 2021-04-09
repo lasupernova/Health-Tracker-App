@@ -102,7 +102,7 @@ class InputWindow(tk.Tk):
         self.login_frame.grid(row=0,column=0, rowspan=20, columnspan=2, sticky='EWNS') #configure timer frame placed in the first row and first column and to fill the entire frame ("container")
 
         # add signup frame 
-        self.signup_frame = SignupWindow(self, self.switch_frame, name="signup")
+        self.signup_frame = SignupWindow(self, name="signup")
         self.signup_frame.grid(row=0,column=0, rowspan=20, columnspan=2, sticky='EWNS')
 
         # add signup frame 
@@ -278,7 +278,7 @@ class InputWindow(tk.Tk):
         if frame == self.frames['TC']:
             self.add_plots()
             self.date_button.grid(row=1,column=1,rowspan=1, sticky='N')
-            self.frames['LoginWindow'].grid_forget()
+            # self.frames['LoginWindow'].grid_forget()
 
         #brings indicated frame to the front
         frame.tkraise() 

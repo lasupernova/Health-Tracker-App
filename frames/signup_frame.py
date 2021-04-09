@@ -1,3 +1,5 @@
+# TO DO: find better way to reference uinfo from signup and vice versa
+
 # ----- import libraries and  modules ---
 import tkinter as tk
 from tkinter import ttk
@@ -13,7 +15,7 @@ from database.connections import db_transact #NOTE: use python -m frames.login_f
 #  ----- class inheriting from tk.Tk -----
 class SignupWindow(tk.Frame):
     #  ----- initialize -----
-    def __init__(self, parent, switch_frame, *args, **kwargs):
+    def __init__(self, parent, *args, **kwargs):
         super().__init__(None)
 
     # ----- Styles -----
@@ -28,8 +30,6 @@ class SignupWindow(tk.Frame):
         # customed_style.configure('Custom.TNotebook.Tab', padding=[12, 12], font=('Helvetica', 10))
 
     # ----- customize -----
-
-        self.switch_frame = switch_frame
 
         self.parent = parent
 
@@ -157,7 +157,7 @@ class SignupWindow(tk.Frame):
         if status == 1:
             self.uinfowindow = [child for child in self.parent.winfo_children() if child.winfo_name() == "!userinfowindow"][0]
             self.uinfowindow.info_from_signup()
-            self.switch_frame('UinfoWindow') #To DO: once df data is loaded into database -> load user data into TC-frame
+            self.parent.switch_frame('UinfoWindow') #To DO: once df data is loaded into database -> load user data into TC-frame
         elif status == 0:
             self.warning.set("Something went wrong. Please try again")
             self.reset_entry_fields()
@@ -172,7 +172,7 @@ class SignupWindow(tk.Frame):
     def switch_frame_advanced(self, next_frame):
         self.warning.set("")  #reset warning message on tab switch
         self.reset_entry_fields()
-        self.switch_frame(next_frame)
+        self.parent.switch_frame(next_frame)
 
     def reset_entry_fields(self):
         self.username.set("Username")
@@ -181,4 +181,4 @@ class SignupWindow(tk.Frame):
     
     # ---- development functionality -----
     def uinfo(self):
-        self.switch_frame('UinfoWindow')
+        self.parent.switch_frame('UinfoWindow')

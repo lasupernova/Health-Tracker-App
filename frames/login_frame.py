@@ -14,7 +14,7 @@ from database.connections import db_transact #NOTE: use python -m frames.login_f
 #  ----- class inheriting from tk.Tk -----
 class LoginWindow(tk.Frame):
     #  ----- initialize -----
-    def __init__(self, parent, *args, **kwargs): #, switch_frame
+    def __init__(self, parent, *args, **kwargs):
         super().__init__(None)
 
     # ----- Styles -----
@@ -29,8 +29,6 @@ class LoginWindow(tk.Frame):
         # customed_style.configure('Custom.TNotebook.Tab', padding=[12, 12], font=('Helvetica', 10))
 
     # ----- customize -----
-
-        # self.switch_frame = switch_frame
 
         # configure rows and columns
         self.grid_columnconfigure(0, weight=1)
@@ -171,7 +169,7 @@ class LoginWindow(tk.Frame):
     def switch_frame_advanced(self, next_frame):
         self.warning.set("")  #reset warning message on tab switch
         self.reset_entry_fields()
-        self.switch_frame(next_frame)
+        self.parent.switch_frame(next_frame)
 
     def reset_entry_fields(self):
         self.username.set("Username")
