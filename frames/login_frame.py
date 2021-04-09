@@ -66,13 +66,13 @@ class LoginWindow(tk.Frame):
         self.user_entry = tk.Entry(login,textvariable=self.username)
         self.user_entry.grid(row=1, column=0, sticky="NSEW", columnspan=2, padx =(5,5), pady =(5,0)) 
         self.user_entry.bind("<FocusIn>", lambda event, field=self.user_entry: self.focus_in(field))
-        self.user_entry.bind("<FocusOut>", lambda event, field=self.user_entry, field_name='username': self.focus_out(event, field, field_name))
+        self.user_entry.bind("<FocusOut>", lambda event, field=self.user_entry, field_name='username': self.focus_out(field, field_name))
         self.user_entry.bind("<Return>", self.check_credentials)
 
         self.pw_entry = tk.Entry(login,textvariable=self.password, show="*")
         self.pw_entry.grid(row=2, column=0, sticky="NSEW", columnspan=2, padx =(5,5), pady =(5,0)) 
         self.pw_entry.bind("<FocusIn>", lambda event, field=self.pw_entry: self.focus_in(field))
-        self.pw_entry.bind("<FocusOut>", lambda event, field=self.pw_entry, field_name='password': self.focus_out(event, field, field_name))
+        self.pw_entry.bind("<FocusOut>", lambda event, field=self.pw_entry, field_name='password': self.focus_out(field, field_name))
         self.pw_entry.bind("<Return>", self.check_credentials)
 
         #Buttons
@@ -97,16 +97,21 @@ class LoginWindow(tk.Frame):
     def on_exit(self):
         self.destroy() #destroy window
 
-    def focus_in(event, field):
-        field.delete(0,"end")
-        # usercheck=True
 
     def test(self, event):
         print("TEST!!!")
     
-    def focus_out(self, event, field, field_name):
+
+    def focus_in(self, field):
+        if field.get() == "Username" or field.get() == "Password" or "I said ENTER" in field.get():
+            field.delete(0,"end")
+        if field == self.pw_entry:
+            field.config(show="*")
+    
+
+    def focus_out(self, field, field_name):
         '''
-        Get's inserted value on focus out or adds placeholder prompting for input if no input was given;
+        Get's sets username and password Stringvar-value on focus out or adds placeholder prompting for input if no input was given;
         Works for both the username and the password - fields
         '''
 
@@ -115,6 +120,8 @@ class LoginWindow(tk.Frame):
         if text_var != '' and text_var!='0' and text_var!=0:
             return text_var
         else:
+            if field_name == "password":
+                field.config(show="")
             field.insert(0, f"I said ENTER {field_name.upper()}!")
             return 
                 
