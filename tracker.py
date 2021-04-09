@@ -1,9 +1,8 @@
-
-
 # TO DO: add daving all info to db to _on_exit()-method
 # TO DO: Figure out why app does not close after closing window !!!! --> checl past_entry_frames
 # NOTE: tk.Frame does NOT have access to ttk.Notebook!
 # --> convert tracker.py into a main.py instead!!!
+
 # ----- import libraries and  modules ---
 import tkinter as tk
 from tkinter import ttk
@@ -99,7 +98,7 @@ class InputWindow(tk.Tk):
     #----- Login and SignUp Screen -----
 
         # add login frame that is placed within "container"
-        self.login_frame = LoginWindow(self, self.switch_frame) #initiate Timer-class and pass self as the controller
+        self.login_frame = LoginWindow(self) #initiate Timer-class and pass self as the controller #, self.switch_frame
         self.login_frame.grid(row=0,column=0, rowspan=20, columnspan=2, sticky='EWNS') #configure timer frame placed in the first row and first column and to fill the entire frame ("container")
 
         # add signup frame 
@@ -279,6 +278,7 @@ class InputWindow(tk.Tk):
         if frame == self.frames['TC']:
             self.add_plots()
             self.date_button.grid(row=1,column=1,rowspan=1, sticky='N')
+            self.frames['LoginWindow'].grid_forget()
 
         #brings indicated frame to the front
         frame.tkraise() 

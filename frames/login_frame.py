@@ -14,7 +14,7 @@ from database.connections import db_transact #NOTE: use python -m frames.login_f
 #  ----- class inheriting from tk.Tk -----
 class LoginWindow(tk.Frame):
     #  ----- initialize -----
-    def __init__(self, parent, switch_frame, *args, **kwargs):
+    def __init__(self, parent, *args, **kwargs): #, switch_frame
         super().__init__(None)
 
     # ----- Styles -----
@@ -30,7 +30,7 @@ class LoginWindow(tk.Frame):
 
     # ----- customize -----
 
-        self.switch_frame = switch_frame
+        # self.switch_frame = switch_frame
 
         # configure rows and columns
         self.grid_columnconfigure(0, weight=1)
@@ -146,7 +146,7 @@ class LoginWindow(tk.Frame):
         print('Logged in!' if status==1 else 'Wrong password!' if status==0 else 'User does not exist!' if status==-1 else 'Unknown error!')
         if status == 1:
             self.parent.user = user  #save logged in user to main tracker frame
-            self.switch_frame('TC')  #To DO: once df data is loaded into database -> load user data into TC-frame
+            self.parent.switch_frame('TC')  #To DO: once df data is loaded into database -> load user data into TC-frame
             self.parent.tabControl.bind("<<NotebookTabChanged>>", self.parent.on_tab_change)
         elif status == 0:
             self.warning.set("Wrong Password, please try again!") #pop-up label with 'wrong password' here
