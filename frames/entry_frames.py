@@ -375,7 +375,7 @@ class EntryFrame(tk.Frame):
                     to_open = option_info["opens"]
                     to_open_info = [info[to_open] for info in self.info_list if to_open in info.keys()][0]  #get info of option to open, based on controller parent info
                     to_open_value = data[to_open]
-
+                    self.toggle_checkbox(option_info)
                     if to_open["type"] == "Spinbox":
                         __update_spinbox__(to_open, to_open_value)
                     elif to_open["type"] == "MultipleChoice":
