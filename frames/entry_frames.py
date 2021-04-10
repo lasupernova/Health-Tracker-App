@@ -448,7 +448,8 @@ class EntryFrame(tk.Frame):
                 option_name_translated = option_name_translated.replace("?", "")
                 return option_name_translated
         
-    def focus_in(event, field):
+    def focus_in(self, event):
+        field = event.widget
         field.delete(0,"end")
 
     # ----- function creation checkbox-frame with functionality -----
@@ -530,10 +531,13 @@ class EntryFrame(tk.Frame):
                         )
         self.building_blocks[option_name]["entry_object"].grid(row=0, column=1, sticky="W")
         self.building_blocks[option_name]["entries"] = []
+
+        # bindings using input
         self.building_blocks[option_name]["entry_object"].bind("<Return>", lambda event: self.add_entry_to_entrylist(option_name=option_name))
         self.building_blocks[option_name]["entry_object"].bind("<FocusOut>", lambda event: self.add_entry_to_entrylist(option_name=option_name))
+        # binding deleting placeholder text
+        self.building_blocks[option_name]["entry_object"].bind("<FocusIn>", lambda event: self.focus_in(event))   
 
-        # return self.building_blocks[option_name]
 
     def logout(self):
         print("Log Out Now!")
