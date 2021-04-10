@@ -348,13 +348,116 @@ class EntryFrame(tk.Frame):
 
     # ----- method updating displayed entries based on selected date -----
     def update_selection(self, data_dict, date):
+        """
+        Updates shown selection upon date change
+
+        Parameters:
+            data_dict: dict - contains options and database info of all tabs, obtained by db_transact.query_data_by_date_and_user()-function (called in root)
+            date: string - contains date info
+
+        Returns: Void function
+        """
+
+        def __update_checkbox__(option, value):
+            """
+            Updates value for specified checkbox entryfield
+
+            Parameters:
+                option: string - field name
+                value: bool - field is going to be set to this value
+            
+            Returns: 0 (success) or -1 (Error)
+            """
+            try:
+                self.building_blocks[option]["selection"].set(str(int(value))) #get int-version, as only 0 or 1 are accepted for Checkbox
+                option_info = [info[option] for info in self.info_list if option in info.keys()][0]  #get option's entry-info from info_list-list (a list of tables)
+                if "opens" in option_info.keys() and value:
+                    to_open = option_info["opens"]
+                    to_open_info = [info[to_open] for info in self.info_list if to_open in info.keys()][0]  #get info of option to open, based on controller parent info
+                    to_open_value = data[to_open]
+
+                    if to_open["type"] == "Spinbox":
+                        __update_spinbox__(to_open, to_open_value)
+                    elif to_open["type"] == "MultipleChoice":
+                        __update_multichoice__(to_open, to_open_value)
+                    del data[to_open]  #delete optional entry-option, to avoid duplicate addition
+                elif "opens" in option_info.keys() and not value:
+                    to_open = option_info["opens"]
+                    del data[to_open]
+                return 0
+            except Exception as e:
+                print(f"Selection change not possible for: {option}; reason: {e}")            
+                return -1
+
+        def __update_spinbox__(option, value):
+            """
+            Updates value for specified spinbox entryfield
+
+            Parameters:
+                option: string - field name
+                value: int or float - field is going to be set to this value
+            
+            Returns: 0 (success) or -1 (Error)
+            """
+
+            if value:
+                try:
+                    if self.building_blocks[option]["increment"] < 1: #use float for increments <1
+                        converted_value = str(value)
+                        self.building_blocks[option]["selection"].set(converted_value)
+                    else: #use integers for increments > 1 -> otherwise diplay will not update because decimal points cannot be displayed for increments larger than 1
+                        converted_value = str(int(value)) 
+                        self.building_blocks[option]["selection"].set(converted_value)
+                except Exception as e:
+                    print(f"Selection change not possible for: {option}; reason: {e}")  
+                    return -1
+
+        def __update_multichoice__(option, value):
+            """
+            Updates value for specified multichoice entryfield
+
+            Parameters:
+                option: string - field name
+                value: string or int - field is going to be set to this value
+            
+            Returns: 0 (success) or -1 (Error)
+            """
+            if  value:
+                try:
+                    self.building_blocks[option]["selection"].set(value) #get int-version, as only 0 or 1 are accepted for Checkbox
+                except Exception as e:
+                    print(f"Selection change not possible for: {option}; reason: {e}")   
+
+        def __update_entryfield__(option, value):
+            """
+            Updates value for specified text entryfield
+
+            Parameters:
+                option: string - field name
+                value: string (representing a list) - field is going to be set to this value
+            
+            Returns: 0 (success) or -1 (Error)
+            """
+            try:
+                if value:
+                    entry_string = value.strip("[]").replace("'","") # value is a list as a string -> to get desired output strip square bracets and remove single quotes
+                    if (value) and (entry_string != 'nan'):
+                        # print(f">>>Entry String: {entry_string}")  #uncomment for troubleshooting
+                        self.print_entries(option, entry_list=entry_string)
+                    else:
+                        for child in self.building_blocks[option]["frame"].winfo_children():
+                            if child.winfo_name() == 'former_entries':
+                                child.grid_remove()
+            except Exception as e:
+                print(f"Selection change not possible for: {option}; reason: {e}") 
+
 
         # get tab-relevant data for current EntryFrame()-object
         data = data_dict[self.tab]
 
         # update fields
         # for option in data.columns:
-        for option in data.keys():
+        for option in list(data.keys()):  #make iterator a list, in order to be able to modify it while iterating over it (see in checkbox-section)
             try:
                 try: 
                     # value = data.loc[date, option] #get value for according field in df
@@ -362,39 +465,16 @@ class EntryFrame(tk.Frame):
                     # print(option,": ", value) #uncomment for troubleshooting
 
                     if self.building_blocks[option]["type"] == "Checkbox":
-                        try:
-                            self.building_blocks[option]["selection"].set(str(int(value))) #get int-version, as only 0 or 1 are accepted for Checkbox
-                        except:
-                            print(f"Selection change not possible for: {option}")
+                        __update_checkbox__(option, value)
 
                     elif self.building_blocks[option]["type"] == "Spinbox":
-                        try:
-                            if self.building_blocks[option]["increment"] < 1: #use float for increments <1
-                                converted_value = str(value)
-                                self.building_blocks[option]["selection"].set(converted_value)
-                            else: #use integers for increments > 1 -> otherwise diplay will not update because decimal points cannot be displayed for increments larger than 1
-                                converted_value = str(int(value)) 
-                                self.building_blocks[option]["selection"].set(converted_value)
-                        except:
-                            print(f"Selection change not possible for: {option}")                                          
+                        __update_spinbox__(option, value)
+
                     elif self.building_blocks[option]["type"] == "Entryfield":
-                        try:
-                            entry_string = value.strip("[]").replace("'","") # value is a list as a string -> to get desired output strip square bracets and remove single quotes
-                            if (value) and (entry_string != 'nan'):
-                                print(f">>>Entry String: {entry_string}")
-                                self.print_entries(option, entry_list=entry_string)
-                            else:
-                                for child in self.building_blocks[option]["frame"].winfo_children():
-                                    if child.winfo_name() == 'former_entries':
-                                        child.grid_remove()
-                        except:
-                            print(f"Selection change not possible for: {option}") 
+                        __update_entryfield__(option, value)
                               
                     elif self.building_blocks[option]["type"] == "MultipleChoice":
-                        try:
-                            self.building_blocks[option]["selection"].set(value) #get int-version, as only 0 or 1 are accepted for Checkbox
-                        except:
-                            print(f"Selection change not possible for: {option}")                               
+                        __update_multichoice__(option, value)
                     else:
                         print(f'The {option}-field is of type {self.building_blocks[option]["type"]}.')
                 except Exception as e:
