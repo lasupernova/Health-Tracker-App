@@ -205,7 +205,7 @@ class EntryFrame(tk.Frame):
                     value = None
             elif option[option_name]["type"] == "MultipleChoice":
                 value = self.building_blocks[option_name]["translated_selection"].get()
-                print(self.building_blocks[option_name])
+                # print(self.building_blocks[option_name])  #uncomment for troubleshooting
             else:
                 value = self.building_blocks[option_name]["selection"].get()
                 # print(option_name,": ", value) #any otherfields take one entry saved in a tk.StringVar-object
@@ -281,7 +281,7 @@ class EntryFrame(tk.Frame):
             entry_list = self.building_blocks[option_name]["entries"]
 
             entry_container = tk.Frame(container)
-            entry_container.grid(row=0, column=2, sticky="W")
+            entry_container.grid(row=1, column=1, sticky="W") #.grid(row=0, column=2, sticky="W")
 
             # label_buttons = {}  #create dict to be able to access label_buttons by entry for deletion --> otherwise they woudl all have the name "label_button"
 
@@ -290,8 +290,8 @@ class EntryFrame(tk.Frame):
                                                 text=entry, 
                                                 borderwidth=0, 
                                                 command=lambda str_entry=entry, container_=entry_container, option_name=option_name: self._delete_entry(str_entry, container_, entry_list, option_name),
-                                                fg="#b8b6b0", 
-                                                bg="SystemButtonFace"
+                                                fg='grey', #"#b8b6b0", 
+                                                bg='whitesmoke' #"SystemButtonFace"
                                                 )
 
                 label_button.pack(side="left")
@@ -378,7 +378,7 @@ class EntryFrame(tk.Frame):
                             print(f"Selection change not possible for: {option}")                                          
                     elif self.building_blocks[option]["type"] == "Entryfield":
                         try:
-                            entry_string = value.strip("[]").replace("'","") # value is a list as a strin -> to get desired output strip square bracets and remove single quotes
+                            entry_string = value.strip("[]").replace("'","") # value is a list as a string -> to get desired output strip square bracets and remove single quotes
                             if (value) and (entry_string != 'nan'):
                                 ttk.Label(self.building_blocks[option]["frame"], name='former_entries',text=entry_string, foreground='grey', background='whitesmoke').grid(row=1, column=1, sticky="W") #add label displaying previosu entries under Entryfield
                             else:
