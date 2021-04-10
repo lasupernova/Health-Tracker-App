@@ -255,7 +255,7 @@ class EntryFrame(tk.Frame):
 
     # ----- method displaying tk.Entry()-field entries to new tk.Label()-field next to entry field -----
     # def print_entries(self, entry_list, container):
-    def print_entries(self, option_name):
+    def print_entries(self, option_name, entry_list=None):
         '''
         Create tk.Frame-object that contains entries made to currently used EntryField-object'.
         New entries are .pack()-ed to end as buttons with label aestetics.
@@ -265,25 +265,26 @@ class EntryFrame(tk.Frame):
                    (and needs to be destroyed and recreated) OR if it does not exist yet and can simply be created
 
         Parameters:
-            entry_list: list-type object, that is stored in a class-globally accessible parameter (self.building_blocks[option_name]["entries"])
-            container: tk.Frame-object, that is stored in a class-globally accessible parameter (self.building_blocks[option_name]["frame"])
+            option_name: string
+            entry_list: None or string - None when getting input from user; string when getting input from database
         '''
 
-        def _create_entry_container(container, option_name):
+        def _create_entry_container(container, option_name, entry_list):
             '''
-            Created tk.Frame-object oacking and containing  "label-buttons" for entries.
+            Created tk.Frame-object packing and containing  "label-buttons" for entries.
 
             Parameters:
-                entry_list: list-type object, that is stored in a class-globally accessible parameter (self.building_blocks[option_name]["entries"])
+                entry_list: list-type object if obtained from GUI(self.building_blocks[option_name]["entries"]), string if obtained from database
                 container: tk.Frame-object, that is stored in a class-globally accessible parameter (self.building_blocks[option_name]["frame"])
             '''
 
-            entry_list = self.building_blocks[option_name]["entries"]
+            if not entry_list:
+                entry_list = self.building_blocks[option_name]["entries"]
+            else:
+                entry_list = entry_list.split(",")  #split string into list by ","
 
             entry_container = tk.Frame(container)
-            entry_container.grid(row=1, column=1, sticky="W") #.grid(row=0, column=2, sticky="W")
-
-            # label_buttons = {}  #create dict to be able to access label_buttons by entry for deletion --> otherwise they woudl all have the name "label_button"
+            entry_container.grid(row=1, column=1, sticky="W")  
 
             for entry in entry_list:
                 label_button = tk.Button(entry_container, 
@@ -301,11 +302,11 @@ class EntryFrame(tk.Frame):
 
         # check if entry_container already exists (--> if main container contains more than 2 children [field-label and field-entryfield], then entry_field was previosuly created)
         if len(container.winfo_children()) == 2:
-            _create_entry_container(container, option_name)
+            _create_entry_container(container, option_name, entry_list)
         else:   #if entry_container already exist, destroy it and create new from new entry_list
             print(f"Destroy: ", container.winfo_children()[-1])
             container.winfo_children()[-1].destroy()
-            _create_entry_container(container, option_name)
+            _create_entry_container(container, option_name, entry_list)
 
     def _delete_entry(self, entry, container, entry_list, option_name):
         '''
@@ -380,7 +381,8 @@ class EntryFrame(tk.Frame):
                         try:
                             entry_string = value.strip("[]").replace("'","") # value is a list as a string -> to get desired output strip square bracets and remove single quotes
                             if (value) and (entry_string != 'nan'):
-                                ttk.Label(self.building_blocks[option]["frame"], name='former_entries',text=entry_string, foreground='grey', background='whitesmoke').grid(row=1, column=1, sticky="W") #add label displaying previosu entries under Entryfield
+                                print(f">>>Entry String: {entry_string}")
+                                self.print_entries(option, entry_list=entry_string)
                             else:
                                 for child in self.building_blocks[option]["frame"].winfo_children():
                                     if child.winfo_name() == 'former_entries':
