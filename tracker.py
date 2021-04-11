@@ -1,6 +1,7 @@
 # TO DO: add daving all info to db to _on_exit()-method
 # NOTE: tk.Frame does NOT have access to ttk.Notebook!
 # --> convert tracker.py into a main.py instead!!!
+# TO Do: switch active tab to first frame on .switch_tab() again
 
 # ----- import libraries and  modules ---
 import tkinter as tk
@@ -84,8 +85,9 @@ class InputWindow(tk.Tk):
         # list to save EntryFrame objects in to use fot latter iterations
         self.entry_frames = []
 
-        # variable to save info about loggin in user
+        # variable to save info about user logging in
         self.user = None
+        self.sex = None
 
     # # ----- Frame Container -----
 
@@ -106,7 +108,6 @@ class InputWindow(tk.Tk):
 
         # add signup frame 
         self.userinfo_frame = UserinfoWindow(self)
-        self.userinfo_frame
 
     # ----- Tabs -----
 
@@ -114,23 +115,22 @@ class InputWindow(tk.Tk):
         self.tabControl = ttk.Notebook(self)#, style="Custom.TNotebook.Tab")
 
         # create tabs
-        mood_tab = ttk.Frame(self.tabControl)
-        health_tab = ttk.Frame(self.tabControl) #, relief = tk.SUNKEN
-        sleep_tab = ttk.Frame(self.tabControl)
-        food_tab = ttk.Frame(self.tabControl)
-        fitness_tab = ttk.Frame(self.tabControl)
-        period_tab = ttk.Frame(self.tabControl)
-        longterm_tab = ttk.Frame(self.tabControl)
-        self.all_tabs = [mood_tab, food_tab, fitness_tab, period_tab, longterm_tab, health_tab, sleep_tab]
+        self.mood_tab = ttk.Frame(self.tabControl)
+        self.health_tab = ttk.Frame(self.tabControl) #, relief = tk.SUNKEN
+        self.sleep_tab = ttk.Frame(self.tabControl)
+        self.food_tab = ttk.Frame(self.tabControl)
+        self.fitness_tab = ttk.Frame(self.tabControl)
+        self.period_tab = ttk.Frame(self.tabControl)
+        self.longterm_tab = ttk.Frame(self.tabControl)
 
         # add tabs
-        self.tabControl.add(mood_tab, text='Mood')
-        self.tabControl.add(health_tab, text='Health')
-        self.tabControl.add(sleep_tab, text='Sleep')
-        self.tabControl.add(food_tab, text='Food')
-        self.tabControl.add(fitness_tab, text='Fitness')
-        self.tabControl.add(period_tab, text='Period')
-        self.tabControl.add(longterm_tab, text='Longterm Changes')
+        self.tabControl.add(self.mood_tab, text='Mood')
+        self.tabControl.add(self.health_tab, text='Health')
+        self.tabControl.add(self.sleep_tab, text='Sleep')
+        self.tabControl.add(self.food_tab, text='Food')
+        self.tabControl.add(self.fitness_tab, text='Fitness')
+        self.tabControl.add(self.period_tab, text='Period')
+        self.tabControl.add(self.longterm_tab, text='Longterm Changes')
 
         # # pack tabs - to make them visible 
         # # tabControl.pack(expand=0, fill="both", pady=(10,10))
@@ -143,27 +143,34 @@ class InputWindow(tk.Tk):
 
     # ----- Labels ----- 
         fontLab = tkFont.Font(family='Verdana', size=40, weight='bold', slant='roman')
-        ttk.Label(mood_tab,  text ="How's your head feeling? \n", font=fontLab).grid(row=0, column=0, columnspan=2)
-        ttk.Label(food_tab,  text ="How's your stomach feeling? \n", font={'size':12}).grid(row=0, column=0, columnspan=2)
-        ttk.Label(fitness_tab,  text ="How's your muscles feeling? \n", font={'size':12}).grid(row=0, column=0, columnspan=2)
-        ttk.Label(period_tab,  text ="How's your uterus feeling? \n", font={'size':12}).grid(row=0, column=0, columnspan=2)
-        ttk.Label(longterm_tab,  text ="How have you been? \n", font={'size':12}).grid(row=0, column=0, columnspan=2)
-        ttk.Label(health_tab,  text ="How's your body feeling? \n", font={'size':12}).grid(row=0, column=0, columnspan=2)
-        ttk.Label(sleep_tab,  text ="How's your ZZZZZZZs feeling? \n", font={'size':12}).grid(row=0, column=0, columnspan=2)
-
-    # ----- Tracker df -----
-
-        # self.df = TrackerFrame(self.tracker) 
+        ttk.Label(self.mood_tab,  text ="How's your head feeling? \n", font=fontLab).grid(row=0, column=0, columnspan=2)
+        ttk.Label(self.food_tab,  text ="How's your stomach feeling? \n", font={'size':12}).grid(row=0, column=0, columnspan=2)
+        ttk.Label(self.fitness_tab,  text ="How's your muscles feeling? \n", font={'size':12}).grid(row=0, column=0, columnspan=2)
+        ttk.Label(self.longterm_tab,  text ="How have you been? \n", font={'size':12}).grid(row=0, column=0, columnspan=2)
+        ttk.Label(self.health_tab,  text ="How's your body feeling? \n", font={'size':12}).grid(row=0, column=0, columnspan=2)
+        ttk.Label(self.period_tab,  text ="How's your uterus feeling? \n", font={'size':12}).grid(row=0, column=0, columnspan=2)
+        ttk.Label(self.sleep_tab,  text ="How's your ZZZZZZZs feeling? \n", font={'size':12}).grid(row=0, column=0, columnspan=2)
 
     #  ----- Entry -----
 
-        EntryFrame(mood_tab, mood_info, self.tabControl.tab(mood_tab)['text'], name='mood_tab').grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
-        EntryFrame(health_tab, health_info, self.tabControl.tab(health_tab)['text']).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
-        EntryFrame(food_tab, food_info, self.tabControl.tab(food_tab)['text']).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
-        EntryFrame(sleep_tab, sleep_info, self.tabControl.tab(sleep_tab)['text']).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
-        EntryFrame(fitness_tab, fitness_info, self.tabControl.tab(fitness_tab)['text']).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
-        EntryFrame(period_tab, period_info, self.tabControl.tab(period_tab)['text']).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
-        EntryFrame(longterm_tab, longterm_info, self.tabControl.tab(longterm_tab)['text']).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
+        EntryFrame(self.mood_tab, mood_info, self.tabControl.tab(self.mood_tab)['text'], name='mood_tab').grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
+        EntryFrame(self.health_tab, health_info, self.tabControl.tab(self.health_tab)['text']).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
+        EntryFrame(self.food_tab, food_info, self.tabControl.tab(self.food_tab)['text']).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
+        EntryFrame(self.sleep_tab, sleep_info, self.tabControl.tab(self.sleep_tab)['text']).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
+        EntryFrame(self.fitness_tab, fitness_info, self.tabControl.tab(self.fitness_tab)['text']).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
+        EntryFrame(self.period_tab, period_info, self.tabControl.tab(self.period_tab)['text']).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
+        EntryFrame(self.longterm_tab, longterm_info, self.tabControl.tab(self.longterm_tab)['text']).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
+
+        # if self.sex != 'male':
+        #     period_tab = ttk.Frame(self.tabControl)
+        #     self.tabControl.add(period_tab, text='Period')
+        #     ttk.Label(period_tab,  text ="How's your uterus feeling? \n", font={'size':12}).grid(row=0, column=0, columnspan=2)
+        #     EntryFrame(period_tab, period_info, self.tabControl.tab(period_tab)['text']).grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
+        #     self.all_tabs = [mood_tab, food_tab, fitness_tab, period_tab, longterm_tab, health_tab, sleep_tab]
+        # else:
+        #     self.all_tabs = [mood_tab, food_tab, fitness_tab, longterm_tab, health_tab, sleep_tab]
+
+        self.all_tabs = [self.mood_tab, self.food_tab, self.fitness_tab, self.period_tab, self.longterm_tab, self.health_tab, self.sleep_tab]
 
         # current tab
         tabName = self.tabControl.select()  #get name of current tab
@@ -186,6 +193,7 @@ class InputWindow(tk.Tk):
         self.tabControl.grid_columnconfigure(0, weight=1)
         for n in range(15):
             self.tabControl.grid_rowconfigure(n, weight=1)
+
         self.date_button = tk.Button(self,text="Change date NOW",command=self.change_date, borderwidth=0, fg='darkslateblue')
 
     # ----- Date Picker ------
@@ -242,7 +250,7 @@ class InputWindow(tk.Tk):
         # change value of self.active_tab, as the tab was changed - done AFTER calling active_entryframe.insert_database(), otherwise the un-filled newly opened tab info is inserted to database
         tabName = self.tabControl.select() 
         self.active_tab = self.tabControl.nametowidget(tabName) 
-        print(self.tabControl.tab(self.tabControl.select(), "text"))
+        # print(self.tabControl.tab(self.tabControl.select(), "text"))  #uncomment for troubleshooting
 
 
     # ----- funtion to run upon closing the window -----
@@ -283,6 +291,10 @@ class InputWindow(tk.Tk):
 
         # create UI if frame to switch to is 'TC' - important to load TC after login only and to directly load correct user data based on self.user
         if frame == self.frames['TC']:
+            if self.sex == 'male':
+                self.change_tab_status(self.period_tab)
+            else:
+                self.change_tab_status(self.period_tab, method="enable")
             self.add_plots()
             self.date_button.grid(row=1,column=1,rowspan=1, sticky='N')
             frame.grid(row=0,column=0, rowspan=20, sticky='EWNS') 
@@ -298,6 +310,33 @@ class InputWindow(tk.Tk):
         top.title(title)
         tk.Message(top, text=message, padx=20, pady=20).pack()
         top.after(duration, top.destroy)
+
+    
+    def change_tab_status(self, tab, method="disable"):
+        """
+        Changes status of specified ttk.Notebook-tab.
+        If state change to "enabled", the state needs to be checked, as enabling from hidden vs disabled status use different functions.
+
+        Parameters:
+            tab: variable name of tab (NOT a string) - e.g. mood_tab
+            method: string - "disable" (default) or "hide" or "enable"
+
+        Returns: Void function
+        """
+
+        if method == "disable":
+            self.tabControl.tab(tab, state="disabled")
+            print(self.tabControl.tab(tab)['state'])
+        elif method == "hide":
+            self.tabControl.hide(tab)
+            print(self.tabControl.tab(tab)['state'])
+        elif method == "enable":
+            state = self.tabControl.tab(tab)['state']
+            if state == "hidden":
+                self.tabControl.add(tab)
+            elif state == "disabled":
+                self.tabControl.tab(tab, state="normal")
+                
 
 # ----- run app -----
 if __name__ == '__main__':
