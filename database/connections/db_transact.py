@@ -209,7 +209,7 @@ def query_data_by_date_and_user(date, user, end_date=None):
         table_names = get_table_list()
 
         if table_names == 0: #if exception was thrown calling get_table_list()
-            return 0
+            return 1
 
         else:
             data_dict = {}
@@ -235,7 +235,7 @@ def query_data_by_date_and_user(date, user, end_date=None):
 
     except Exception as e:
         print(e)
-        return 0
+        return -1
 
 def query_data_between_dates_by_user(user:str, start_date, end_date, table:str=None, columns:list=None):
 
