@@ -56,47 +56,9 @@ class EntryFrame(tk.Frame):
         # print("\n\n")
 
 
-    # ----- Frames -----
+    # # ----- Frames -----
 
-        # create and place containing frame
-        # self.entry_frame = tk.Frame(container)        
-        # self.grid(row=1, column=0, sticky="NSEW", padx=10, pady=10)
-
-        # ------ Health Data Entry ------
-        # interate over options
-        for option in self.info_list:
-
-            # get option string
-            option_name = [*option][0]
-            label_name = option[option_name]['label']
-
-            # create building blocks (frame and stringvar - objects) for each option and save in dict - to access in commands on click
-            self.building_blocks[option_name] = {}
-            self.building_blocks[option_name]["frame"] = tk.Frame(self)
-            self.building_blocks[option_name]["type"] = option[option_name]["type"]
-            self.building_blocks[option_name]["selection"] = tk.StringVar(value=0)   #entered value (or default values) is saved here
-            self.value_entry_record[option_name] = False
-
-            # create object based on the given type information
-            if option[option_name]["type"] == "Checkbox":
-                self.create_checkBox(self.building_blocks[option_name], option[option_name],label_name)
-
-            elif option[option_name]["type"] == "MultipleChoice":
-                # print("optionmenu", option_name) #uncomment for troubleshooting
-                self.create_multiChoice(self.building_blocks[option_name], option[option_name],label_name)
-
-            elif option[option_name]["type"] == "Spinbox":
-                self.create_spinBox(self.building_blocks[option_name], option[option_name],label_name)
- 
-            elif option[option_name]["type"] == "Entryfield":  
-                self.create_entryField(option_name, label_name)
-
-            else:
-                pass
-
-            if option[option_name]["type"] != "Entryfield":  # for EntryField: self.value_entry_record is set to True upon appenting entry-list
-                # start tracing option StringVar-objects AFTER setting up entry-menu, as these objects are changed to a default value for many entry-options -- > this would falsely run check_option()
-                self.building_blocks[option_name]["selection"].trace("w", lambda clback1, clback2, clback3, option=option_name: self.check_options(option=option))  #lambda option=option_name, topic=self.building_blocks: self.check_options(option, topic) #trace StringVar-object and change according self.value_entry_record when a write change is recorded
+        self.create_blank_entryframes()
 
 
     # ----- Buttons -----
@@ -214,6 +176,70 @@ class EntryFrame(tk.Frame):
             data_dict[option_name_db] = value
 
         return data_dict
+
+
+    def create_blank_entryframes(self):
+        """
+        Creates entryframes including fields used for user input based on entry_information captured in self.info_list.
+        ToDo: elaborate on structures created herein
+
+        Returns: Void function
+        """
+
+        # ------ Health Data Entry ------
+        # interate over options
+        for option in self.info_list:
+
+            # get option string
+            option_name = [*option][0]
+            label_name = option[option_name]['label']
+
+            # IF frame does not exist yet: create building blocks (frame and stringvar - objects) for each option and save in dict - to access in commands on click
+            if option_name not in self.building_blocks.keys():
+                self.building_blocks[option_name] = {}
+                self.building_blocks[option_name]["frame"] = tk.Frame(self)
+                self.building_blocks[option_name]["type"] = option[option_name]["type"]
+                self.building_blocks[option_name]["selection"] = tk.StringVar(value=0)   #entered value (or default values) is saved here
+                self.value_entry_record[option_name] = False
+
+                # create object based on the given type information
+                if option[option_name]["type"] == "Checkbox":
+                    self.create_checkBox(self.building_blocks[option_name], option[option_name],label_name)
+
+                elif option[option_name]["type"] == "MultipleChoice":
+                    # print("optionmenu", option_name) #uncomment for troubleshooting
+                    self.create_multiChoice(self.building_blocks[option_name], option[option_name],label_name)
+
+                elif option[option_name]["type"] == "Spinbox":
+                    self.create_spinBox(self.building_blocks[option_name], option[option_name],label_name)
+
+                elif option[option_name]["type"] == "Entryfield":  
+                    self.create_entryField(option_name, label_name)
+
+                else:
+                    pass
+
+                if option[option_name]["type"] != "Entryfield":  # for EntryField: self.value_entry_record is set to True upon appenting entry-list
+                    # start tracing option StringVar-objects AFTER setting up entry-menu, as these objects are changed to a default value for many entry-options -- > this would falsely run check_option()
+                    self.building_blocks[option_name]["selection"].trace("w", lambda clback1, clback2, clback3, option=option_name: self.check_options(option=option))  #lambda option=option_name, topic=self.building_blocks: self.check_options(option, topic) #trace StringVar-object and change according self.value_entry_record when a write change is recorded`
+           
+            else:  #if frame already exists: reset value
+                if option[option_name]["type"] == "Checkbox":
+                    self.building_blocks[option_name]["selection"].set(0)
+
+                elif option[option_name]["type"] == "MultipleChoice":
+                    # print("optionmenu", option_name) #uncomment for troubleshooting
+                    self.building_blocks[option_name]["selection"].set(option[option_name]["selection_menu"][0])
+
+                elif option[option_name]["type"] == "Spinbox":
+                    self.building_blocks[option_name]["selection"].set(0)
+
+                elif option[option_name]["type"] == "Entryfield":  
+                    self.building_blocks[option_name]["selection"].set(f"Type info + ENTER")
+
+                else:
+                    pass
+        
 
 
     # ----- method adding entries from tk.Entry()-fields -----
@@ -481,6 +507,7 @@ class EntryFrame(tk.Frame):
                     print(f"Data for {date} not available. \n\t Error: {e}")  
             except KeyError as e: #KeyError will be thrown if no entryfield with the current options value exists
                 print(f"There is no entry field with the value {option}. \n\t Error: {e}") 
+
 
     def insert_database(self, user, date):
         '''
