@@ -89,7 +89,7 @@ class EntryFrame(tk.Frame):
     # ----- method printing current checkbutton state when clicked and passing them on to dataframe to be saved -----
     def check_options(self, option=None, value=None):
         '''
-        Checks entry value upon textvariable or entrylisy change and 
+        Checks entry value upon textvariable or entrylist change and 
         '''
 
         if value!=None:
@@ -236,8 +236,8 @@ class EntryFrame(tk.Frame):
 
                 elif option[option_name]["type"] == "Entryfield":  
                     self.building_blocks[option_name]["selection"].set(f"Type info + ENTER")
-                    if self.building_blocks[option_name]["entries"]:
-                        print(self.building_blocks[option_name]["frame"].winfo_children())
+                    if len(self.building_blocks[option_name]["frame"].winfo_children()) > 2:  #more than 2 children only if entries are printed--> if so, destroy entry container
+                        self.building_blocks[option_name]["frame"].winfo_children()[-1].destroy() 
 
                 else:
                     pass
@@ -482,7 +482,6 @@ class EntryFrame(tk.Frame):
 
         # get tab-relevant data for current EntryFrame()-object
         data = data_dict[self.tab]
-        print("DATA in Entryframes: ", data)
 
         # update fields
         # for option in data.columns:
