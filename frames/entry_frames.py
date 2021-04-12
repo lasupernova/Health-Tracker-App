@@ -351,7 +351,9 @@ class EntryFrame(tk.Frame):
                 print("Deleting Entry...")
                 button.destroy()
                 entry_list.remove(entry)
-                self.check_options(option=option_name, value=entry_list)
+                if len(entry_list) == 0:  #if no more entries printed, destroy container, to toggle space in
+                    container.destroy()
+                self.check_options(option=option_name, value=entry_list)  #record if changes need to be submitted to database
 
 
     def show_plotly(self):
