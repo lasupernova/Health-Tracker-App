@@ -292,9 +292,11 @@ class InputWindow(tk.Tk):
         # create UI if frame to switch to is 'TC' - important to load TC after login only and to directly load correct user data based on self.user
         if frame == self.frames['TC']:
             if self.sex == 'male':
-                self.change_tab_status(self.period_tab)
+                self.change_tab_state(self.period_tab)
             else:
-                self.change_tab_status(self.period_tab, method="enable")
+                self.change_tab_state(self.period_tab, method="enable")
+            self.tabControl.select(0)  #make first tab current tab every time new TC loads
+            # print(self.tabControl.tab(self.active_tab))
             self.add_plots()
             self.date_button.grid(row=1,column=1,rowspan=1, sticky='N')
             frame.grid(row=0,column=0, rowspan=20, sticky='EWNS') 
@@ -312,7 +314,7 @@ class InputWindow(tk.Tk):
         top.after(duration, top.destroy)
 
     
-    def change_tab_status(self, tab, method="disable"):
+    def change_tab_state(self, tab, method="disable"):
         """
         Changes status of specified ttk.Notebook-tab.
         If state change to "enabled", the state needs to be checked, as enabling from hidden vs disabled status use different functions.
