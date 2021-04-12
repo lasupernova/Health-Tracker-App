@@ -224,6 +224,7 @@ class InputWindow(tk.Tk):
         date_string = self.current_date.strftime("%Y-%m-%d") #convert datetime object to string in order to be able to pass it to .loc[]
         # get data
         data = db_transact.query_data_by_date_and_user(date_string, self.user)
+
         # update all EntryFrame fields based on date
         for entry_frame in self.entry_frames:
             if type(data) != dict:  #check if any data was returned from database for specified date and user
@@ -233,6 +234,7 @@ class InputWindow(tk.Tk):
 
 
         # ----- method toggling date picker and printing selection ------
+    
     def change_date(self):
 
         self.cal.bind("<<DateEntrySelected>>", lambda event: self.print_sel(event=event))
@@ -281,7 +283,7 @@ class InputWindow(tk.Tk):
 
             # save each tab's EntryFrame object in list for latter use
             for child in tab.winfo_children():
-                if child.winfo_class() == "EntryFrame":
+                if type(child)==EntryFrame:
                     self.entry_frames.append(child)
 
             # get current notebook tab's text
