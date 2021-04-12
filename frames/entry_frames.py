@@ -236,6 +236,8 @@ class EntryFrame(tk.Frame):
 
                 elif option[option_name]["type"] == "Entryfield":  
                     self.building_blocks[option_name]["selection"].set(f"Type info + ENTER")
+                    if self.building_blocks[option_name]["entries"]:
+                        print(self.building_blocks[option_name]["frame"].winfo_children())
 
                 else:
                     pass
@@ -480,6 +482,7 @@ class EntryFrame(tk.Frame):
 
         # get tab-relevant data for current EntryFrame()-object
         data = data_dict[self.tab]
+        print("DATA in Entryframes: ", data)
 
         # update fields
         # for option in data.columns:
