@@ -1,7 +1,6 @@
 # TO DO: add daving all info to db to _on_exit()-method
 # NOTE: tk.Frame does NOT have access to ttk.Notebook!
 # --> convert tracker.py into a main.py instead!!!
-# TO Do: switch active tab to first frame on .switch_tab() again
 
 # ----- import libraries and  modules ---
 import tkinter as tk
@@ -219,7 +218,10 @@ class InputWindow(tk.Tk):
             data = db_transact.query_data_by_date_and_user(date_string, self.user)
             # update all EntryFrame fields based on date
             for entry_frame in self.entry_frames:
-                entry_frame.update_selection(data, date_string) 
+                if type(data) != dict:  #check if any data was returned from database for specified date and user
+                    entry_frame.create_blank_entryframes()
+                else:
+                    entry_frame.update_selection(data, date_string) 
         self.cal.bind("<<DateEntrySelected>>", print_sel) 
 
         if self.cal.winfo_ismapped():
@@ -295,8 +297,6 @@ class InputWindow(tk.Tk):
                 self.change_tab_state(self.period_tab)
             else:
                 self.change_tab_state(self.period_tab, method="enable")
-            self.tabControl.select(0)  #make first tab current tab every time new TC loads
-            # print(self.tabControl.tab(self.active_tab))
             self.add_plots()
             self.date_button.grid(row=1,column=1,rowspan=1, sticky='N')
             frame.grid(row=0,column=0, rowspan=20, sticky='EWNS') 
@@ -338,7 +338,20 @@ class InputWindow(tk.Tk):
                 self.tabControl.add(tab)
             elif state == "disabled":
                 self.tabControl.tab(tab, state="normal")
-                
+
+
+    def reset_tracker(self):
+        """
+        Resets tracker interface (=ttk.Notebook object) and tkcalendar.DateEntry-object, when switching between users.
+        This method is run from LoginWindow-object.
+
+
+        Returns: Void function
+        """
+
+        self.tabControl.select(0)  #make first tab current tab every time new TC loads
+        self.current_date = datetime.datetime.now().date()  
+        self.cal.set_date(self.current_date)  #reset DateEntry-object
 
 # ----- run app -----
 if __name__ == '__main__':
