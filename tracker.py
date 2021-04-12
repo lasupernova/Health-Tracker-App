@@ -368,6 +368,8 @@ class InputWindow(tk.Tk):
         self.current_date = datetime.datetime.now().date()  
         self.cal.set_date(self.current_date)  #reset DateEntry-object
         self.print_sel()
+        if self.cal.winfo_ismapped():  #toggle in
+            self.cal.grid_remove()
 
 # ----- run app -----
 if __name__ == '__main__':
