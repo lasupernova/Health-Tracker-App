@@ -202,10 +202,15 @@ class InputWindow(tk.Tk):
         # print([obj.winfo_name() for obj in self.entry_frames])
 
 
-        # ----- method toggling date picker and printing selection ------
-    def change_date(self):
-        # function printing selected date from calendar
-        def print_sel(e):
+    # function printing selected date from calendar
+    def print_sel(self, event=None):
+        """
+        Changes selected data in Entryframes
+
+        Parameters:
+            event: event - not None when called by self.change_date(); None when called by self.reset_tracker()
+        """
+        if event:
             try:
                 old_date = self.current_date
             except:
@@ -213,16 +218,24 @@ class InputWindow(tk.Tk):
             new_date = self.cal.get_date()
             self.current_date = new_date
             print(f"Date changed from {old_date} to {self.current_date}")
-            date_string = self.current_date.strftime("%Y-%m-%d") #convert datetime object to string in order to be able to pass it to .loc[]
-            # get data
-            data = db_transact.query_data_by_date_and_user(date_string, self.user)
-            # update all EntryFrame fields based on date
-            for entry_frame in self.entry_frames:
-                if type(data) != dict:  #check if any data was returned from database for specified date and user
-                    entry_frame.create_blank_entryframes()
-                else:
-                    entry_frame.update_selection(data, date_string) 
-        self.cal.bind("<<DateEntrySelected>>", print_sel) 
+        else:
+            self.current_date = datetime.datetime.now().date()  
+
+        date_string = self.current_date.strftime("%Y-%m-%d") #convert datetime object to string in order to be able to pass it to .loc[]
+        # get data
+        data = db_transact.query_data_by_date_and_user(date_string, self.user)
+        # update all EntryFrame fields based on date
+        for entry_frame in self.entry_frames:
+            if type(data) != dict:  #check if any data was returned from database for specified date and user
+                entry_frame.create_blank_entryframes()
+            else:
+                entry_frame.update_selection(data, date_string) 
+
+
+        # ----- method toggling date picker and printing selection ------
+    def change_date(self):
+
+        self.cal.bind("<<DateEntrySelected>>", lambda event: self.print_sel(event=event))
 
         if self.cal.winfo_ismapped():
             self.cal.grid_remove()
@@ -268,7 +281,7 @@ class InputWindow(tk.Tk):
 
             # save each tab's EntryFrame object in list for latter use
             for child in tab.winfo_children():
-                if child.winfo_class() == "Frame":
+                if child.winfo_class() == "EntryFrame":
                     self.entry_frames.append(child)
 
             # get current notebook tab's text
@@ -352,6 +365,7 @@ class InputWindow(tk.Tk):
         self.tabControl.select(0)  #make first tab current tab every time new TC loads
         self.current_date = datetime.datetime.now().date()  
         self.cal.set_date(self.current_date)  #reset DateEntry-object
+        self.print_sel()
 
 # ----- run app -----
 if __name__ == '__main__':
