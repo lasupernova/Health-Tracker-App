@@ -6,9 +6,10 @@ The health tracker was built using Tkinter and is running on a PostgreSQl databa
 Usage:<br>
 `python tracker.py`
 
------ Under Construction -----<br><br>
 Current Look:<br>
-<!---![Screenshot](media/images/readme.png)--->
+<!---![Screenshot](media/images/readme.png)---><br><br>
+
+
 <img align="right" alt="GUI Screenshot" title="Screenshot Feb 12th 2021" src="media/images/README.gif">
 <br>
 <br>
