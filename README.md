@@ -3,6 +3,9 @@ Personalized Health Tracker GUI<br><br>
 
 The health tracker was built using Tkinter and is running on a PostgreSQl database to store information inserted into GUI.<br>
 
+Installation:<br>
+- `git clone https://github.com/lasupernova/Health-Tracker-App.git`
+
 Usage:<br>
 `python tracker.py`
 
