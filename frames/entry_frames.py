@@ -235,7 +235,7 @@ class EntryFrame(tk.Frame):
                     self.building_blocks[option_name]["selection"].set(0)
 
                 elif option[option_name]["type"] == "Entryfield":  
-                    self.building_blocks[option_name]["selection"].set(f"Type info + ENTER")
+                    self.building_blocks[option_name]["selection"].set(f"Type info + hit ENTER")
                     if len(self.building_blocks[option_name]["frame"].winfo_children()) > 2:  #more than 2 children only if entries are printed--> if so, destroy entry container
                         self.building_blocks[option_name]["frame"].winfo_children()[-1].destroy() 
 
