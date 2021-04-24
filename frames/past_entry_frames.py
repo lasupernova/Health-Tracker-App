@@ -13,6 +13,9 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 # from .analysis.plots.test import make_plot
 from media.plots.cycle import plot_cycle
 from media.plots.sleep import plot_sleep
+from media.plots.food import create_cloud
+
+BG_COLOR = "whitesmoke"
 
 class PastEntryFrame(tk.Frame):
     def __init__(self, container, tab_name, *args, **kwargs):
@@ -36,6 +39,13 @@ class PastEntryFrame(tk.Frame):
 
     def display_plots(self, tab_name):
 
+        nothing_to_see = ttk.Label(self, 
+                              name='nothing_to_see',
+                              text='Nothing to see... yet', 
+                              foreground='grey', 
+                              background='whitesmoke', 
+                              font=('MANIFESTO', 36))
+
         try:
 
             if tab_name == "Period":
@@ -46,7 +56,7 @@ class PastEntryFrame(tk.Frame):
             # http://staff.ltam.lu/feljc/software/python/matplotlib_tkinter.pdf
                 # # get plot 
                 if plot_cycle(self.user, self.date) == -1:
-                    ttk.Label(self, name='nothing_to_see',text='Nothing to see... yet', foreground='grey', background='whitesmoke').pack()
+                    nothing_to_see.pack()
 
                 self.plot = plot_cycle(self.user, self.date)
 
@@ -59,7 +69,7 @@ class PastEntryFrame(tk.Frame):
             elif tab_name == "Sleep":
 
                 if plot_sleep(self.user, self.date) == -1:
-                    ttk.Label(self, name='nothing_to_see',text='Nothing to see... yet', foreground='grey', background='whitesmoke').pack()
+                    nothing_to_see.pack()
 
                 self.plot = plot_sleep(self.user, self.date)
 
@@ -67,6 +77,26 @@ class PastEntryFrame(tk.Frame):
                 self.canvas = FigureCanvasTkAgg(self.plot, master=self)
                 self.canvas.get_tk_widget().pack()
                 self.canvas.draw()
+
+            elif tab_name == "Food":
+
+                # if plot_sleep(self.user, self.date) == -1:
+                #     nothing_to_see.pack()
+
+                # self.plot = plot_sleep(self.user, self.date)
+
+                # create cloud and save to png
+                os.system('python media\plots\\food.py')
+                print(os.getcwd())
+                print(">>>WORKS!")
+                # create canvas to place plots in
+                self.C1 = tk.Canvas(self, borderwidth=1, bg=BG_COLOR)
+                self.C1.pack()
+
+                # import image
+                self.img = ImageTk.PhotoImage(Image.open(f"media{os.sep}plots{os.sep}.archive{os.sep}new2.png").resize((300,200)))
+
+                self.C1.create_image(60,60, anchor="nw", image=self.img)
 
 
             else:
