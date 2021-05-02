@@ -50,13 +50,14 @@ class PastEntryFrame(tk.Frame):
         """
         food = button.cget('text')
         image = button.cget('image')
-        print(food)
-        print(image)
+        print(food, ": ", image)
         if image != '':
-            print("NOT NONE")
             button.configure(image='')
+            button.configure(height=20, width=30)
         else:
             button.configure(image=self.button_dict[food]['image'])
+            button.configure(height=200, width=300)
+
 
     def display_plots(self, tab_name):
 
@@ -123,8 +124,9 @@ class PastEntryFrame(tk.Frame):
                     # food data
                     self.button_dict[food]['image'] = ImageTk.PhotoImage(Image.open(f"media{os.sep}plots{os.sep}.archive{os.sep}{food}.png").resize((300,200)))
                     self.button_dict[food]['button'] = tk.Button(self.container, 
-                                        text = f'{food}', 
-                                        image = self.button_dict[food]['image'])  
+                                                                borderwidth=0,
+                                                                text = f'{food}', 
+                                                                image = self.button_dict[food]['image'])  
                     self.button_dict[food]['button'].configure(command=lambda button_=self.button_dict[food]['button']:self.flip_tile(button_))
                     self.button_dict[food]['button'].grid(row=row, column=col, sticky="W")
                 # import image
