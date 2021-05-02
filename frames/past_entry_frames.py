@@ -48,8 +48,15 @@ class PastEntryFrame(tk.Frame):
         Returns:
             void function
         """
-        button.configure(image=self.img3)
-        # print(">>> CHECK!!")
+        food = button.cget('text')
+        image = button.cget('image')
+        print(food)
+        print(image)
+        if image != '':
+            print("NOT NONE")
+            button.configure(image='')
+        else:
+            button.configure(image=self.button_dict[food]['image'])
 
     def display_plots(self, tab_name):
 
@@ -114,10 +121,10 @@ class PastEntryFrame(tk.Frame):
                 for food, (row, col) in zip(food_images, grid_loc):
                     self.button_dict[food] = {}
                     # food data
-                    self.button_dict[food]['image'] = ImageTk.PhotoImage(Image.open(f"media{os.sep}plots{os.sep}.archive{os.sep}unhealthy.png").resize((300,200)))
+                    self.button_dict[food]['image'] = ImageTk.PhotoImage(Image.open(f"media{os.sep}plots{os.sep}.archive{os.sep}{food}.png").resize((300,200)))
                     self.button_dict[food]['button'] = tk.Button(self.container, 
-                                        text = 'Click Me !', 
-                                        image = self.button_dict[food]['image'])#tk.Canvas(self.container, borderwidth=1, bg=BG_COLOR)
+                                        text = f'{food}', 
+                                        image = self.button_dict[food]['image'])  
                     self.button_dict[food]['button'].configure(command=lambda button_=self.button_dict[food]['button']:self.flip_tile(button_))
                     self.button_dict[food]['button'].grid(row=row, column=col, sticky="W")
                 # import image
