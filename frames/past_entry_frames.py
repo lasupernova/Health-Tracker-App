@@ -6,6 +6,7 @@ import tkinter as tk
 from tkinter import ttk
 # from tkinter import ttk
 import os
+import subprocess
 from PIL import ImageTk, Image
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 # from .analysis.cycle import plot_cycle
@@ -30,7 +31,7 @@ class PastEntryFrame(tk.Frame):
         self.container = container
         self.user = self.container.master.master.user   # get value for 'user'-parameter of main frame (=container's grandparent)
         self.date = self.container.master.master.current_date   # get value for 'current_date'-parameter of main frame (=container's grandparent)
-
+        self.root = self.winfo_toplevel()  #get root window/frame
         # print(self.tab_name)
         # self.grid(row=1, column=1, sticky="NSEW", padx=10, pady=10)
 
@@ -86,18 +87,33 @@ class PastEntryFrame(tk.Frame):
                 # self.plot = plot_sleep(self.user, self.date)
 
                 # create cloud and save to png
-                os.system('python media\plots\\food.py')
-                print(os.getcwd())
-                print(">>>WORKS!")
+                self.p = subprocess.Popen([f"venv{os.sep}Scripts{os.sep}python", "wrapper.py"])  #NOTE: save process to variable, in order to kill it on tracker exit
+                # self.p="TEST"
+                self.root.sysproc.append(self.p)  #self.root.sysproc used to close processes on exit
+                # os.system('python wrapper.py')
                 # create canvas to place plots in
-                self.C1 = tk.Canvas(self, borderwidth=1, bg=BG_COLOR)
-                self.C1.pack()
-
+                self.container = tk.Frame(self)
+                self.container.pack()
+                
+                # unhealthy food data
+                self.C1 = tk.Canvas(self.container, borderwidth=1, bg=BG_COLOR)
+                self.C1.grid(row=0, column=0, sticky="W")  
                 # import image
-                self.img = ImageTk.PhotoImage(Image.open(f"media{os.sep}plots{os.sep}.archive{os.sep}new2.png").resize((300,200)))
+                self.img1 = ImageTk.PhotoImage(Image.open(f"media{os.sep}plots{os.sep}.archive{os.sep}unhealthy.png").resize((300,200)))
+                self.C1.create_image(60,60, anchor="nw", image=self.img1)
 
-                self.C1.create_image(60,60, anchor="nw", image=self.img)
+                # non-vegan food data
+                self.C3 = tk.Canvas(self.container, borderwidth=1, bg=BG_COLOR)
+                self.C3.grid(row=0, column=1, sticky="W")  
+                self.img3 = ImageTk.PhotoImage(Image.open(f"media{os.sep}plots{os.sep}.archive{os.sep}non_vegan.png").resize((300,200)))
+                self.C3.create_image(60,60, anchor="nw", image=self.img3)
 
+                # fruits food data
+                self.C2 = tk.Canvas(self.container, borderwidth=1, bg=BG_COLOR)
+                self.C2.grid(row=1, column=0, sticky="W")  
+                self.img2 = ImageTk.PhotoImage(Image.open(f"media{os.sep}plots{os.sep}.archive{os.sep}fruits.png").resize((300,200)))
+                self.C2.create_image(60,60, anchor="nw", image=self.img2)
+                
 
             else:
                 # create canvas to place plots in
