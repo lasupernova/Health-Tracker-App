@@ -84,9 +84,12 @@ class InputWindow(tk.Tk):
         # list to save EntryFrame objects in to use fot latter iterations
         self.entry_frames = []
 
-        # variable to save info about user logging in
+        # properties to save info about user logging in
         self.user = None
         self.sex = None
+
+        # list property to collect system processes in --> to be closed on frame exit (e.g. created using subprocess.Popen())
+        self.sysproc = []
 
     # # ----- Frame Container -----
 
@@ -272,10 +275,26 @@ class InputWindow(tk.Tk):
 
     # ----- funtion to run upon closing the window -----
     def on_exit(self):
-        print("Exiting app...")
+        print("Closing down background processes...")
+        self.kill_processes(self.sysproc)
+        print("Saving latest changes...")
         self.on_tab_change()  #save entries of last tab without tab change
+        print("Exiting app...")
         self.destroy()  #destroy window
 
+    def kill_processes(self, processes):
+        """
+        Kills every process in a list of processes.
+
+        Parameters:
+            processes (list) - list of processes
+
+        Returns:
+            void function
+        """
+        for process in processes:
+            process.kill()
+        return
 
     def add_plots(self):
         # ----- iterate over all notebook tabs -----
