@@ -108,35 +108,39 @@ class PastEntryFrame(tk.Frame):
                 self.container = tk.Frame(self)
                 self.container.pack()
                 
-                # unhealthy food data
-                # self.B1 = tk
-                self.img1 = ImageTk.PhotoImage(Image.open(f"media{os.sep}plots{os.sep}.archive{os.sep}unhealthy.png").resize((300,200)))
-                self.C1 = tk.Button(self.container, 
-                                    text = 'Click Me !', 
-                                    image = self.img1)#tk.Canvas(self.container, borderwidth=1, bg=BG_COLOR)
-                self.C1.configure(command=lambda button_=self.C1:self.flip_tile(button_))
-                self.C1.grid(row=0, column=0, sticky="W")  
+                food_images  = ['unhealthy', 'non_vegan', 'fruits', 'cereal']
+                grid_loc  = [(0, 0), (0, 1), (1, 0), (1, 1)]
+                self.button_dict = {}
+                for food, (row, col) in zip(food_images, grid_loc):
+                    self.button_dict[food] = {}
+                    # food data
+                    self.button_dict[food]['image'] = ImageTk.PhotoImage(Image.open(f"media{os.sep}plots{os.sep}.archive{os.sep}unhealthy.png").resize((300,200)))
+                    self.button_dict[food]['button'] = tk.Button(self.container, 
+                                        text = 'Click Me !', 
+                                        image = self.button_dict[food]['image'])#tk.Canvas(self.container, borderwidth=1, bg=BG_COLOR)
+                    self.button_dict[food]['button'].configure(command=lambda button_=self.button_dict[food]['button']:self.flip_tile(button_))
+                    self.button_dict[food]['button'].grid(row=row, column=col, sticky="W")
                 # import image
                 # self.img1 = ImageTk.PhotoImage(Image.open(f"media{os.sep}plots{os.sep}.archive{os.sep}unhealthy.png").resize((300,200)))
                 # self.C1.create_image(60,60, anchor="nw", image=self.img1)
 
-                # non-vegan food data
-                self.C3 = tk.Canvas(self.container, borderwidth=1, bg=BG_COLOR)
-                self.C3.grid(row=0, column=1, sticky="W")  
-                self.img3 = ImageTk.PhotoImage(Image.open(f"media{os.sep}plots{os.sep}.archive{os.sep}non_vegan.png").resize((300,200)))
-                self.C3.create_image(60,60, anchor="nw", image=self.img3)
+                # # non-vegan food data
+                # self.C3 = tk.Canvas(self.container, borderwidth=1, bg=BG_COLOR)
+                # self.C3.grid(row=0, column=1, sticky="W")  
+                # self.img3 = ImageTk.PhotoImage(Image.open(f"media{os.sep}plots{os.sep}.archive{os.sep}non_vegan.png").resize((300,200)))
+                # self.C3.create_image(60,60, anchor="nw", image=self.img3)
 
-                # fruits food data
-                self.C2 = tk.Canvas(self.container, borderwidth=1, bg=BG_COLOR)
-                self.C2.grid(row=1, column=0, sticky="W")  
-                self.img2 = ImageTk.PhotoImage(Image.open(f"media{os.sep}plots{os.sep}.archive{os.sep}fruits.png").resize((300,200)))
-                self.C2.create_image(60,60, anchor="nw", image=self.img2)
+                # # fruits food data
+                # self.C2 = tk.Canvas(self.container, borderwidth=1, bg=BG_COLOR)
+                # self.C2.grid(row=1, column=0, sticky="W")  
+                # self.img2 = ImageTk.PhotoImage(Image.open(f"media{os.sep}plots{os.sep}.archive{os.sep}fruits.png").resize((300,200)))
+                # self.C2.create_image(60,60, anchor="nw", image=self.img2)
 
-                # cereal food data
-                self.C4 = tk.Canvas(self.container, borderwidth=1, bg=BG_COLOR)
-                self.C4.grid(row=1, column=1, sticky="W")  
-                self.img4 = ImageTk.PhotoImage(Image.open(f"media{os.sep}plots{os.sep}.archive{os.sep}cereal.png").resize((300,200)))
-                self.C4.create_image(60,60, anchor="nw", image=self.img4)
+                # # cereal food data
+                # self.C4 = tk.Canvas(self.container, borderwidth=1, bg=BG_COLOR)
+                # self.C4.grid(row=1, column=1, sticky="W")  
+                # self.img4 = ImageTk.PhotoImage(Image.open(f"media{os.sep}plots{os.sep}.archive{os.sep}cereal.png").resize((300,200)))
+                # self.C4.create_image(60,60, anchor="nw", image=self.img4)
                 
 
             else:
