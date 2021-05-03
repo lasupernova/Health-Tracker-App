@@ -77,7 +77,7 @@ class PastEntryFrame(tk.Frame):
         try:
 
             if tab_name == "Period":
-                pass
+                # pass
             # https://stackoverflow.com/questions/50846947/interference-between-the-matplotlib-graphs-in-tkinter-gui
             # https://stackoverflow.com/questions/55542813/tkinter-plt-figure-does-not-plot-but-figure-does
             # https://stackoverflow.com/questions/17535766/tkinter-matplotlib-backend-conflict-causes-infinite-mainloop
