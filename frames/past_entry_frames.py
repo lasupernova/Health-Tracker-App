@@ -16,6 +16,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from media.plots.cycle import plot_cycle
 from media.plots.sleep import plot_sleep
 from media.plots.food import create_cloud
+from helpers import change_color, changeOnHover
 
 BG_COLOR = "whitesmoke"
 
@@ -49,7 +50,7 @@ class PastEntryFrame(tk.Frame):
         Returns:
             void function
         """
-        food = button.cget('text')
+        food = button.cget('text').split()[0]
         image = button.cget('image')
         print(food, ": ", image)
         if image != '':
@@ -59,6 +60,11 @@ class PastEntryFrame(tk.Frame):
             button.configure(image=self.button_dict[food]['image'])
             button.configure(height=200, width=298)
 
+    def on_hover_button_text(self, button, func=changeOnHover):
+        """
+        .
+        """
+        func(button, 'red', 'blue')
 
     def display_plots(self, tab_name):
 
@@ -131,10 +137,11 @@ class PastEntryFrame(tk.Frame):
                     self.button_dict[food]['image'] = ImageTk.PhotoImage(Image.open(f"media{os.sep}plots{os.sep}.archive{os.sep}{food}.png").resize((298,200)))
                     self.button_dict[food]['button'] = tk.Button(self.container, 
                                                                 borderwidth=0,
-                                                                text = f'{food}', 
+                                                                text = f'{food}\n\n\t\t\t TEST', 
                                                                 image = self.button_dict[food]['image'])  
                     self.button_dict[food]['button'].configure(command=lambda button_=self.button_dict[food]['button']:self.flip_tile(button_))
                     self.button_dict[food]['button'].grid(row=row, column=col, sticky="EW")
+                    changeOnHover(self.button_dict[food]['button'], 'blue', 'grey')
                 # import image
                 # self.img1 = ImageTk.PhotoImage(Image.open(f"media{os.sep}plots{os.sep}.archive{os.sep}unhealthy.png").resize((300,200)))
                 # self.C1.create_image(60,60, anchor="nw", image=self.img1)
