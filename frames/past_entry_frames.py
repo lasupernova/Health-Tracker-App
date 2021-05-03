@@ -1,5 +1,6 @@
-# TO DO: Figure out why app does not close after closing window !!!!
 # To DO ; sleep plot does not show xticklabels correctly
+#  TO DO: correct food-button widht and heigth + center text
+#  TO DO: food buttons - if text is currently on display, show "click me" on hover
 
 # ----- import libraries and  modules ---
 import tkinter as tk
@@ -40,7 +41,7 @@ class PastEntryFrame(tk.Frame):
 
     def flip_tile(self, button):
         """
-        'Flips' tile by changin button content from image to text and back.
+        'Flips' tile by changing button content from image to text and back.
 
         Parameters:
             button (tk.Button) - button to flip
@@ -53,10 +54,10 @@ class PastEntryFrame(tk.Frame):
         print(food, ": ", image)
         if image != '':
             button.configure(image='')
-            button.configure(height=20, width=30)
+            button.configure(height=13, width=42)  #manually determined by trial and error --> find better (more universal) way
         else:
             button.configure(image=self.button_dict[food]['image'])
-            button.configure(height=200, width=300)
+            button.configure(height=200, width=298)
 
 
     def display_plots(self, tab_name):
@@ -108,13 +109,18 @@ class PastEntryFrame(tk.Frame):
                 # self.plot = plot_sleep(self.user, self.date)
 
                 # create cloud and save to png
-                self.p = subprocess.Popen([f"venv{os.sep}Scripts{os.sep}python", "wrapper.py"])  #NOTE: save process to variable, in order to kill it on tracker exit
-                # self.p="TEST"
-                self.root.sysproc.append(self.p)  #self.root.sysproc used to close processes on exit
+                # self.p = subprocess.Popen([f"venv{os.sep}Scripts{os.sep}python", "wrapper.py"])  #NOTE: save process to variable, in order to kill it on tracker exit
+                # # self.p="TEST"
+                # self.root.sysproc.append(self.p)  #self.root.sysproc used to close processes on exit
                 # os.system('python wrapper.py')
                 # create canvas to place plots in
                 self.container = tk.Frame(self)
                 self.container.pack()
+                self.container.columnconfigure(0, weight=1)
+                self.container.columnconfigure(1, weight=1)
+
+                self.container.rowconfigure(0, weight=1)
+                self.container.rowconfigure(1, weight=1)
                 
                 food_images  = ['unhealthy', 'non_vegan', 'fruits', 'cereal']
                 grid_loc  = [(0, 0), (0, 1), (1, 0), (1, 1)]
@@ -122,13 +128,13 @@ class PastEntryFrame(tk.Frame):
                 for food, (row, col) in zip(food_images, grid_loc):
                     self.button_dict[food] = {}
                     # food data
-                    self.button_dict[food]['image'] = ImageTk.PhotoImage(Image.open(f"media{os.sep}plots{os.sep}.archive{os.sep}{food}.png").resize((300,200)))
+                    self.button_dict[food]['image'] = ImageTk.PhotoImage(Image.open(f"media{os.sep}plots{os.sep}.archive{os.sep}{food}.png").resize((298,200)))
                     self.button_dict[food]['button'] = tk.Button(self.container, 
                                                                 borderwidth=0,
                                                                 text = f'{food}', 
                                                                 image = self.button_dict[food]['image'])  
                     self.button_dict[food]['button'].configure(command=lambda button_=self.button_dict[food]['button']:self.flip_tile(button_))
-                    self.button_dict[food]['button'].grid(row=row, column=col, sticky="W")
+                    self.button_dict[food]['button'].grid(row=row, column=col, sticky="EW")
                 # import image
                 # self.img1 = ImageTk.PhotoImage(Image.open(f"media{os.sep}plots{os.sep}.archive{os.sep}unhealthy.png").resize((300,200)))
                 # self.C1.create_image(60,60, anchor="nw", image=self.img1)
