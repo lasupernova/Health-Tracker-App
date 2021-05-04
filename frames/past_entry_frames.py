@@ -1,5 +1,6 @@
 # To DO ; sleep plot does not show xticklabels correctly
 #  TO DO: food buttons - if text is currently on display, show "click me" on hover
+# TO DO: custom fonts (throughout app)
 
 # ----- import libraries and  modules ---
 import tkinter as tk
@@ -51,7 +52,7 @@ class PastEntryFrame(tk.Frame):
         """
         food = button.cget('text').split()[0]
         image = button.cget('image')
-        print(food, ": ", image)
+        # print(food, ": ", image)  ##uncomment for troubleshooting
         if image != '':
             button.configure(image='')
             button.configure(height=13, width=42)  #manually determined by trial and error --> find better (more universal) way
@@ -77,7 +78,6 @@ class PastEntryFrame(tk.Frame):
         try:
 
             if tab_name == "Period":
-                # pass
             # https://stackoverflow.com/questions/50846947/interference-between-the-matplotlib-graphs-in-tkinter-gui
             # https://stackoverflow.com/questions/55542813/tkinter-plt-figure-does-not-plot-but-figure-does
             # https://stackoverflow.com/questions/17535766/tkinter-matplotlib-backend-conflict-causes-infinite-mainloop
@@ -108,7 +108,7 @@ class PastEntryFrame(tk.Frame):
 
             elif tab_name == "Food":
 
-                self.container = tk.Frame(self)
+                self.container = tk.Frame(self, borderwidth=0)
                 self.container.pack()
                 self.container.columnconfigure(0, weight=1)
                 self.container.columnconfigure(1, weight=1)
@@ -125,11 +125,11 @@ class PastEntryFrame(tk.Frame):
                     self.button_dict[food]['image'] = ImageTk.PhotoImage(Image.open(f"media{os.sep}plots{os.sep}.archive{os.sep}{food}.png").resize((298,200)))
                     self.button_dict[food]['button'] = tk.Button(self.container, 
                                                                 borderwidth=0,
-                                                                text = f'{food}\n\n\t\t\t TEST', 
+                                                                text = f'{food}\n\n\n\n\t\t\tCLICK ME!', 
                                                                 image = self.button_dict[food]['image'])  
                     self.button_dict[food]['button'].configure(command=lambda button_=self.button_dict[food]['button']:self.flip_tile(button_))
                     self.button_dict[food]['button'].grid(row=row, column=col, sticky="EW")
-                    changeOnHover(self.button_dict[food]['button'], 'blue', 'grey')
+                    changeOnHover(self.button_dict[food]['button'], 'blue', 'red')
                 
             else:
                 # create canvas to place plots in
