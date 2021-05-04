@@ -1,3 +1,17 @@
+#  ----- variables -----
+
+"""
+RECORD_BUTTON_BLINK: a global variable to record buttons for which .after() is running
+--> used in order to call .after_cancel() before calling change_color() repeatedly in order 
+to avoid erratic blinking behaviour due to several .after()-calls running simultaneoulsy on same widget
+"""
+global RECORD_BUTTON_BLINK  #initiate dict that stores after_ids and cancels id for current widget if it is still running
+RECORD_BUTTON_BLINK = {}
+
+
+
+#  ------ function -----
+
 def change_color(widget):
     '''
     Creates illusion of widget "blinking" by gradually switching colors to background color and back to original widget text color.
@@ -21,21 +35,38 @@ def change_color(widget):
         widget_after_id = widget.after(time_per_col*n, _color_text, widget, tint)
         RECORD_BUTTON_BLINK[widget] = widget_after_id
 
-
- 
-global RECORD_BUTTON_BLINK  #initiate dict that stores after_ids and cancels id for current widget if it is still running
-RECORD_BUTTON_BLINK = {}
-
 def changeOnHover(button, fgColorOnHover, fgColorOnLeave, bgColorOnHover="#DCDAD5", bgColorOnLeave="#DCDAD5"): 
+    """
+    Modifies button configuration on hover.
+
+    Parameters:
+        button (tk.Button) - button to modify on hover
+        fgColorOnHover, fgColorOnLeave (str) - text color to set on hover and on leave
+        bgColorOnHover, bgColorOnLeave (str) - background color to set on hover and on leave (default: "#DCDAD5")
+    """
     def _modify(e, fgcol, bgcol, blink=0):
-        if button in RECORD_BUTTON_BLINK.keys(): 
-            button.after_cancel(RECORD_BUTTON_BLINK[button])  #if previous after still running for this widget - cancel it, so that blinking frequency is not changed
-        
+        """
+        Enable blinking of button text.
+        Change button text and background color.
+        Calls on change_color().
+
+        Parameters:
+            e (event) - tkinter event, carries information about event 
+            fgcol (str) - color to set text to
+            bgcol (str) - color to set background to
+            blink (bool) - determines if blinking functionality should be used (by calling change_color()) (default: 0)
+
+        Returns:
+            void function
+        """
         if (blink != 0) and ('CLICK ME!' in button.cget('text')):  #tun only if blink is set to one and if button text does not contain 'HIT ME!' substring"
             change_color(button)
         button.config(fg=fgcol)
         button.config(bg=bgcol)
-    
+
+    if button in RECORD_BUTTON_BLINK.keys(): 
+        button.after_cancel(RECORD_BUTTON_BLINK[button])  #if previous after still running for this widget - cancel it, so that blinking frequency is not changed
+
     # background on cursor entering widget 
     button.bind("<Enter>", 
                 func=lambda e, fgcol=fgColorOnHover, bgcol=bgColorOnHover, blink=1: _modify(e, fgcol, bgcol, blink)
