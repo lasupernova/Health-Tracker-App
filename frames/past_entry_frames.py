@@ -60,11 +60,6 @@ class PastEntryFrame(tk.Frame):
             button.configure(image=self.button_dict[food]['image'])
             button.configure(height=200, width=298)
 
-    def on_hover_button_text(self, button, func=changeOnHover):
-        """
-        .
-        """
-        func(button, 'red', 'blue')
 
     def display_plots(self, tab_name):
 
@@ -129,7 +124,7 @@ class PastEntryFrame(tk.Frame):
                                                                 image = self.button_dict[food]['image'])  
                     self.button_dict[food]['button'].configure(command=lambda button_=self.button_dict[food]['button']:self.flip_tile(button_))
                     self.button_dict[food]['button'].grid(row=row, column=col, sticky="EW")
-                    changeOnHover(self.button_dict[food]['button'], 'blue', 'red')
+                    changeOnHover(self.button_dict[food]['button'], 'red', 'blue')
                 
             else:
                 # create canvas to place plots in
