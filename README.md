@@ -1,6 +1,8 @@
 # Health-Tracker-App
 Personalized Health Tracker GUI<br><br>
 
+Currently using Tkinter, will be enhanced to run on a browser using Flask and on Android using Kivy.<br>
+
 The health tracker was built using Tkinter and is running on a PostgreSQl database to store information inserted into GUI.<br>
 
 Installation:<br>
