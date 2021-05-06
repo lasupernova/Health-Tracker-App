@@ -40,27 +40,28 @@ def render_content(tab):
                         )  
     elif tab == 'health':
         checklist, sliders = create_entry_fields(health_info)
-        # for slider in sliders:
-        #     dcc.Slider(
-        #             min=-5,
-        #             max=10,
-        #             step=0.5,
-        #             value=-3
-        #         )  
-        return [
-            dcc.Checklist(
-                            options=checklist,
-                            value=[]
-                        ),
-            dcc.Slider(
-                    min=-5,
-                    max=10,
-                    step=0.5,
-                    value=-3
-                )  
-        ]
+        entry_fields = []
+        if len(checklist) > 0:
+            entry_fields.append(dcc.Checklist(options=checklist, value=[]))
+        for slider in sliders:
+            param = slider['label']
+            min_ = slider['min']
+            max_ = slider['max']
+            step = slider['step']
+            new_spinbox = dcc.Input(
+                                    id=param, 
+                                    type='number', 
+                                    min=min_, 
+                                    max=max_, 
+                                    step=step)  
+            new_div =    html.Div([
+                                html.Div([html.P(param)],style={'margin-right': '5px', 'display': 'inline-block'}),
+                                html.Div([new_spinbox],style={'display': 'inline-block'})
+                                ])
+            entry_fields.append(new_div)
+        return entry_fields
 
-
+# marks={i: 'Label {}'.format(i) for i in range(10)}, --> add based on min-max-increment info
 
 if __name__ == '__main__':
     app.run_server(debug=True)
