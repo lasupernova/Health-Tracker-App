@@ -1,3 +1,5 @@
+# TO DO: create function creating children-return value for callback function
+
 import sys
 import dash
 from dash.dependencies import Input, Output
@@ -38,10 +40,10 @@ app.layout = html.Div([
 def render_content(tab):
     for k, v in entry_info.items():
         if tab == k:
-            checklist, sliders = create_entry_fields(v)
-            entry_fields = []  #create list and append all enty object to it one by one, in order to pass this list as a return value (will be the outputs children - must be a single list!)
+            checklist, sliders, entryfields = create_entry_fields(v)
+            entry_options = []  #create list and append all enty object to it one by one, in order to pass this list as a return value (will be the outputs children - must be a single list!)
             if len(checklist) > 0:
-                entry_fields.append(dcc.Checklist(options=checklist, value=[]))
+                entry_options.append(dcc.Checklist(options=checklist, value=[]))
             if len(sliders) > 0:
                 for slider in sliders:
                     param = slider['label']
@@ -58,39 +60,19 @@ def render_content(tab):
                                         html.Div([html.P(param)],style={'margin-right': '5px', 'display': 'inline-block'}),
                                         html.Div([new_spinbox],style={'display': 'inline-block'})
                                         ])
-                    entry_fields.append(new_div)
-            return entry_fields
-
-    # if tab == 'mood':
-    #     checklist, sliders = create_entry_fields(mood_info)
-    #     return dcc.Checklist(
-    #                         options=checklist,
-    #                         value=[]
-    #                     )  
-    # elif tab == 'health':
-    #     checklist, sliders = create_entry_fields(health_info)
-    #     entry_fields = []  #create list and append all enty object to it one by one, in order to pass this list as a return value (will be the outputs children - must be a single list!)
-    #     if len(checklist) > 0:
-    #         entry_fields.append(dcc.Checklist(options=checklist, value=[]))
-    #     for slider in sliders:
-    #         param = slider['label']
-    #         min_ = slider['min']
-    #         max_ = slider['max']
-    #         step = slider['step']
-    #         new_spinbox = dcc.Input(
-    #                                 id=param, 
-    #                                 type='number', 
-    #                                 min=min_, 
-    #                                 max=max_, 
-    #                                 step=step)  
-    #         new_div = html.Div([
-    #                             html.Div([html.P(param)],style={'margin-right': '5px', 'display': 'inline-block'}),
-    #                             html.Div([new_spinbox],style={'display': 'inline-block'})
-    #                             ])
-    #         entry_fields.append(new_div)
-    #     return entry_fields
-
-# marks={i: 'Label {}'.format(i) for i in range(10)}, --> add based on min-max-increment info
+                    entry_options.append(new_div)
+            if len(entryfields) > 0:
+                for field in entryfields:
+                    param = field['label']
+                    new_entry = dcc.Input(
+                                            id=param, 
+                                            type='text')  
+                    new_div = html.Div([
+                                        html.Div([html.P(param)],style={'margin-right': '5px', 'display': 'inline-block'}),
+                                        html.Div([new_entry],style={'display': 'inline-block'})
+                                        ])
+                    entry_options.append(new_div)
+            return entry_options
 
 if __name__ == '__main__':
     app.run_server(debug=True)
