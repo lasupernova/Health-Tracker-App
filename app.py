@@ -9,6 +9,7 @@ import dash_bootstrap_components as dbc
 from entry import create_entry_fields
 from assets.entry_information import * 
 from assets.grains_seeds import g_and_s
+from assets.fruits import fruits
 
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -71,13 +72,19 @@ def render_content(tab):
                                                 placeholder='Start typing a grain or seed name...',
                                                 multi=True
                                             )  
+                    elif param == 'fruits':
+                        new_entry = dcc.Dropdown(
+                                                options=[{'label':x, 'value':x.lower()} for x in fruits],
+                                                placeholder='Start typing a fruit name...',
+                                                multi=True
+                                            )                          
                     else:
                         new_entry = dcc.Input(
                                                 id=param, 
                                                 type='text')  
                     new_div = html.Div([
                                         html.Div([html.P(param)],style={'margin-right': '5px', 'display': 'inline-block'}),
-                                        html.Div([new_entry],style={'display': 'inline-block', 'width':'50%'})
+                                        html.Div([new_entry],style={'display': 'inline-block', 'width':'30%'})
                                         ])
                     entry_options.append(new_div)
             return entry_options
