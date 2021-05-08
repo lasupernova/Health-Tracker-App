@@ -100,6 +100,20 @@ def create_first_col_children(category_dict):
 
 def return_full_entrytab(category):
     return_val = create_first_col_children(category)
-    return dbc.Row([dbc.Col(return_val, width = 4), dbc.Col([html.Div("Col 2", style={'backgroundColor': 'pink'})], width = 8)])
+    return dbc.Row([
+                    dbc.Col(return_val, width = 4), 
+                    dbc.Col([
+                            dcc.Graph(
+                                id='stock_graph',
+                                figure={
+                                    'data': [
+                                        {'x': [1,2], 'y': [3,1]}
+                                            ],
+                                    'layout': dict(title='Placeholder') 
+                                    },
+                                style = dict(display='inline-block')
+                            )
+                            ], width = 8)
+                    ])
 
 
