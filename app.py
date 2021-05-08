@@ -11,6 +11,7 @@ from assets.entry_information import *
 from assets.grains_seeds import g_and_s
 from assets.fruits import fruits
 from flask_app.dashapps.populate import return_full_entrytab
+from datetime import datetime
 
 external_stylesheets = [dbc.themes.LUX]
 
@@ -24,7 +25,7 @@ app.layout = html.Div([
     # html.H1('Dash Tabs component demo'),
     html.Div([
         dbc.Row([dcc.Tabs(className='row', id="tabs", value='tab-1-example', children=[
-            dcc.Tab(id={"name":"mood", "type":"tab"},label='Mood', value='mood'),
+            dcc.Tab(label='Mood', value='mood'),
             dcc.Tab(label='Health', value='health'),
             dcc.Tab(label='Food', value='food'),
             dcc.Tab(label='Fitness', value='fitness'),
@@ -34,7 +35,7 @@ app.layout = html.Div([
         ],  vertical=False, parent_style={'float': 'left'})]),
         dbc.Col([html.Div(id='tabs-content-example')])
     ]),
-    html.Div(id="values_to_db", children=['None'], style={'display':'none'})
+    html.Div(id="values_to_db", children=['None'], style={'display':'block'})
 ])
 
 #  add tab content as tabs' children using call back
@@ -53,25 +54,53 @@ def render_content(tab, info):
 
 # toggle entryfields for checkboxed for which additional info is necessary
 @app.callback(Output({'name': MATCH, 'type': 'div'}, 'style'),
-              [Input({'name': MATCH, 'type': 'check_toggle'}, 'value')],
-              State({'name': MATCH, 'type': 'div'}, 'style'))
-def render_content(check_button, state):
+              [Input({'name': MATCH, 'type': 'check_toggle'}, 'value')])
+            #   ,State({'name': MATCH, 'type': 'div'}, 'style'))
+def toggle_checkbox(check_button):
     if len(check_button) > 0:
         # print('SELECTED')  ##uncomment for troubleshooting
         return {'display': 'inline-block', 'width':'30%'}
     else:
         return {'display': 'none', 'width':'30%'}
 
-# get values for all entry fields in current tab --> to be passed on to db 
+
+def insert_database(data, user='gabri', date=datetime.now().date()):
+    '''
+    Insert selection of current tab to database for specified date and logged in user
+    '''
+
+    # keep only values that have been entered in data-dict (--> exclude default values)
+    for key, value in data.items():
+        if self.value_entry_record == False:
+            del data[key]
+
+    print(f"Inserted into database: {data}")
+    # append user and date to data
+    data['date'] = date  #do not use today's date, in case Date Picker was used to change current health tracker date
+
+    # insert into database
+    db_transact.add_data(self.tab, data, user)
+
+
+# get values for all entry fields in current tab --> to be passed on to db in dict form
 @app.callback(Output('values_to_db', 'children'),
               [Input('tabs', 'value')],
               [State({'name': ALL, 'type': ALL}, 'value'),
               State({'name': ALL, 'type': ALL}, 'id')])
-def render_content(tab, values, names):
+def send_to_db(tab, values, names):
     name = [n['name'] for n in names]
-    print(f"TAB: {tab}")
-    for n, v in zip(name, values):
-        print(f"{n}: {v}")
+    type_ = [n['type'] for n in names]
+    to_db = {}
+    for n, v, t in zip(name, values, type_):  #zip all three if type is 'div' for one - continue (as that will be a div as oppossed to a dcc)
+        if (t != 'div') and v:  #checklists that are not checked return empty list (if <empty_list> - returns False); other entryfields without entry will return None
+            to_db[n] = 1 if 'check' in t else v
+            print(f"{n} : {1 if 'check' in t else v}")
+
+        else:
+            continue
+            # print(f"Div: {n} - {v}")  ##uncomment for troubleshooting
+
+    return str(to_db)
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=True) 
