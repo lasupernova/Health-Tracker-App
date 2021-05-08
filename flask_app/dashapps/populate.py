@@ -37,7 +37,7 @@ def create_dcc_obj_by_type(entry_dict, called_by=None ,on_demand=False):
         id_ = {"name":id_label, "type":"on_demand"}
     else:
         id_ = {"name":entry_name, "type":"permanent"}
-        label_ = html.Label([entry_label])  #add label to non-on_demand entries in order to identify them
+        label_ = html.Label([entry_label], style={'margin-right':'5px'})  #add label to non-on_demand entries in order to identify them
         child_list.append(label_)
     if entry_type == 'Spinbox':
         min_= entry_dict['from']
@@ -45,12 +45,12 @@ def create_dcc_obj_by_type(entry_dict, called_by=None ,on_demand=False):
         step = entry_dict['increment']
         to_open = dcc.Input(id=id_, type="number", min=min_, max=max_, step=step)
     elif entry_type == 'Entryfield':
-        if entry_label == "grains/seeds":
+        if entry_label == "gs_type":
             opts = [{'label':item.capitalize(), 'value':item} for item in g_and_s]  #convert from list to list of dicts with form [{'label1':x, 'value1':y},...]
             to_open = dcc.Dropdown(id=id_, options=opts,
                                     placeholder='Start typing a grain or seed name...',
                                     multi=True)
-        elif entry_label == "fruits":
+        elif entry_label == "fruit_types":
             opts = [{'label':item.capitalize(), 'value':item} for item in fruits]
             to_open = dcc.Dropdown(id=id_, options=opts,
                                     placeholder='Start typing a fruit name...',
