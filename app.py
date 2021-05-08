@@ -2,7 +2,7 @@
 
 import sys
 import dash
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, MATCH, State, ALL
 import dash_html_components as html
 import dash_core_components as dcc
 import dash_bootstrap_components as dbc
@@ -10,7 +10,7 @@ from entry import create_entry_fields
 from assets.entry_information import * 
 from assets.grains_seeds import g_and_s
 from assets.fruits import fruits
-from test2 import return_full_entrytab
+from flask_app.dashapps.populate import return_full_entrytab
 
 external_stylesheets = [dbc.themes.LUX]
 
@@ -33,67 +33,45 @@ app.layout = html.Div([
             dcc.Tab(label='Longterm', value='longterm'),
         ],  vertical=False, parent_style={'float': 'left'})]),
         dbc.Col([html.Div(id='tabs-content-example')])
-    ])
+    ]),
+    html.Div(id="values_to_db", children=['None'], style={'display':'none'})
 ])
 
 #  add tab content as tabs' children using call back
 @app.callback(Output('tabs-content-example', 'children'),
-              [Input('tabs', 'value')])
-def render_content(tab):
+              [Input('tabs', 'value')],
+              State('tabs-content-example', 'children'))
+def render_content(tab, info):
+    if info:
+        for x in info['props']['children']:
+            print(x.keys())
+        print('\n')
     for k, v in entry_info.items():
         if tab == k:
             entry_options = return_full_entrytab(v)
-            # checklist, sliders, entryfields = create_entry_fields(v)
-            # entry_options = []  #create list and append all enty object to it one by one, in order to pass this list as a return value (will be the outputs children - must be a single list!)
-            # if len(checklist) > 0:
-            #     for check in checklist:
-            #         if 'opens' in check.keys():
-            #             to_open = entry_info[k]
-            #         check_item = dcc.Checklist(options=[check], value=[])
-            #         to_open = None
-            #         entry_options.append(check_item)
-            # if len(sliders) > 0:
-            #     for slider in sliders:
-            #         param = slider['label']
-            #         min_ = slider['min']
-            #         max_ = slider['max']
-            #         step = slider['step']
-            #         new_spinbox = dcc.Input(
-            #                                 id=param, 
-            #                                 type='number', 
-            #                                 min=min_, 
-            #                                 max=max_, 
-            #                                 step=step)  
-            #         new_div = html.Div([
-            #                             html.Div([html.P(param)],style={'margin-right': '5px', 'display': 'inline-block'}),
-            #                             html.Div([new_spinbox],style={'display': 'inline-block'})
-            #                             ])
-            #         entry_options.append(new_div)
-            # if len(entryfields) > 0:
-            #     for field in entryfields:
-            #         param = field['label']
-            #         if param == 'grains/seeds':
-            #             new_entry = dcc.Dropdown(
-            #                                     options=[{'label':x, 'value':x.lower()} for x in g_and_s],
-            #                                     placeholder='Start typing a grain or seed name...',
-            #                                     multi=True
-            #                                 )  
-            #         elif param == 'fruits':
-            #             new_entry = dcc.Dropdown(
-            #                                     options=[{'label':x, 'value':x.lower()} for x in fruits],
-            #                                     placeholder='Start typing a fruit name...',
-            #                                     multi=True
-            #                                 )                          
-            #         else:
-            #             new_entry = dcc.Input(
-            #                                     id=param, 
-            #                                     type='text')  
-            #         new_div = html.Div([
-            #                             html.Div([html.P(param)],style={'margin-right': '5px', 'display': 'inline-block'}),
-            #                             html.Div([new_entry],style={'display': 'inline-block', 'width':'30%'})
-            #                             ])
-            #         entry_options.append(new_div)
             return entry_options
+
+# toggle entryfields for checkboxed for which additional info is necessary
+@app.callback(Output({'name': MATCH, 'type': 'div'}, 'style'),
+              [Input({'name': MATCH, 'type': 'check_toggle'}, 'value')],
+              State({'name': MATCH, 'type': 'div'}, 'style'))
+def render_content(check_button, state):
+    if len(check_button) > 0:
+        # print('SELECTED')  ##uncomment for troubleshooting
+        return {'display': 'inline-block', 'width':'30%'}
+    else:
+        return {'display': 'none', 'width':'30%'}
+
+# get values for all entry fields in current tab --> to be passed on to db 
+@app.callback(Output('values_to_db', 'children'),
+              [Input('tabs', 'value')],
+              [State({'name': ALL, 'type': ALL}, 'value'),
+              State({'name': ALL, 'type': ALL}, 'id')])
+def render_content(tab, values, names):
+    name = [n['name'] for n in names]
+    print(f"TAB: {tab}")
+    for n, v in zip(name, values):
+        print(f"{n}: {v}")
 
 if __name__ == '__main__':
     app.run_server(debug=True)
