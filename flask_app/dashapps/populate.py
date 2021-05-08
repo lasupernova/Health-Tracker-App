@@ -32,10 +32,13 @@ def create_dcc_obj_by_type(entry_dict, called_by=None ,on_demand=False):
     entry_type = entry_dict['type']
     entry_label = entry_dict['label']
     id_label = called_by
+    child_list = []  
     if on_demand:
         id_ = {"name":id_label, "type":"on_demand"}
     else:
         id_ = {"name":entry_name, "type":"permanent"}
+        label_ = html.Label([entry_label])  #add label to non-on_demand entries in order to identify them
+        child_list.append(label_)
     if entry_type == 'Spinbox':
         min_= entry_dict['from']
         max_ = entry_dict['to']
@@ -60,8 +63,9 @@ def create_dcc_obj_by_type(entry_dict, called_by=None ,on_demand=False):
                                     placeholder='Select...',
                                     multi=False)
 
+    child_list.append(to_open)
     # wrap in html.Div in order to have every entry on separate line
-    div = html.Div([to_open])
+    div = html.Div(child_list)
 
     return div 
 
