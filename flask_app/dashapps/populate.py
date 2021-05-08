@@ -60,7 +60,10 @@ def create_dcc_obj_by_type(entry_dict, called_by=None ,on_demand=False):
                                     placeholder='Select...',
                                     multi=False)
 
-    return to_open   
+    # wrap in html.Div in order to have every entry on separate line
+    div = html.Div([to_open])
+
+    return div 
 
 def create_first_col_children(category_dict):
     dcc_obj_list = []
@@ -94,17 +97,5 @@ def create_first_col_children(category_dict):
 def return_full_entrytab(category):
     return_val = create_first_col_children(category)
     return dbc.Row([dbc.Col(return_val, width = 4), dbc.Col([html.Div("Col 2", style={'backgroundColor': 'pink'})], width = 8)])
-###example of callbacks created in loop
-# def update(ignore):
-#     return np.random.uniform()
-
-# for i in range(20):
-#     app.callback(
-#         dash.dependencies.Output('input %i' % i, 'value'),
-#         [dash.dependencies.Input('button populate', 'n_clicks')]
-#     )(update)
-
-# # OR!!!
-# use MATCH --> id ={type="checkbox", name="gym"} corresponds to id ={type="dropdown", name="gym"}
 
 
