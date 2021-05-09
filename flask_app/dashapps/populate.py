@@ -31,10 +31,14 @@ def create_dcc_obj_by_type(entry_dict, called_by=None ,on_demand=False):
     entry_dict = entry_dict[entry_name]
     entry_type = entry_dict['type']
     entry_label = entry_dict['label']
-    id_label = called_by
+    try:
+        entry_message = entry_dict['message']
+    except KeyError:
+        entry_message = 'Type and hit ENTER'
+    id_label = called_by  #UNUSED VAR
     child_list = []  
     if on_demand:
-        id_ = {"name":id_label, "type":"on_demand"}
+        id_ = {"name":entry_name, "type":"on_demand"}
     else:
         id_ = {"name":entry_name, "type":"permanent"}
         label_ = html.Label([entry_label], style={'margin-right':'5px'})  #add label to non-on_demand entries in order to identify them
@@ -43,29 +47,32 @@ def create_dcc_obj_by_type(entry_dict, called_by=None ,on_demand=False):
         min_= entry_dict['from']
         max_ = entry_dict['to']
         step = entry_dict['increment']
-        to_open = dcc.Input(id=id_, type="number", min=min_, max=max_, step=step)
+        to_open = dcc.Input(id=id_, type="number", min=min_, max=max_, step=step, placeholder=entry_message)
     elif entry_type == 'Entryfield':
         if entry_label == "gs_type":
             opts = [{'label':item.capitalize(), 'value':item} for item in g_and_s]  #convert from list to list of dicts with form [{'label1':x, 'value1':y},...]
             to_open = dcc.Dropdown(id=id_, options=opts,
-                                    placeholder='Start typing a grain or seed name...',
+                                    placeholder=entry_message,
+                                    value=[],
                                     multi=True)
         elif entry_label == "fruit_types":
             opts = [{'label':item.capitalize(), 'value':item} for item in fruits]
             to_open = dcc.Dropdown(id=id_, options=opts,
-                                    placeholder='Start typing a fruit name...',
+                                    placeholder=entry_message,
+                                    value=[],
                                     multi=True)
         else:
-            to_open = dcc.Input(id=id_, type='text')
+            to_open = dcc.Input(id=id_, type='text', placeholder=entry_message)
     elif entry_type == 'MultipleChoice':
             selection = [{'label':item, 'value':item} for item in entry_dict['selection_menu']]
             to_open = dcc.Dropdown(id=id_, options=selection,
-                                    placeholder='Select...',
+                                    placeholder=entry_message,
+                                    value=[],
                                     multi=False)
 
     child_list.append(to_open)
     # wrap in html.Div in order to have every entry on separate line
-    div = html.Div(child_list)
+    div = html.Div(child_list, style={'margin-top':'2px', 'margin-left':'10px'})
 
     return div 
 
@@ -76,17 +83,26 @@ def create_first_col_children(category_dict):
         entry_label = entry[entry_name]['label'] 
         if entry[entry_name]['type'] == 'Checkbox':
             if 'opens' in entry[entry_name].keys():
-                checkbox = dcc.Checklist(id={"name":entry_name,"type":"check_toggle"}, options=[{'label':entry_label,'value':entry_name}], value=[])
+                checkbox = dcc.Checklist(id={"name":entry_name,"type":"check_toggle"}, 
+                                        options=[{'label':entry_label,'value':entry_name}], 
+                                        value=[],
+                                        labelStyle={'margin-left':'10px'},
+                                        inputStyle={'margin-right':'5px'})
                 opens = entry[entry_name]['opens'] 
                 to_open = create_non_entry(category_dict, opens)
                 to_open = create_dcc_obj_by_type(to_open, entry_name, on_demand=True)
                 div = html.Div([
                                 html.Div([checkbox],style={'margin-right':'5px', 'display':'inline-block'}), 
                                 html.Div(id={"name":entry_name,"type":"div"}, children=[to_open],style={'display': 'none', 'width':'30%'})
-                                ])
+                                ], style={'margin-top':'2px', 'margin-left':'10px'})
                 # print(f"\tCheckbox: {div}")  ##uncomment for troubleshooting   
             else:
-                div = dcc.Checklist(id={"name":entry_name,"type":"check"}, options=[{'label':entry_label,'value':entry_name}], value=[])
+                div = dcc.Checklist(id={"name":entry_name,"type":"check"}, 
+                                    options=[{'label':entry_label,'value':entry_name}], 
+                                    value=[],
+                                    labelStyle={'margin-left':'10px'},
+                                    inputStyle={'margin-right':'5px'},
+                                    style={'margin-top':'2px', 'margin-left':'10px'})
                 # print(f'\tCheckbox: {div}')  ##uncomment for troubleshooting
         else:
             if 'on_demand' in entry[entry_name].keys():

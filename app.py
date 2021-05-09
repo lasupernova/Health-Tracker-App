@@ -12,8 +12,11 @@ from assets.grains_seeds import g_and_s
 from assets.fruits import fruits
 from flask_app.dashapps.populate import return_full_entrytab
 from datetime import datetime
+from database.connections import db_transact
 
 external_stylesheets = [dbc.themes.LUX]
+
+tab_to_db = ''
 
 entry_info = {'mood':mood_info, 'health':health_info, 'food':food_info, 
               'fitness': fitness_info, 'period':period_info, 'sleep':sleep_info, 'longterm':longterm_info}
@@ -64,43 +67,43 @@ def toggle_checkbox(check_button):
         return {'display': 'none', 'width':'30%'}
 
 
-def insert_database(data, user='gabri', date=datetime.now().date()):
+def insert_database(data, tab, user='gabri', date=datetime.now().date()):
     '''
     Insert selection of current tab to database for specified date and logged in user
     '''
-
-    # keep only values that have been entered in data-dict (--> exclude default values)
-    for key, value in data.items():
-        if self.value_entry_record == False:
-            del data[key]
 
     print(f"Inserted into database: {data}")
     # append user and date to data
     data['date'] = date  #do not use today's date, in case Date Picker was used to change current health tracker date
 
     # insert into database
-    db_transact.add_data(self.tab, data, user)
+    db_transact.add_data(tab, data, user)
 
 
 # get values for all entry fields in current tab --> to be passed on to db in dict form
 @app.callback(Output('values_to_db', 'children'),
               [Input('tabs', 'value')],
               [State({'name': ALL, 'type': ALL}, 'value'),
-              State({'name': ALL, 'type': ALL}, 'id')])
-def send_to_db(tab, values, names):
-    name = [n['name'] for n in names]
-    type_ = [n['type'] for n in names]
-    to_db = {}
-    for n, v, t in zip(name, values, type_):  #zip all three if type is 'div' for one - continue (as that will be a div as oppossed to a dcc)
-        if (t != 'div') and v:  #checklists that are not checked return empty list (if <empty_list> - returns False); other entryfields without entry will return None
-            to_db[n] = 1 if 'check' in t else v
-            print(f"{n} : {1 if 'check' in t else v}")
+              State({'name': ALL, 'type': ALL}, 'id'),
+              State('values_to_db', 'children')])
+def send_to_db(tab, values, names, tab_to_db):
+    print('TAB TO DB: ', tab_to_db)  ##status of last tab (the one to send data to db for) is returned and saved
+    if (tab != 'tab-1-example') and (tab_to_db != 'tab-1-example'):
+        name = [n['name'] for n in names]
+        type_ = [n['type'] for n in names]
+        to_db = {}
+        for n, v, t in zip(name, values, type_):  #zip all three if type is 'div' for one - continue (as that will be a div as oppossed to a dcc)
+            if (t != 'div') and v:  #checklists that are not checked return empty list (if <empty_list> - returns False); other entryfields without entry will return None
+                to_db[n] = True if 'check' in t else v
+                print(f"{n} : {1 if 'check' in t else v}")
 
-        else:
-            continue
-            # print(f"Div: {n} - {v}")  ##uncomment for troubleshooting
+            else:
+                continue
+                # print(f"Div: {n} - {v}")  ##uncomment for troubleshooting
 
-    return str(to_db)
+        insert_database(to_db, tab_to_db)
+    return tab
+
 
 if __name__ == '__main__':
     app.run_server(debug=True) 
