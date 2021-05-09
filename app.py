@@ -100,8 +100,8 @@ def send_to_db(tab, values, names, tab_to_db):
             else:
                 continue
                 # print(f"Div: {n} - {v}")  ##uncomment for troubleshooting
-
-        insert_database(to_db, tab_to_db)
+        if len(to_db) > 0:
+            insert_database(to_db, tab_to_db)
     return tab
 
 

@@ -10,6 +10,7 @@ from entry import create_entry_fields
 from assets.entry_information import * 
 from assets.grains_seeds import g_and_s
 from assets.fruits import fruits
+import datetime
 
 
 entry_info = {'mood':mood_info, 'health':health_info, 'food':food_info, 
@@ -129,7 +130,11 @@ def return_full_entrytab(category):
                                     },
                                 style = dict(display='inline-block')
                             )
-                            ], width = 8)
+                            ], width = 6),
+                    dbc.Col([dcc.DatePickerSingle(
+                                id='startdate-input',
+                                date=datetime.datetime.today().date()
+                            )], width = 2)
                     ])
 
 
