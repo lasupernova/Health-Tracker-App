@@ -14,12 +14,13 @@ load_dotenv()
 database_pw = os.environ["DATABASE_PASSWORD"]
 print(database_pw)
 
+db = 'health_tracker2'
 
-def connect_db(user='postgres', host='localhost', port='5432', database='health_tracker', password='postgres'):
+def connect_db(user='postgres', host='localhost', port='5432', database=db, password='postgres'):
     '''
     Connects to specific database
     '''
-
+    print(f"Connected to: {db}")
     return psycopg2.connect(f"user={user} host={host} dbname={database} password={password} port={port}")
 
 
@@ -47,7 +48,7 @@ def add_data(table, *args):
             query = f"""INSERT INTO {table} ({col_str}) VALUES ({val_placeholders});""" 
             cur.execute(query, (tuple(vals)))
     except psycopg2.errors.UniqueViolation as e:  #update if entry already exists for table - pkey
-        print("ERROR CAUGHT!")
+        print("ENTRY ALREADY EXISTS FOR THIS DATE -- UPDATING ENTRY!")
         update_data(table, data)
     finally:
         con.commit()   
@@ -151,7 +152,6 @@ def sign_up(user, password, sex, dob):
         con = connect_db(password=database_pw)
 
         query_check = f"""SELECT * FROM users WHERE username=%s;"""
-
         query_ins = f"""INSERT INTO users (username, password, sex, DOB) VALUES (%s, %s, %s, %s);"""
 
         with con.cursor() as cur: #closes transaction, but does NOT close the connection itself
@@ -237,40 +237,88 @@ def query_data_by_date_and_user(date, user, end_date=None):
         print(e)
         return -1
 
-def query_data_between_dates_by_user(user:str, start_date, end_date, table:str=None, columns:list=None):
+def query_data_between_dates_by_user(user:str, start_date=None, end_date=None, table:str=None, columns:list=None):
+    """
+    Query data from specified table and columns between a start and an end date for a specified user.
+    When start - and end_date default to None: data for all dates is returned
 
-    try:
+    Parameters:
+        user: username - a string
+        start_date: start_date of query (default: None - e.g. for food data) - a datetime object
+        end_date: end_date of query (default: None - e.g. for food data) - a datetime object
+        table: name of table in database to query - a string
+        columns: name(s) of column(s) in table to get data from - a list
 
-        uid = get_uid_by_username(user)
+    Returns:
+        data - a list of tuples with with one tuple per returned entry data
+    """
+    if start_date != None and end_date != None:
+        try:
 
-        if table == None and columns==None:
-            pass   #query_data_by_date_and_user(date, user, end_date)
+            uid = get_uid_by_username(user)
 
-        elif table != None and columns!=None:
+            if table == None and columns==None:
+                pass   #query_data_by_date_and_user(date, user, end_date)
 
-            col_str = ', '.join(columns)
+            elif table != None and columns!=None:
 
-            query = f'''SELECT {col_str}
-                        FROM {table}
-                        WHERE
-                        (date(date) between date(%s) and date(%s)) 
-                        AND (user_id=%s);
-                        '''
+                col_str = ', '.join(columns)
 
-            con = connect_db(password=database_pw)
-            
-            with con.cursor() as cur:  #closes transaction, but does NOT close the connection itself
-                cur.execute(query, (start_date, end_date, uid)) 
+                query = f'''SELECT {col_str}
+                            FROM {table}
+                            WHERE
+                            (date(date) between date(%s) and date(%s)) 
+                            AND (user_id=%s);
+                            '''
 
-                data = cur.fetchall()  #returns a list of tuples with table_information
+                con = connect_db(password=database_pw)
+                
+                with con.cursor() as cur:  #closes transaction, but does NOT close the connection itself
+                    cur.execute(query, (start_date, end_date, uid)) 
 
-            return data
+                    data = cur.fetchall()  #returns a list of tuples with table_information
 
-        #### TO DO: add elif + error message if table is given but not columns or vice versa
+                return data
 
-    except Exception as e:
-        print(e)
-        return 0
+            #### TO DO: add elif + error message if table is given but not columns or vice versa
+
+        except Exception as e:
+            print(e)
+            return 0
+
+    else:
+        try:
+
+            uid = get_uid_by_username(user)
+
+            if table == None and columns==None:
+                pass   #query_data_by_date_and_user(date, user, end_date)
+
+            elif table != None and columns!=None:
+
+                col_str = ', '.join(columns)
+
+                query = f'''SELECT {col_str}
+                            FROM {table}
+                            WHERE
+                            (user_id=%s);
+                            '''
+
+                con = connect_db(password=database_pw)
+                
+                with con.cursor() as cur:  #closes transaction, but does NOT close the connection itself
+                    cur.execute(query, (uid, )) 
+
+                    data = cur.fetchall()  #returns a list of tuples with table_information
+
+                return data
+
+            #### TO DO: add elif + error message if table is given but not columns or vice versa
+
+        except Exception as e:
+            print(e)
+            return 0        
+
 
 def get_table_list():
     '''
