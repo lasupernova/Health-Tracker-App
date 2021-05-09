@@ -118,7 +118,7 @@ def create_first_col_children(category_dict):
 def return_full_entrytab(category):
     return_val = create_first_col_children(category)
     return dbc.Row([
-                    dbc.Col(return_val, width = 4), 
+                    dbc.Col(return_val, width = "auto"), 
                     dbc.Col([
                             dcc.Graph(
                                 id='stock_graph',
@@ -130,11 +130,11 @@ def return_full_entrytab(category):
                                     },
                                 style = dict(display='inline-block')
                             )
-                            ], width = 6),
+                            ], width = "auto"),
                     dbc.Col([dcc.DatePickerSingle(
                                 id='startdate-input',
                                 date=datetime.datetime.today().date()
-                            )], width = 2)
+                            )], width = "auto")
                     ])
 
 
