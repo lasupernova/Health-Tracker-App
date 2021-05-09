@@ -36,7 +36,7 @@ app.layout = html.Div([
             dcc.Tab(label='Sleep', value='sleep'),
             dcc.Tab(label='Longterm', value='longterm'),
         ],  vertical=False, parent_style={'float': 'left'})]),
-        dbc.Col([html.Div(id='tabs-content-example')])
+        dbc.Row([html.Div(id='tabs-content-example')], style={'margin':'10px'})
     ]),
     html.Div(id="values_to_db", children=['None'], style={'display':'block'})
 ])
