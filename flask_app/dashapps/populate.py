@@ -23,11 +23,11 @@ def create_non_entry(category_dict, entry_name):
     return [entry for entry in category_dict if entry_name in entry.keys()][0]
 
 
-def create_dcc_obj_by_type(entry_dict, called_by=None ,on_demand=False):
+def create_dcc_obj_by_type(category, entry_dict, called_by=None ,on_demand=False):
     """
     Creates dcc entry object based on type given in passed entry_dict
     """
-    entry_name = list(entry_dict.keys())[0]
+    entry_name = list(entry_dict.keys())[0]  ##add category name in front of entry name, in order to select for during callbacl in app.py
     entry_dict = entry_dict[entry_name]
     entry_type = entry_dict['type']
     entry_label = entry_dict['label']
@@ -38,9 +38,9 @@ def create_dcc_obj_by_type(entry_dict, called_by=None ,on_demand=False):
     id_label = called_by  #UNUSED VAR
     child_list = []  
     if on_demand:
-        id_ = {"name":entry_name, "type":"on_demand"}
+        id_ = {"name":f"{category}_{entry_name}", "type":"on_demand"}
     else:
-        id_ = {"name":entry_name, "type":"permanent"}
+        id_ = {"name":f"{category}_{entry_name}", "type":"permanent"}
         label_ = html.Label([entry_label], style={'margin-right':'5px'})  #add label to non-on_demand entries in order to identify them
         child_list.append(label_)
     if entry_type == 'Spinbox':
@@ -76,28 +76,28 @@ def create_dcc_obj_by_type(entry_dict, called_by=None ,on_demand=False):
 
     return div 
 
-def create_first_col_children(category_dict):
+def create_first_col_children(category, category_dict):
     dcc_obj_list = []
     for entry in category_dict:
         entry_name = [*entry][0]
         entry_label = entry[entry_name]['label'] 
         if entry[entry_name]['type'] == 'Checkbox':
             if 'opens' in entry[entry_name].keys():
-                checkbox = dcc.Checklist(id={"name":entry_name,"type":"check_toggle"}, 
+                checkbox = dcc.Checklist(id={"name":f"{category}_{entry_name}","type":"check_toggle"}, 
                                         options=[{'label':entry_label,'value':entry_name}], 
                                         value=[],
                                         labelStyle={'margin-left':'10px'},
                                         inputStyle={'margin-right':'5px'})
                 opens = entry[entry_name]['opens'] 
                 to_open = create_non_entry(category_dict, opens)
-                to_open = create_dcc_obj_by_type(to_open, entry_name, on_demand=True)
+                to_open = create_dcc_obj_by_type(category, to_open, entry_name, on_demand=True)
                 div = html.Div([
                                 html.Div([checkbox],style={'margin-right':'5px', 'display':'inline-block'}), 
-                                html.Div(id={"name":entry_name,"type":"div"}, children=[to_open],style={'display': 'none', 'width':'30%'})
+                                html.Div(id={"name":f"{category}_{entry_name}","type":"div"}, children=[to_open],style={'display': 'none', 'width':'30%'})
                                 ], style={'margin-top':'2px', 'margin-left':'10px'})
                 # print(f"\tCheckbox: {div}")  ##uncomment for troubleshooting   
             else:
-                div = dcc.Checklist(id={"name":entry_name,"type":"check"}, 
+                div = dcc.Checklist(id={"name":f"{category}_{entry_name}","type":"check"}, 
                                     options=[{'label':entry_label,'value':entry_name}], 
                                     value=[],
                                     labelStyle={'margin-left':'10px'},
@@ -109,13 +109,13 @@ def create_first_col_children(category_dict):
                 continue
                 # print(f'\t\tON DEMAND SETTING: {entry_name}')  ##uncomment for troubleshooting
             else:
-                div = create_dcc_obj_by_type(entry)
+                div = create_dcc_obj_by_type(category, entry)
                 # print('\t', div)  ##uncomment for troubleshooting
         dcc_obj_list.append(div)
     return dcc_obj_list
 
-def return_full_entrytab(category):
-    return_val = create_first_col_children(category)
+def return_full_entrytab(category, category_dict):
+    return_val = create_first_col_children(category, category_dict)
     return return_val
 
 
