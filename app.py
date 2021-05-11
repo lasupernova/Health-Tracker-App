@@ -36,20 +36,46 @@ app.layout = html.Div([
             dcc.Tab(label='Sleep', value='sleep'),
             dcc.Tab(label='Longterm', value='longterm'),
         ],  vertical=False, parent_style={'float': 'left'})]),
-        dbc.Row([html.Div(id='tabs-content-example')], style={'margin':'10px'})
+        dbc.Row([
+                    dbc.Col(id='tabs-content', width = "auto"), 
+                    dbc.Col([
+                            dcc.Graph(
+                                id='stock_graph',
+                                figure={
+                                    'data': [
+                                        {'x': [1,2], 'y': [3,1]}
+                                            ],
+                                    'layout': dict(title='Placeholder') 
+                                    },
+                                style = dict(display='inline-block')
+                            )
+                            ], width = "auto"),
+                    dbc.Col([
+                            dbc.Row([
+                                dcc.DatePickerSingle(
+                                    id='startdate-input',
+                                    date=datetime.today().date()),
+                                html.Div(id='picked_date', children=[])
+                                    ]) 
+                                ], width = "auto") 
+                    ])
     ]),
     html.Div(id="values_to_db", children=['None'], style={'display':'block'})
 ])
 
 #  add tab content as tabs' children using call back
-@app.callback(Output('tabs-content-example', 'children'),
+@app.callback(Output('tabs-content', 'children'),
               [Input('tabs', 'value')],
-              State('tabs-content-example', 'children'))
+              State('tabs-content', 'children'))
 def render_content(tab, info):
-    if info:
-        for x in info['props']['children']:
-            print(x.keys())
-        print('\n')
+    # if info:  ##uncomment for troubleshooting
+    #     # print(info[0]['props'])
+    #     for x in info:
+    #         if 'id' in x['props'].keys():
+    #             print(x['props']['id']['name'], '\n')
+    #         else:
+    #             pass
+    #     print('\n')
     for k, v in entry_info.items():
         if tab == k:
             entry_options = return_full_entrytab(v)
@@ -87,7 +113,7 @@ def insert_database(data, tab, user='gabri', date=datetime.now().date()):
               State({'name': ALL, 'type': ALL}, 'id'),
               State('values_to_db', 'children')])
 def send_to_db(tab, values, names, tab_to_db):
-    print('TAB TO DB: ', tab_to_db)  ##status of last tab (the one to send data to db for) is returned and saved
+    # print('TAB TO DB: ', tab_to_db)  ##status of last tab (the one to send data to db for) is returned and saved
     if (tab != 'tab-1-example') and (tab_to_db != 'tab-1-example'):
         name = [n['name'] for n in names]
         type_ = [n['type'] for n in names]
@@ -103,6 +129,21 @@ def send_to_db(tab, values, names, tab_to_db):
         if len(to_db) > 0:
             insert_database(to_db, tab_to_db)
     return tab
+
+# # get date information stored in database
+# @app.callback(Output(None, 'None'),
+#               [Input('startdate-input', 'value')])
+#             #   ,State({'name': MATCH, 'type': 'div'}, 'style'))
+# def get_date_info(date):
+#     print(date)
+#     return date
+
+# # get values from date picker
+# @app.callback(Output('picked_date', 'children'),
+#               [Input('startdate-input', 'date')])
+# def change_date(date):
+#     print('DATE PICKED: ', date)  ##status of last tab (the one to send data to db for) is returned and saved
+#     return date
 
 
 if __name__ == '__main__':

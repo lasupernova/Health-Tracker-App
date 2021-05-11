@@ -10,7 +10,6 @@ from entry import create_entry_fields
 from assets.entry_information import * 
 from assets.grains_seeds import g_and_s
 from assets.fruits import fruits
-import datetime
 
 
 entry_info = {'mood':mood_info, 'health':health_info, 'food':food_info, 
@@ -117,24 +116,6 @@ def create_first_col_children(category_dict):
 
 def return_full_entrytab(category):
     return_val = create_first_col_children(category)
-    return dbc.Row([
-                    dbc.Col(return_val, width = "auto"), 
-                    dbc.Col([
-                            dcc.Graph(
-                                id='stock_graph',
-                                figure={
-                                    'data': [
-                                        {'x': [1,2], 'y': [3,1]}
-                                            ],
-                                    'layout': dict(title='Placeholder') 
-                                    },
-                                style = dict(display='inline-block')
-                            )
-                            ], width = "auto"),
-                    dbc.Col([dcc.DatePickerSingle(
-                                id='startdate-input',
-                                date=datetime.datetime.today().date()
-                            )], width = "auto")
-                    ])
+    return return_val
 
 
