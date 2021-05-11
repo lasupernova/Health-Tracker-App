@@ -51,13 +51,11 @@ app.layout = html.Div([
                         )
                         ], width = "auto"),
                 dbc.Col([
-                        dbc.Row([
-                            dcc.DatePickerSingle(
-                                id='startdate-input',
-                                date=datetime.today().date()),
-                            html.Div(id='picked_date', children=[])
-                                ]) 
-                            ], width = "auto") 
+                        dcc.DatePickerSingle(
+                            id='startdate-input',
+                            date=datetime.today().date()),
+                        html.Div(id='picked_date', children=[])
+                        ], width = "auto") 
                     ])
     ]),
     html.Div(id="values_to_db", children=['None'], style={'display':'block'})
