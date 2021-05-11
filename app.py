@@ -141,7 +141,13 @@ def send_to_db(tab, values, names, tab_to_db):
               [Input('startdate-input', 'date')])
 def change_date(date):
     print(f'DATE PICKED: {date}')  ##status of last tab (the one to send data to db for) is returned and saved
-    return f'DATE: {date}'
+    date_conv = datetime.strptime(date, '%Y-%m-%d')
+    print(date_conv)
+    test = db_transact.query_data_by_date_and_user(date_conv, user='gabri', end_date=None)
+    if test != 2:
+        return str(test)
+    else:
+        return "No data for this date yet!"
 
 
 if __name__ == '__main__':
