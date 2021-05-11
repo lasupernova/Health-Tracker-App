@@ -153,10 +153,10 @@ def send_to_db(tab, values, names, tab_to_db):
                 return "ERROR!"
         for n, v, t in zip(name, values, type_):  #zip all three if type is 'div' for one - continue (as that will be a div as oppossed to a dcc)
             print(f"NAME: {n} - VALUE: {v}")
-            if (t != 'div') and v:  #checklists that are not checked return empty list (if <empty_list> - returns False); other entryfields without entry will return None
+            if (t != 'div'):  #checklists that are not checked return empty list (if <empty_list> - returns False); other entryfields without entry will return None
                 entry_name = "_".join(n.split('_')[1:])  ##first part of n is the category --> grab only relevant entry name like used in db
-                to_db[entry_name] = True if 'check' in t else v
-                print(f"{entry_name} : {1 if 'check' in t else v}")
+                to_db[entry_name] = True if (('check' in t) and v) else False if not v else v
+                print(f"{entry_name} : {1 if (('check' in t) and v) else 0 if not v else v}")
 
             else:
                 continue
