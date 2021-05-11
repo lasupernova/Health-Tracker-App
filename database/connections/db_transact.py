@@ -74,7 +74,7 @@ def update_data(table, data):
 
     con = connect_db(password=database_pw)
     with con.cursor() as cur:
-        query = f"""UPDATE {table} SET ({col_str}) = ({val_placeholders}) WHERE (date = %s and user_id = %s);""" 
+        query = f"""UPDATE {table} SET ({col_str}) = ROW({val_placeholders}) WHERE (date = %s and user_id = %s);""" 
         # query = f"""SELECT * FROM {table} WHERE (date = %s and user_id = %s);""" 
         cur.execute(query, (vals)) #, date, user_id
 
