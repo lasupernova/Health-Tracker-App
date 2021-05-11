@@ -25,22 +25,49 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets, assets_igno
 
 # create tabs
 app.layout = html.Div([
-    # html.H1('Dash Tabs component demo'),
+    dcc.Location(id='url', refresh=False),
+    dcc.ConfirmDialog(
+        id='confirm',
+        message='',
+        ),
     html.Div([
         dbc.Row([dcc.Tabs(className='row', id="tabs", value='tab-1-example', children=[
-            dcc.Tab(label='Mood', value='mood'),
-            dcc.Tab(label='Health', value='health'),
-            dcc.Tab(label='Food', value='food'),
-            dcc.Tab(label='Fitness', value='fitness'),
-            dcc.Tab(label='Period', value='period'),
-            dcc.Tab(label='Sleep', value='sleep'),
-            dcc.Tab(label='Longterm', value='longterm'),
-        ],  vertical=False, parent_style={'float': 'left'})]),
-        dbc.Row([
-                dbc.Col(id='tabs-content', width = "auto"), 
+            dcc.Tab(id='mood_tab', label='Mood', value='mood'),
+            dcc.Tab(id='health_tab', label='Health', value='health'),
+            dcc.Tab(id='food_tab', label='Food', value='food'),
+            dcc.Tab(id='fitness_tab', label='Fitness', value='fitness'),
+            dcc.Tab(id='period_tab', label='Period', value='period'),
+            dcc.Tab(id='sleep_tab', label='Sleep', value='sleep'),
+            dcc.Tab(id='longterm_tab', label='Longterm', value='longterm'),
+        ],  vertical=False, parent_style={'float': 'left'})])
+
+    ]),
+    html.Div(id="values_to_db", children=['None'], style={'display':'block'})
+])
+
+# def test():
+#     for k, v in entry_info.items():
+#         # if tab == k:
+#         entry_options = return_full_entrytab(v)
+#         return entry_options
+@app.callback([Output('mood_tab', 'children'),
+               Output('health_tab', 'children'),
+               Output('food_tab', 'children'),
+               Output('fitness_tab', 'children'),
+               Output('period_tab', 'children'),
+               Output('sleep_tab', 'children'),
+               Output('longterm_tab', 'children')],
+              [Input('url', 'pathname')])
+def display_page(pathname):
+    if pathname=="/":
+        return_vals = {}
+        for k, v in entry_info.items():
+            entry_options = return_full_entrytab(v)
+            template=dbc.Row([
+                dbc.Col(entry_options, id=f'{k}-content', width = "auto"), 
                 dbc.Col([
                         dcc.Graph(
-                            id='stock_graph',
+                            id='{k}_graph',
                             figure={
                                 'data': [
                                     {'x': [1,2], 'y': [3,1]}
@@ -52,32 +79,32 @@ app.layout = html.Div([
                         ], width = "auto"),
                 dbc.Col([
                         dcc.DatePickerSingle(
-                            id='startdate-input',
+                            id='{k}-startdate-input',
                             date=datetime.today().date()),
-                        html.Div(id='picked_date', children=[])
+                        html.Div(id='{k}-picked_date', children=[])
                         ], width = "auto") 
                     ])
-    ]),
-    html.Div(id="values_to_db", children=['None'], style={'display':'block'})
-])
+            return_vals[k] = template
+    return return_vals['mood'], return_vals['health'], return_vals['food'], return_vals['fitness'], return_vals['period'], return_vals['sleep'], return_vals['longterm']
+    # return True, f"The pathname is: {pathname}"
 
-#  add tab content as tabs' children using call back
-@app.callback(Output('tabs-content', 'children'),
-              [Input('tabs', 'value')],
-              State('tabs-content', 'children'))
-def render_content(tab, info):
-    # if info:  ##uncomment for troubleshooting
-    #     # print(info[0]['props'])
-    #     for x in info:
-    #         if 'id' in x['props'].keys():
-    #             print(x['props']['id']['name'], '\n')
-    #         else:
-    #             pass
-    #     print('\n')
-    for k, v in entry_info.items():
-        if tab == k:
-            entry_options = return_full_entrytab(v)
-            return entry_options
+# #  add tab content as tabs' children using call back
+# @app.callback(Output('tabs-content', 'children'),
+#               [Input('tabs', 'value')],
+#               State('tabs-content', 'children'))
+# def render_content(tab, info):
+#     # if info:  ##uncomment for troubleshooting
+#     #     # print(info[0]['props'])
+#     #     for x in info:
+#     #         if 'id' in x['props'].keys():
+#     #             print(x['props']['id']['name'], '\n')
+#     #         else:
+#     #             pass
+#     #     print('\n')
+#     for k, v in entry_info.items():
+#         if tab == k:
+#             entry_options = return_full_entrytab(v)
+#             return entry_options
 
 # toggle entryfields for checkboxed for which additional info is necessary
 @app.callback(Output({'name': MATCH, 'type': 'div'}, 'style'),
