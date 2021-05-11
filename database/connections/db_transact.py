@@ -225,13 +225,19 @@ def query_data_by_date_and_user(date, user, end_date=None):
                 else:
                     data = get_table_data(table, date, end_date, user)
 
-                for col, value in zip(col_names, data):
-                    if col == 'user_id' or col == 'date':  #exclude these two columns, as they do not contain health data
-                        pass
-                    else:
-                        data_dict[table][str(col)] = value if str(value) != 'nan' else None
+                if data != 0:
+                    for col, value in zip(col_names, data):
+                        if col == 'user_id' or col == 'date':  #exclude these two columns, as they do not contain health data
+                            pass
+                        else:
+                            data_dict[table][str(col)] = value if str(value) != 'nan' else None
+                else:
+                    continue
 
-        return data_dict
+            if data_dict:
+                return data_dict
+            else:
+                return 2
 
     except Exception as e:
         print(e)
