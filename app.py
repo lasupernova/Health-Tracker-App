@@ -37,27 +37,27 @@ app.layout = html.Div([
             dcc.Tab(label='Longterm', value='longterm'),
         ],  vertical=False, parent_style={'float': 'left'})]),
         dbc.Row([
-                    dbc.Col(id='tabs-content', width = "auto"), 
-                    dbc.Col([
-                            dcc.Graph(
-                                id='stock_graph',
-                                figure={
-                                    'data': [
-                                        {'x': [1,2], 'y': [3,1]}
-                                            ],
-                                    'layout': dict(title='Placeholder') 
-                                    },
-                                style = dict(display='inline-block')
-                            )
-                            ], width = "auto"),
-                    dbc.Col([
-                            dbc.Row([
-                                dcc.DatePickerSingle(
-                                    id='startdate-input',
-                                    date=datetime.today().date()),
-                                html.Div(id='picked_date', children=[])
-                                    ]) 
-                                ], width = "auto") 
+                dbc.Col(id='tabs-content', width = "auto"), 
+                dbc.Col([
+                        dcc.Graph(
+                            id='stock_graph',
+                            figure={
+                                'data': [
+                                    {'x': [1,2], 'y': [3,1]}
+                                        ],
+                                'layout': dict(title='Placeholder') 
+                                },
+                            style = dict(display='inline-block')
+                        )
+                        ], width = "auto"),
+                dbc.Col([
+                        dbc.Row([
+                            dcc.DatePickerSingle(
+                                id='startdate-input',
+                                date=datetime.today().date()),
+                            html.Div(id='picked_date', children=[])
+                                ]) 
+                            ], width = "auto") 
                     ])
     ]),
     html.Div(id="values_to_db", children=['None'], style={'display':'block'})
@@ -138,12 +138,12 @@ def send_to_db(tab, values, names, tab_to_db):
 #     print(date)
 #     return date
 
-# # get values from date picker
-# @app.callback(Output('picked_date', 'children'),
-#               [Input('startdate-input', 'date')])
-# def change_date(date):
-#     print('DATE PICKED: ', date)  ##status of last tab (the one to send data to db for) is returned and saved
-#     return date
+# get values from date picker
+@app.callback(Output('picked_date', 'children'),
+              [Input('startdate-input', 'date')])
+def change_date(date):
+    print(f'DATE PICKED: {date}')  ##status of last tab (the one to send data to db for) is returned and saved
+    return f'DATE: {date}'
 
 
 if __name__ == '__main__':
