@@ -141,21 +141,21 @@ def insert_database(data, tab, user='gabri', date=datetime.now().date()):
 def send_to_db(tab, values, names, tab_to_db):
     # print('TAB TO DB: ', tab_to_db)  ##status of last tab (the one to send data to db for) is returned and saved
     if (tab != 'tab-1-example') and (tab_to_db != 'tab-1-example'):
-        print("VALUES: ", [x for x in zip(names, values)])
+        # print("VALUES: ", [x for x in zip(names, values)])  ##uncomment for troubleshooting
         info = {n['name']: v for n, v in zip(names, values) if (n['name'].startswith(tab_to_db) and n['type'] != 'div')}  ##get only values when corresponding names contain category name as substring
         name = [k for k in info.keys()]
         values = [v for k, v in info.items()]
         type_ = [n['type'] for n in names if (n['name'].startswith(tab_to_db) and n['type'] != 'div')]  ##use startswith() instead of tab_to_db in n['name'], as 'health' also in 'food_unhealthy_food'
         to_db = {}
         print(len(name), len(values), len(type_))
-        if len(name) != len(type_) != len(values):  ##need to be of same lenght in order to successfully pass data to db
+        if len(name) != len(type_) != len(values):  ##need to be of same length in order to successfully pass data to db
                 print("An Error Occured! Lengths of name, value and type lists are unequal!")
                 return "ERROR!"
         for n, v, t in zip(name, values, type_):  #zip all three if type is 'div' for one - continue (as that will be a div as oppossed to a dcc)
             print(f"NAME: {n} - VALUE: {v}")
             if (t != 'div'):  #checklists that are not checked return empty list (if <empty_list> - returns False); other entryfields without entry will return None
                 entry_name = "_".join(n.split('_')[1:])  ##first part of n is the category --> grab only relevant entry name like used in db
-                to_db[entry_name] = True if (('check' in t) and v) else False if not v else v
+                to_db[entry_name] = True if (('check' in t) and v) else False if (('check' in t) and not v) else None if ((not 'check' in t) and not v) else v
                 print(f"{entry_name} : {1 if (('check' in t) and v) else 0 if not v else v}")
 
             else:
