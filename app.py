@@ -57,11 +57,6 @@ app.layout = html.Div([
     ])
 ])
 
-# def test():
-#     for k, v in entry_info.items():
-#         # if tab == k:
-#         entry_options = return_full_entrytab(v)
-#         return entry_options
 @app.callback([Output('mood_tab', 'children'),
                Output('health_tab', 'children'),
                Output('food_tab', 'children'),
@@ -99,24 +94,6 @@ def display_page(pathname):
             return_vals[k] = template
     return return_vals['mood'], return_vals['health'], return_vals['food'], return_vals['fitness'], return_vals['period'], return_vals['sleep'], return_vals['longterm']
     # return True, f"The pathname is: {pathname}"
-
-# #  add tab content as tabs' children using call back
-# @app.callback(Output('tabs-content', 'children'),
-#               [Input('tabs', 'value')],
-#               State('tabs-content', 'children'))
-# def render_content(tab, info):
-#     # if info:  ##uncomment for troubleshooting
-#     #     # print(info[0]['props'])
-#     #     for x in info:
-#     #         if 'id' in x['props'].keys():
-#     #             print(x['props']['id']['name'], '\n')
-#     #         else:
-#     #             pass
-#     #     print('\n')
-#     for k, v in entry_info.items():
-#         if tab == k:
-#             entry_options = return_full_entrytab(v)
-#             return entry_options
 
 # toggle entryfields for checkboxed for which additional info is necessary
 @app.callback(Output({'name': MATCH, 'type': 'div'}, 'style'),
@@ -177,13 +154,6 @@ def send_to_db(tab, values, names, tab_to_db):
             insert_database(to_db, tab_to_db)
     return tab
 
-# # get date information stored in database
-# @app.callback(Output(None, 'None'),
-#               [Input('startdate-input', 'value')])
-#             #   ,State({'name': MATCH, 'type': 'div'}, 'style'))
-# def get_date_info(date):
-#     print(date)
-#     return date
 
 # get values from date picker
 @app.callback([Output("current_date", 'children')],
@@ -202,10 +172,7 @@ def change_date(date):
         else:
             return ["No data for this date yet!"]
 
-# @app.callback(Output({"name": ALL ,"type":ALL}, 'value'),
-#               [Input({"name": "selected-date" ,"type":"picked_date"}, 'children')],
-#               [State({"name": ALL ,"type":ALL}, 'value'),
-#               State({"name": ALL ,"type":ALL}, 'id')])
+
 @app.callback(Output({"name": ALL ,"type":ALL, "list":"entry"}, 'value'),
               [Input("current_date", 'children')],
               [State({"name": ALL ,"type":ALL, "list":"entry"}, 'value'),
@@ -260,43 +227,6 @@ def testing(data, values, ids):  #fill entry field values
         print(f">>>>RESULTS: {tuple(values_for_date)} number of return vals {len(values_for_date)}")
         return tuple(values_for_date)
 
-
-# @app.callback(Output('test', 'children'),
-#               [Input({"name": ALL ,"type":"picked_date"}, 'children')],
-#               [State({"name": ALL ,"type":ALL}, 'value'),
-#               State({"name": ALL ,"type":ALL}, 'id')])
-# def testing(test, values, ids):  #fille entry field values
-#     values_for_date = []
-#     test = test[0]
-#     test_dict = ast.literal_eval(test)  #string is first (and only) item within picked_date children list
-#     for val, id_ in zip(values, ids):
-#         entry_id = id_['name'].split("_")  #IDs with form {"name":xxx, "type":yyy} are passed by State requesting that form
-#         type_ = id_['type']
-#         category = entry_id[0]
-#         entry_name = "_".join(entry_id[1:])
-#         # print(f">>>>>>CAT: {category} \t{entry_name}")
-#         # current_val = test_dict[category][entry_name]
-#         if len(entry_id) > 1:
-#             if 'check' in type_ or type_ == "permanent":
-#                 print(entry_id, type_)
-#                 # print(f"ID: {id_} with OLD Value: {val}; NEW VALUE: {current_val}")
-#                 # values_for_date.append(current_val)
-#             elif type_ == "on_demand":
-#                 print(entry_id, "ON DEMAND!!!")
-#                 if len(entry_id) < 4:
-#                     called_by = [entry['name'] for entry in ids if (entry_id[0] in entry['name'] and entry_id[1] in entry['name'] and entry['name']!= id_['name'])][0]
-#                     caller_name = "_".join(called_by.split("_")[1:])
-#                     caller_value = test_dict[category][caller_name]
-#                     print(f"Caller value: {caller_value}")
-#                 else:
-#                     called_by = [entry['name'] for entry in ids if (entry_id[0] in entry['name'] and entry_id[1] in entry['name']and entry_id[2] in entry['name'] and entry['name']!= id_['name'])][0]
-#                     caller_name = "_".join(called_by.split("_")[1:])
-#                     caller_value = test_dict[category][caller_name]
-#                     print(f"Caller value: {caller_value}")
-#                 if caller_value == True:
-#                     values_for_date.append(current_val) 
-# 
-    # return tuple(values_for_date)
 
 if __name__ == '__main__':
     app.run_server(debug=True) 
