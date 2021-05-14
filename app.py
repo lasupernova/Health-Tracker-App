@@ -175,9 +175,9 @@ def change_date(date):
               [State({"name": ALL ,"type":ALL, "list":"entry"}, 'value'),
               State({"name": ALL ,"type":ALL, "list":"entry"}, 'id')])
 def testing(data, values, ids):  #fill entry field values
-    print(">>>>!!TEST: ", data)
     if data == "No data for this date yet!":
-        return tuple(values)
+        vals = [[] if "check" in entry_type["type"] else None for entry_type in ids]
+        return tuple(vals)
     else:
         data_dict = ast.literal_eval(data)   ##convert data string into dict
         print(">>>>!!TEST: ", data_dict)
