@@ -48,8 +48,10 @@ app.layout = html.Div([
                         dcc.DatePickerSingle(
                             id="date_picker",
                             date=datetime.today().date()),
-                        html.Div(id="current_date", children=["BLUB"])
-                        ], width = "auto") 
+                        html.Div(id="current_date", children=["BLUB"]),
+                        html.Div(id="db_data", children=[], style={'display': 'none'})
+                        ], width = "auto"),
+
 
         ]),
     html.Div(id="values_to_db", children=['None'], style={'display':'block'}),
@@ -84,16 +86,10 @@ def display_page(pathname):
                             style = dict(display='inline-block')
                         )
                         ], width = "auto")
-                # dbc.Col([
-                #         dcc.DatePickerSingle(
-                #             id={"name":k,"type":"startdate-input"},
-                #             date=datetime.today().date()),
-                #         html.Div(id={"name":k,"type":"picked_date"}, children=["TEST"])
-                #         ], width = "auto") 
                     ])
             return_vals[k] = template
     return return_vals['mood'], return_vals['health'], return_vals['food'], return_vals['fitness'], return_vals['period'], return_vals['sleep'], return_vals['longterm']
-    # return True, f"The pathname is: {pathname}"
+
 
 # toggle entryfields for checkboxed for which additional info is necessary
 @app.callback(Output({'name': MATCH, 'type': 'div'}, 'style'),
@@ -156,7 +152,8 @@ def send_to_db(tab, values, names, tab_to_db):
 
 
 # get values from date picker
-@app.callback([Output("current_date", 'children')],
+@app.callback([Output("current_date", 'children'),
+               Output("db_data", 'children')],
               [Input("date_picker", 'date')])
 def change_date(date):
     print(f'DATE PICKED: {date}')  ##status of last tab (the one to send data to db for) is returned and saved
@@ -168,13 +165,13 @@ def change_date(date):
         data = db_transact.query_data_by_date_and_user(date_conv, user='gabri', end_date=None)
         print(f">>>>DATE (change_date): {data}")
         if data != 2:
-            return [str(data)]
+            return "Data for selected date loaded", str(data)
         else:
-            return ["No data for this date yet!"]
+            return "No data for this date yet!", "No data for this date yet!"
 
 
 @app.callback(Output({"name": ALL ,"type":ALL, "list":"entry"}, 'value'),
-              [Input("current_date", 'children')],
+              [Input("db_data", 'children')],
               [State({"name": ALL ,"type":ALL, "list":"entry"}, 'value'),
               State({"name": ALL ,"type":ALL, "list":"entry"}, 'id')])
 def testing(data, values, ids):  #fill entry field values
