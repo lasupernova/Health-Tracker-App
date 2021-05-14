@@ -38,9 +38,9 @@ def create_dcc_obj_by_type(category, entry_dict, called_by=None ,on_demand=False
     id_label = called_by  #UNUSED VAR
     child_list = []  
     if on_demand:
-        id_ = {"name":f"{category}_{entry_name}", "type":"on_demand"}
+        id_ = {"name":f"{category}_{entry_name}", "type":"on_demand", "list":"entry"}
     else:
-        id_ = {"name":f"{category}_{entry_name}", "type":"permanent"}
+        id_ = {"name":f"{category}_{entry_name}", "type":"permanent", "list":"entry"}
         label_ = html.Label([entry_label], style={'margin-right':'5px'})  #add label to non-on_demand entries in order to identify them
         child_list.append(label_)
     if entry_type == 'Spinbox':
@@ -64,7 +64,8 @@ def create_dcc_obj_by_type(category, entry_dict, called_by=None ,on_demand=False
         else:
             to_open = dcc.Input(id=id_, type='text', placeholder=entry_message)
     elif entry_type == 'MultipleChoice':
-            selection = [{'label':item, 'value':item} for item in entry_dict['selection_menu']]
+            selection = [{'label':item, 'value':number+1} for number, item in enumerate(entry_dict['selection_menu'])]  ##add 1 as 0-based and 0 would mean False (but the option was selected in corresponding checkbox already)
+            print(f">>>SELECTION: {selection}")
             to_open = dcc.Dropdown(id=id_, options=selection,
                                     placeholder=entry_message,
                                     value=[],
@@ -83,7 +84,7 @@ def create_first_col_children(category, category_dict):
         entry_label = entry[entry_name]['label'] 
         if entry[entry_name]['type'] == 'Checkbox':
             if 'opens' in entry[entry_name].keys():
-                checkbox = dcc.Checklist(id={"name":f"{category}_{entry_name}","type":"check_toggle"}, 
+                checkbox = dcc.Checklist(id={"name":f"{category}_{entry_name}","type":"check_toggle", "list":"entry"}, 
                                         options=[{'label':entry_label,'value':entry_name}], 
                                         value=[],
                                         labelStyle={'margin-left':'10px'},
@@ -97,7 +98,7 @@ def create_first_col_children(category, category_dict):
                                 ], style={'margin-top':'2px', 'margin-left':'10px'})
                 # print(f"\tCheckbox: {div}")  ##uncomment for troubleshooting   
             else:
-                div = dcc.Checklist(id={"name":f"{category}_{entry_name}","type":"check"}, 
+                div = dcc.Checklist(id={"name":f"{category}_{entry_name}","type":"check", "list":"entry"}, 
                                     options=[{'label':entry_label,'value':entry_name}], 
                                     value=[],
                                     labelStyle={'margin-left':'10px'},
