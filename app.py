@@ -234,6 +234,7 @@ def testing(data, values, ids):  #fill entry field values
                 try:
                     db_val = data_dict[category][entry_name]
                 except:
+                    empty_val = [] if "check" in entry_type else None
                     values_for_date.append(val)
                     continue
                 if ('check' in entry_type):
