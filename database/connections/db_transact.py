@@ -12,7 +12,7 @@ import os
 # load environmental variables required for connection
 load_dotenv()
 database_pw = os.environ["DATABASE_PASSWORD"]
-print(database_pw)
+# print(database_pw)  ##uncomment for troubleshooting
 
 db = 'health_tracker2'
 
@@ -216,8 +216,6 @@ def query_data_by_date_and_user(date, user, end_date=None):
 
             for table in table_names:
 
-                data_dict[table] = {}
-
                 col_names = get_columns_from_table(table)
 
                 if end_date==None:
@@ -226,6 +224,7 @@ def query_data_by_date_and_user(date, user, end_date=None):
                     data = get_table_data(table, date, end_date, user)
 
                 if data != 0:
+                    data_dict[table] = {}
                     for col, value in zip(col_names, data):
                         if col == 'user_id' or col == 'date':  #exclude these two columns, as they do not contain health data
                             pass
