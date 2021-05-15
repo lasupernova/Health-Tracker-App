@@ -169,6 +169,59 @@ def change_date(date):
         else:
             return "No data for this date yet!", "No data for this date yet!"
 
+def db_vals_to_list(data_dict, values, ids):
+    """
+    Iterates over current entry values and replaces each value:
+    with db value (if entry available in db for specified date and user) 
+    or 
+    [] (checklist entry fields) or None (non-checklist entry fields) if no value returned from db.
+
+    Parameters:
+        data - dict: dict of values returned from db for each entry per category
+        values - list: current values for all entry fields
+        ids - list: ids for all entry fields in specified form (e.g {"name":xxx, "type:"yyy})
+
+    Returns:
+        values_for_date - list: list of values to fill into dashboard entry field in correct order (corresponding to order from values/ids)
+    """
+    values_for_date = []
+
+    for id_, val in zip(ids, values):  
+
+        #extract category, entry_name and entry_type for each entry_id from composite id including {"name":xxx, "type":yyy}
+        entry_type = id_['type']
+        category = id_["name"].split("_")[0]
+        entry_name = "_".join(id_["name"].split("_")[1:])
+
+        # check if value was returned from db for current entry, otherwise append empty value (depending on entry type)
+        try:
+            db_val = data_dict[category][entry_name]
+        except:
+            empty_val = [] if "check" in entry_type else None
+            values_for_date.append(empty_val)
+            continue
+
+        if ('check' in entry_type):
+            # try:
+            current_val = [entry_name] if db_val==True else []
+            # except:
+            #     current_val = val
+            values_for_date.append(current_val)
+        elif (entry_type == "permanent"):
+            current_val = db_val
+            values_for_date.append(current_val)
+        elif entry_type == "on_demand":
+            caller_name = "_".join(entry_name.split("_")[:-1])
+            try:
+                caller_value = data_dict[category][caller_name]
+            except:
+                caller_value = None
+            if caller_value:
+                current_val = db_val
+                values_for_date.append(current_val)
+            else:
+                values_for_date.append(None)
+    return values_for_date
 
 @app.callback(Output({"name": ALL ,"type":ALL, "list":"entry"}, 'value'),
               [Input("db_data", 'children')],
@@ -180,47 +233,8 @@ def testing(data, values, ids):  #fill entry field values
         return tuple(vals)
     else:
         data_dict = ast.literal_eval(data)   ##convert data string into dict
-        print(">>>>!!TEST: ", data_dict)
-        print(f">>>>>>DATA to be processed: {len(data_dict)} for data of type {type(data_dict)}")
-        values_for_date = []
-        print(f"\nDATA (testing): {data_dict}\n")
 
-        for id_, val in zip(ids, values):  #extract cotegory, entry_name and entry_type for each entry_id
-            entry_type = id_['type']
-            if entry_type == 'div':
-                values_for_date.append(None)
-            elif (entry_type == 'picked_date') or (entry_type == 'startdate-input'):
-                values_for_date.append(val)
-            else:
-                category = id_["name"].split("_")[0]
-                entry_name = "_".join(id_["name"].split("_")[1:])
-                print(entry_name)
-                try:
-                    db_val = data_dict[category][entry_name]
-                except:
-                    empty_val = [] if "check" in entry_type else None
-                    values_for_date.append(val)
-                    continue
-                if ('check' in entry_type):
-                    try:
-                        current_val = [entry_name] if db_val==True else []
-                    except:
-                        current_val = val
-                    values_for_date.append(current_val)
-                elif (entry_type == "permanent"):
-                    current_val = db_val
-                    values_for_date.append(current_val)
-                elif entry_type == "on_demand":
-                    caller_name = "_".join(entry_name.split("_")[:-1])
-                    try:
-                        caller_value = data_dict[category][caller_name]
-                    except:
-                        caller_value = None
-                    if caller_value:
-                        current_val = db_val
-                        values_for_date.append(current_val)
-                    else:
-                        values_for_date.append(None)
+        values_for_date = db_vals_to_list(data_dict, values, ids)
         print(f">>>>RESULTS: {tuple(values_for_date)} number of return vals {len(values_for_date)}")
         return tuple(values_for_date)
 
