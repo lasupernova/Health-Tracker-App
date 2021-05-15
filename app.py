@@ -1,5 +1,6 @@
 # TO DO: create function creating children-return value for callback function
-# TD: CONTINUE ON LINE 194 :(
+
+    ##MULTIPLE ENTRIeS GET PASSED TO DB AS LISTS BUT COME BACK AS STRING DEPICTING A DICT!!!
 
 import sys
 import dash
@@ -207,6 +208,11 @@ def db_vals_to_list(data_dict, values, ids):
         # check if value was returned from db for current entry, otherwise append empty value (depending on entry type)
         try:
             db_val = data_dict[category][entry_name]
+            if type(db_val)==str and "{" in db_val:
+                db_val = db_val.strip("{}")
+                print(f"STRIPPED: {db_val}")
+                db_val = db_val.replace('"', '').split(",")
+                print(f"List db_val: {db_val}")
         except:
             empty_val = [] if "check" in entry_type else None
             values_for_date.append(empty_val)
@@ -219,8 +225,7 @@ def db_vals_to_list(data_dict, values, ids):
             #     current_val = val
             values_for_date.append(current_val)
         elif (entry_type == "permanent"):
-            current_val = db_val
-            values_for_date.append(current_val)
+            values_for_date.append(db_val)
         elif entry_type == "on_demand":
             caller_name = "_".join(entry_name.split("_")[:-1])
             try:
@@ -228,8 +233,7 @@ def db_vals_to_list(data_dict, values, ids):
             except:
                 caller_value = None
             if caller_value:
-                current_val = db_val
-                values_for_date.append(current_val)
+                values_for_date.append(db_val)
             else:
                 values_for_date.append(None)
     return values_for_date
