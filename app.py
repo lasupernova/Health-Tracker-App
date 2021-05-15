@@ -46,7 +46,7 @@ app.layout = html.Div([
                         id="date_picker",
                         date=datetime.today().date()),
                     html.Div(id="current_date", children=["BLUB"]),
-                    html.Div(id="previous_date"),  #, hidden=True   #division saving previous date to save last tab to db (-> no tab change necessary for saving data in final tab before switching dates)
+                    html.Div(id="previous_date", hidden=True),    #division saving previous date to save last tab to db (-> no tab change necessary for saving data in final tab before switching dates)
                     html.Div(id="db_data", children=[], style={'display': 'none'})
                     ], width = "auto"),
 
