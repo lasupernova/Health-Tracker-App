@@ -103,7 +103,7 @@ def toggle_checkbox(check_button):
         return {'display': 'none', 'width':'30%'}
 
 
-def insert_database(data, tab, user='gabri', date=datetime.now().date()):
+def insert_database(data, tab, date, user='gabri'):
     '''
     Insert selection of current tab to database for specified date and logged in user
     '''
@@ -121,8 +121,9 @@ def insert_database(data, tab, user='gabri', date=datetime.now().date()):
               [Input('tabs', 'value')],
               [State({'name': ALL, 'type': ALL, "list":"entry"}, 'value'),
               State({'name': ALL, 'type': ALL, "list":"entry"}, 'id'),
-              State('values_to_db', 'children')])
-def send_to_db(tab, values, names, tab_to_db):
+              State('values_to_db', 'children'),
+              State('date_picker', 'date')])
+def send_to_db(tab, values, names, tab_to_db, date):
     # print('TAB TO DB: ', tab_to_db)  ##status of last tab (the one to send data to db for) is returned and saved
     if (tab != 'tab-1-example') and (tab_to_db != 'tab-1-example'):
         # print("VALUES: ", [x for x in zip(names, values)])  ##uncomment for troubleshooting
@@ -139,7 +140,17 @@ def send_to_db(tab, values, names, tab_to_db):
             print(f"NAME: {n} - VALUE: {v}")
             if (t != 'div'):  #checklists that are not checked return empty list (if <empty_list> - returns False); other entryfields without entry will return None
                 entry_name = "_".join(n.split('_')[1:])  ##first part of n is the category --> grab only relevant entry name like used in db
-                to_db[entry_name] = True if (('check' in t) and v) else False if (('check' in t) and not v) else None if ((not 'check' in t) and not v) else v
+                if "check" in t:
+                    if v:
+                        entry_val = True
+                    else:
+                        entry_val = False
+                else:
+                    if v:
+                        entry_val = v
+                    else:
+                        entry_val = None
+                to_db[entry_name] = entry_val
                 print(f"{entry_name} : {1 if (('check' in t) and v) else 0 if not v else v}")
 
             else:
@@ -147,7 +158,7 @@ def send_to_db(tab, values, names, tab_to_db):
                 # print(f"Div: {n} - {v}")  ##uncomment for troubleshooting
         print(f">>>DATA: {to_db}")
         if len(to_db) > 0:
-            insert_database(to_db, tab_to_db)
+            insert_database(to_db, tab_to_db, date=date)
     return tab
 
 
