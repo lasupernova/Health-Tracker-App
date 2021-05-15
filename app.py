@@ -1,7 +1,3 @@
-# TO DO: create function creating children-return value for callback function
-
-    ##MULTIPLE ENTRIeS GET PASSED TO DB AS LISTS BUT COME BACK AS STRING DEPICTING A DICT!!!
-
 import sys
 import dash
 from dash.dependencies import Input, Output, MATCH, State, ALL
@@ -77,6 +73,17 @@ def testHover(hoverdata):
                Output('longterm_tab', 'children')],
               [Input('url', 'pathname')])   ##callback on page load
 def display_page(pathname):
+    """
+    Fills in entry fields and graphs for each tab, based on information in assets.entry_information.py.
+    Function will run when the URL pathname changes and will therefore be called on first dashboard start-up.
+    NOTE: page will not be refreshed when (URL-)location is updated due to URL 'refresh'-parameter being set to 'False'.
+
+    PARAMETERS:
+        pathname - str
+
+    Returns:
+        lay out templates for each of the Outputs
+    """
     if pathname=="/":
         return_vals = {}
         for k, v in entry_info.items():
@@ -97,6 +104,7 @@ def display_page(pathname):
                         ], width = "auto")
                     ])
             return_vals[k] = template
+    ## TO DO: modify to return ONE list in order to be more easily scalable later one
     return return_vals['mood'], return_vals['health'], return_vals['food'], return_vals['fitness'], return_vals['period'], return_vals['sleep'], return_vals['longterm']
 
 
@@ -105,6 +113,15 @@ def display_page(pathname):
               [Input({'name': MATCH, 'type': 'check_toggle', "list":"entry"}, 'value')])
             #   ,State({'name': MATCH, 'type': 'div'}, 'style'))
 def toggle_checkbox(check_button):
+    """
+    'Toggles' checkboxes on checkbox-click, by changing adjacent html.Div object style to show adjacent element (if available).
+
+    Parameters:
+        check_button - list: list will be empty of checkbox is not selected and will contain string (checkbox name/value) otherwise
+
+    Returns:
+        dict containing the style description that should be used for the adjacent html.Div object
+    """
     if len(check_button) > 0:
         # print('SELECTED')  ##uncomment for troubleshooting
         return {'display': 'inline-block', 'width':'30%'}
@@ -115,17 +132,37 @@ def toggle_checkbox(check_button):
 def insert_database(data, tab, date, user='gabri'):
     '''
     Insert selection of current tab to database for specified date and logged in user
-    '''
 
+    Returns:
+        void function
+    '''
     print(f"Inserted into database: {data}")
     # append user and date to data
     data['date'] = date  #do not use today's date, in case Date Picker was used to change current health tracker date
-
     # insert into database
     db_transact.add_data(tab, data, user)
 
 def send_to_db(tab, values, names, tab_to_db, date):
-    print(">>>>>>>>>>>>>>>>>>>> RUNNING!!!!!!! <<<<<<<<<<<<<<<<<<")
+    """
+    Sends entryfield data for specific tab to db for specific date and user.
+    Function is used for 2 different callbacks with the following differences for the function call:
+        - callback triggered by changed date in date_picker 
+            date - previous date, as this callback is used to save data  in final tab to db without tab change
+            tab_to_db -  is equal to tab (tab_to_db is only used to record filled in tab previous to tab change, which is not necessary when running this function using this callback, as tab did not change)
+        - callback triggered by tab change (date - date currently selected in date_picker)
+            date - current date (=date currently selected in date_picker)
+            tab_to_db -  not equal to 'tab'-parameter, as function is used on tab change, but data for tab selected BEFORE tab change must be passed to db       
+    
+    Parameters:
+        tab - str: value of currently selected tab
+        values - list: list of current values for all entry fields (NOTE: only entry field values from current tab will be filtered out and be sent to database during any one callback)
+        names - list: list of ids for all entry field values (see NOTE above)
+        tab_to_db - str: tab name of tab/category entry field values to send to db
+        date - str: date to use as value for db entry
+
+    Returns:
+        tab - str: tab name for currently selected tab --> will be saved to (['values_to_db[2]', 'children']) which will then serve as 'tab_to_db' when this function is called the next time 
+    """
     # print('TAB TO DB: ', tab_to_db)  ##status of last tab (the one to send data to db for) is returned and saved
     if (tab != 'tab-1-example') and (tab_to_db != 'tab-1-example'):
         # print("VALUES: ", [x for x in zip(names, values)])  ##uncomment for troubleshooting
@@ -172,7 +209,6 @@ def send_to_db(tab, values, names, tab_to_db, date):
               State('values_to_db', 'children'),
               State('date_picker', 'date')])
 def to_db_from_current_date(tab, values, names, tab_to_db, date):
-    print(f">>>>>>INITIAL TAB: {tab}")
     return send_to_db(tab, values, names, tab_to_db, date)
 
 # get values for all entry fields in current tab --> to be passed on to db in dict form (without tab change, but triggered by date change)
@@ -181,13 +217,12 @@ def to_db_from_current_date(tab, values, names, tab_to_db, date):
               [Input('date_picker', 'date')],
               [State({'name': ALL, 'type': ALL, "list":"entry"}, 'value'),
               State({'name': ALL, 'type': ALL, "list":"entry"}, 'id'),
-              State('values_to_db', 'children'),
               State('previous_date', 'children'),
               State('tabs', 'value')])
-def to_db_from_previous_date(date, values, names, tab_to_db, prev_date, tab):
-    print(f">>>>>>>>>>>>>> DATE FROM PREVIOUS: {date}")
+def to_db_from_previous_date(date, values, names, prev_date, tab):
+    print(f"TAB: {tab}; TAB TO DB: {tab_to_db}")
     if prev_date:
-        return send_to_db(tab, values, names, tab_to_db, prev_date), date
+        return send_to_db(tab, values, names, tab, prev_date), date  #NOTE: parameters 'tab' and 'tab_to_db' are same for this call
     else:
         print(f"to_db_from_previous_date: no action as prev_date is {prev_date}")
         return tab, date
