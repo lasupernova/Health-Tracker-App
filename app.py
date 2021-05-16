@@ -91,21 +91,72 @@ def display_page(pathname):
         return_vals = {}
         for k, v in entry_info.items():
             entry_options = return_full_entrytab(k, v)
-            template=dbc.Row([
-                dbc.Col(entry_options, id=f'{k}-content', width = "auto"), 
-                dbc.Col([
-                        dcc.Graph(
-                            id=f'{k}_graph',
-                            figure={
-                                'data': [
-                                    {'x': [1,2], 'y': [3,1]}
-                                        ],
-                                'layout': dict(title='Placeholder') 
-                                },
-                            style = dict(display='inline-block')
-                        )
+            if k == "food":
+                template=dbc.Row([
+                    dbc.Col(entry_options, id=f'{k}-content', width = "auto"), 
+                    dbc.Col([
+                        html.Div([
+                                dcc.Graph(
+                                    id=f'{k}_graph',
+                                    figure={
+                                        'data': [
+                                            {'x': [1,2], 'y': [3,1]}
+                                                ],
+                                        'layout': dict(title='Placeholder', margin={'l':20, 'r':20, 't':30, 'b':30}) 
+                                        },
+                                    style={'display':'inline-block', 'width': '25vw', 'height': '50vh'}
+                                ),
+                                dcc.Graph(
+                                    id=f'{k}_graph2',
+                                    figure={
+                                        'data': [
+                                            {'x': [2,6], 'y': [3,1]}
+                                                ],
+                                        'layout': dict(title='Placeholder 2', margin={'l':20, 'r':20, 't':30, 'b':30}) 
+                                        },
+                                    style={'display':'inline-block', 'width': '25vw', 'height': '50vh'}
+                                )
+                            ], style = dict(display='inline-block')),
+                            html.Div([
+                                dcc.Graph(
+                                    id=f'{k}_graph3',
+                                    figure={
+                                        'data': [
+                                            {'x': [1,2], 'y': [3,1]}
+                                                ],
+                                        'layout': dict(title='Placeholder 3', margin={'l':20, 'r':20, 't':30, 'b':30}) 
+                                        },
+                                    style={'display':'inline-block', 'width': '25vw', 'height': '50vh'}
+                                ),
+                                dcc.Graph(
+                                    id=f'{k}_graph4',
+                                    figure={
+                                        'data': [
+                                            {'x': [2,6], 'y': [3,1]}
+                                                ],
+                                        'layout': dict(title='Placeholder 4', margin={'l':20, 'r':20, 't':30, 'b':30}) 
+                                        },
+                                    style={'display':'inline-block', 'width': '25vw', 'height': '50vh'}
+                                )
+                            ], style = dict(display='inline-block'))
                         ], width = "auto")
                     ])
+            else:
+                template=dbc.Row([
+                    dbc.Col(entry_options, id=f'{k}-content', width = "auto"), 
+                    dbc.Col([
+                            dcc.Graph(
+                                id=f'{k}_graph',
+                                figure={
+                                    'data': [
+                                        {'x': [1,2], 'y': [3,1]}
+                                            ],
+                                    'layout': dict(title='Placeholder') 
+                                    },
+                                style = dict(display='inline-block')
+                            )
+                            ], width = "auto")
+                        ])
             return_vals[k] = template
     ## TO DO: modify to return ONE list in order to be more easily scalable later one
     return return_vals['mood'], return_vals['health'], return_vals['food'], return_vals['fitness'], return_vals['period'], return_vals['sleep'], return_vals['longterm']
