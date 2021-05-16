@@ -32,15 +32,18 @@ app.layout = html.Div([
     html.Div([
         dbc.Row(
             [dbc.Col([
-                dcc.Tabs(className='row', id="tabs", value='tab-1-example', children=[
-                dcc.Tab(id='mood_tab', label='Mood', value='mood'),
-                dcc.Tab(id='health_tab', label='Health', value='health'),
-                dcc.Tab(id='food_tab', label='Food', value='food'),
-                dcc.Tab(id='fitness_tab', label='Fitness', value='fitness'),
-                dcc.Tab(id='period_tab', label='Period', value='period'),
-                dcc.Tab(id='sleep_tab', label='Sleep', value='sleep'),
-                dcc.Tab(id='longterm_tab', label='Longterm', value='longterm'),
-            ],  vertical=False, parent_style={'float': 'left'})], width = 9),
+                dcc.Loading([
+                    dcc.Tabs(className='row', id="tabs", value='tab-1-example', children=[
+                        dcc.Tab(id='mood_tab', label='Mood', value='mood'),
+                        dcc.Tab(id='health_tab', label='Health', value='health'),
+                        dcc.Tab(id='food_tab', label='Food', value='food'),
+                        dcc.Tab(id='fitness_tab', label='Fitness', value='fitness'),
+                        dcc.Tab(id='period_tab', label='Period', value='period'),
+                        dcc.Tab(id='sleep_tab', label='Sleep', value='sleep'),
+                        dcc.Tab(id='longterm_tab', label='Longterm', value='longterm')
+                    ],  vertical=False, parent_style={'float': 'left'})
+                ], type='circle', fullscreen=True) 
+            ], width = 9),
             dbc.Col([
                     dcc.DatePickerSingle(
                         id="date_picker",
